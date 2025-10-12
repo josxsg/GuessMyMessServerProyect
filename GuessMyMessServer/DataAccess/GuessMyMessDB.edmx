@@ -1,0 +1,1172 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="GuessMyMessDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Avatar">
+          <Key>
+            <PropertyRef Name="idAvatar" />
+          </Key>
+          <Property Name="idAvatar" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="avatarData" Type="varbinary(max)" />
+        </EntityType>
+        <EntityType Name="Drawing">
+          <Key>
+            <PropertyRef Name="idDrawing" />
+          </Key>
+          <Property Name="idDrawing" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="drawingData" Type="varbinary(max)" />
+          <Property Name="isGuessed" Type="tinyint" />
+          <Property Name="Player_idPlayer" Type="int" />
+          <Property Name="Match_idMatch" Type="int" />
+          <Property Name="Word_idWord" Type="int" />
+        </EntityType>
+        <EntityType Name="Friendship">
+          <Key>
+            <PropertyRef Name="idFriendship" />
+          </Key>
+          <Property Name="idFriendship" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Player_idPlayer1" Type="int" />
+          <Property Name="Player_idPlayer2" Type="int" />
+          <Property Name="FriendShipStatus_idFriendShipStatus" Type="int" />
+        </EntityType>
+        <EntityType Name="FriendShipStatus">
+          <Key>
+            <PropertyRef Name="idFriendShipStatus" />
+          </Key>
+          <Property Name="idFriendShipStatus" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="status" Type="varchar" MaxLength="45" />
+        </EntityType>
+        <EntityType Name="Gender">
+          <Key>
+            <PropertyRef Name="idGender" />
+          </Key>
+          <Property Name="idGender" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="gender" Type="varchar" MaxLength="45" />
+        </EntityType>
+        <EntityType Name="KickVote">
+          <Key>
+            <PropertyRef Name="idKickVote" />
+          </Key>
+          <Property Name="idKickVote" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="voteCast" Type="tinyint" />
+          <Property Name="Player_idVoterPlayer" Type="int" />
+          <Property Name="Player_idTargetPlayer" Type="int" />
+          <Property Name="Match_idMatch" Type="int" />
+        </EntityType>
+        <EntityType Name="Match">
+          <Key>
+            <PropertyRef Name="idMatch" />
+          </Key>
+          <Property Name="idMatch" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="maxPlayers" Type="int" />
+          <Property Name="currentPlayers" Type="int" />
+          <Property Name="totalRounds" Type="int" />
+          <Property Name="startTime" Type="datetime" />
+          <Property Name="isPrivate" Type="tinyint" />
+          <Property Name="matchCode" Type="varchar" MaxLength="12" />
+          <Property Name="Player_idHost" Type="int" />
+          <Property Name="MatchDifficulty_idMatchDifficulty" Type="int" />
+        </EntityType>
+        <EntityType Name="MatchDifficulty">
+          <Key>
+            <PropertyRef Name="idMatchDifficulty" />
+          </Key>
+          <Property Name="idMatchDifficulty" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="difficulty" Type="varchar" MaxLength="45" />
+        </EntityType>
+        <EntityType Name="MatchHistory">
+          <Key>
+            <PropertyRef Name="idMatchHistory" />
+          </Key>
+          <Property Name="idMatchHistory" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="finalScore" Type="int" />
+          <Property Name="ranking" Type="int" />
+          <Property Name="Match_idMatch" Type="int" />
+          <Property Name="Player_idPlayer" Type="int" />
+        </EntityType>
+        <EntityType Name="Player">
+          <Key>
+            <PropertyRef Name="idPlayer" />
+          </Key>
+          <Property Name="idPlayer" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="varchar" MaxLength="45" />
+          <Property Name="lastName" Type="varchar" MaxLength="45" />
+          <Property Name="email" Type="varchar" MaxLength="45" />
+          <Property Name="username" Type="varchar" MaxLength="45" />
+          <Property Name="password" Type="varchar" MaxLength="45" />
+          <Property Name="Avatar_idAvatar" Type="int" />
+          <Property Name="Gender_idGender" Type="int" />
+          <Property Name="UserStatus_idUserStatus" Type="int" />
+        </EntityType>
+        <EntityType Name="SocialNetwork">
+          <Key>
+            <PropertyRef Name="idSocialNetwork" />
+          </Key>
+          <Property Name="idSocialNetwork" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="userLink" Type="varchar" MaxLength="45" />
+          <Property Name="Player_idPlayer" Type="int" />
+          <Property Name="TypeSocialNetwork_idTypeSocialNetwork" Type="int" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
+        <EntityType Name="TypeSocialNetwork">
+          <Key>
+            <PropertyRef Name="idTypeSocialNetwork" />
+          </Key>
+          <Property Name="idTypeSocialNetwork" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="type" Type="varchar" MaxLength="45" />
+        </EntityType>
+        <EntityType Name="UserStatus">
+          <Key>
+            <PropertyRef Name="idUserStatus" />
+          </Key>
+          <Property Name="idUserStatus" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="status" Type="varchar" MaxLength="45" />
+        </EntityType>
+        <EntityType Name="Word">
+          <Key>
+            <PropertyRef Name="idWord" />
+          </Key>
+          <Property Name="idWord" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="word" Type="varchar" MaxLength="45" />
+          <Property Name="WordDifficulty_idWordDifficulty" Type="int" />
+        </EntityType>
+        <EntityType Name="WordDifficulty">
+          <Key>
+            <PropertyRef Name="idWordDifficulty" />
+          </Key>
+          <Property Name="idWordDifficulty" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="difficulty" Type="varchar" MaxLength="45" />
+        </EntityType>
+        <Association Name="FK__Drawing__Match_i__59FA5E80">
+          <End Role="Match" Type="Self.Match" Multiplicity="0..1" />
+          <End Role="Drawing" Type="Self.Drawing" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Match">
+              <PropertyRef Name="idMatch" />
+            </Principal>
+            <Dependent Role="Drawing">
+              <PropertyRef Name="Match_idMatch" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Drawing__Player___59063A47">
+          <End Role="Player" Type="Self.Player" Multiplicity="0..1" />
+          <End Role="Drawing" Type="Self.Drawing" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="idPlayer" />
+            </Principal>
+            <Dependent Role="Drawing">
+              <PropertyRef Name="Player_idPlayer" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Drawing__Word_id__5AEE82B9">
+          <End Role="Word" Type="Self.Word" Multiplicity="0..1" />
+          <End Role="Drawing" Type="Self.Drawing" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Word">
+              <PropertyRef Name="idWord" />
+            </Principal>
+            <Dependent Role="Drawing">
+              <PropertyRef Name="Word_idWord" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Friendshi__Frien__4BAC3F29">
+          <End Role="FriendShipStatus" Type="Self.FriendShipStatus" Multiplicity="0..1" />
+          <End Role="Friendship" Type="Self.Friendship" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FriendShipStatus">
+              <PropertyRef Name="idFriendShipStatus" />
+            </Principal>
+            <Dependent Role="Friendship">
+              <PropertyRef Name="FriendShipStatus_idFriendShipStatus" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Friendshi__Playe__49C3F6B7">
+          <End Role="Player" Type="Self.Player" Multiplicity="0..1" />
+          <End Role="Friendship" Type="Self.Friendship" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="idPlayer" />
+            </Principal>
+            <Dependent Role="Friendship">
+              <PropertyRef Name="Player_idPlayer1" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Friendshi__Playe__4AB81AF0">
+          <End Role="Player" Type="Self.Player" Multiplicity="0..1" />
+          <End Role="Friendship" Type="Self.Friendship" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="idPlayer" />
+            </Principal>
+            <Dependent Role="Friendship">
+              <PropertyRef Name="Player_idPlayer2" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__KickVote__Match___6383C8BA">
+          <End Role="Match" Type="Self.Match" Multiplicity="0..1" />
+          <End Role="KickVote" Type="Self.KickVote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Match">
+              <PropertyRef Name="idMatch" />
+            </Principal>
+            <Dependent Role="KickVote">
+              <PropertyRef Name="Match_idMatch" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__KickVote__Player__619B8048">
+          <End Role="Player" Type="Self.Player" Multiplicity="0..1" />
+          <End Role="KickVote" Type="Self.KickVote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="idPlayer" />
+            </Principal>
+            <Dependent Role="KickVote">
+              <PropertyRef Name="Player_idVoterPlayer" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__KickVote__Player__628FA481">
+          <End Role="Player" Type="Self.Player" Multiplicity="0..1" />
+          <End Role="KickVote" Type="Self.KickVote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="idPlayer" />
+            </Principal>
+            <Dependent Role="KickVote">
+              <PropertyRef Name="Player_idTargetPlayer" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Match__MatchDiff__5165187F">
+          <End Role="MatchDifficulty" Type="Self.MatchDifficulty" Multiplicity="0..1" />
+          <End Role="Match" Type="Self.Match" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MatchDifficulty">
+              <PropertyRef Name="idMatchDifficulty" />
+            </Principal>
+            <Dependent Role="Match">
+              <PropertyRef Name="MatchDifficulty_idMatchDifficulty" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Match__Player_id__5070F446">
+          <End Role="Player" Type="Self.Player" Multiplicity="0..1" />
+          <End Role="Match" Type="Self.Match" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="idPlayer" />
+            </Principal>
+            <Dependent Role="Match">
+              <PropertyRef Name="Player_idHost" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__MatchHist__Match__5DCAEF64">
+          <End Role="Match" Type="Self.Match" Multiplicity="0..1" />
+          <End Role="MatchHistory" Type="Self.MatchHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Match">
+              <PropertyRef Name="idMatch" />
+            </Principal>
+            <Dependent Role="MatchHistory">
+              <PropertyRef Name="Match_idMatch" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__MatchHist__Playe__5EBF139D">
+          <End Role="Player" Type="Self.Player" Multiplicity="0..1" />
+          <End Role="MatchHistory" Type="Self.MatchHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="idPlayer" />
+            </Principal>
+            <Dependent Role="MatchHistory">
+              <PropertyRef Name="Player_idPlayer" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Player__Avatar_i__3F466844">
+          <End Role="Avatar" Type="Self.Avatar" Multiplicity="0..1" />
+          <End Role="Player" Type="Self.Player" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Avatar">
+              <PropertyRef Name="idAvatar" />
+            </Principal>
+            <Dependent Role="Player">
+              <PropertyRef Name="Avatar_idAvatar" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Player__Gender_i__403A8C7D">
+          <End Role="Gender" Type="Self.Gender" Multiplicity="0..1" />
+          <End Role="Player" Type="Self.Player" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Gender">
+              <PropertyRef Name="idGender" />
+            </Principal>
+            <Dependent Role="Player">
+              <PropertyRef Name="Gender_idGender" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Player__UserStat__412EB0B6">
+          <End Role="UserStatus" Type="Self.UserStatus" Multiplicity="0..1" />
+          <End Role="Player" Type="Self.Player" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserStatus">
+              <PropertyRef Name="idUserStatus" />
+            </Principal>
+            <Dependent Role="Player">
+              <PropertyRef Name="UserStatus_idUserStatus" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__SocialNet__Playe__440B1D61">
+          <End Role="Player" Type="Self.Player" Multiplicity="0..1" />
+          <End Role="SocialNetwork" Type="Self.SocialNetwork" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="idPlayer" />
+            </Principal>
+            <Dependent Role="SocialNetwork">
+              <PropertyRef Name="Player_idPlayer" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__SocialNet__TypeS__44FF419A">
+          <End Role="TypeSocialNetwork" Type="Self.TypeSocialNetwork" Multiplicity="0..1" />
+          <End Role="SocialNetwork" Type="Self.SocialNetwork" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TypeSocialNetwork">
+              <PropertyRef Name="idTypeSocialNetwork" />
+            </Principal>
+            <Dependent Role="SocialNetwork">
+              <PropertyRef Name="TypeSocialNetwork_idTypeSocialNetwork" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Word__WordDiffic__5629CD9C">
+          <End Role="WordDifficulty" Type="Self.WordDifficulty" Multiplicity="0..1" />
+          <End Role="Word" Type="Self.Word" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="WordDifficulty">
+              <PropertyRef Name="idWordDifficulty" />
+            </Principal>
+            <Dependent Role="Word">
+              <PropertyRef Name="WordDifficulty_idWordDifficulty" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="GuessMyMessDBModelStoreContainer">
+          <EntitySet Name="Avatar" EntityType="Self.Avatar" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Drawing" EntityType="Self.Drawing" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Friendship" EntityType="Self.Friendship" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FriendShipStatus" EntityType="Self.FriendShipStatus" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Gender" EntityType="Self.Gender" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="KickVote" EntityType="Self.KickVote" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Match" EntityType="Self.Match" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MatchDifficulty" EntityType="Self.MatchDifficulty" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MatchHistory" EntityType="Self.MatchHistory" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Player" EntityType="Self.Player" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SocialNetwork" EntityType="Self.SocialNetwork" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TypeSocialNetwork" EntityType="Self.TypeSocialNetwork" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserStatus" EntityType="Self.UserStatus" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Word" EntityType="Self.Word" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="WordDifficulty" EntityType="Self.WordDifficulty" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__Drawing__Match_i__59FA5E80" Association="Self.FK__Drawing__Match_i__59FA5E80">
+            <End Role="Match" EntitySet="Match" />
+            <End Role="Drawing" EntitySet="Drawing" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Drawing__Player___59063A47" Association="Self.FK__Drawing__Player___59063A47">
+            <End Role="Player" EntitySet="Player" />
+            <End Role="Drawing" EntitySet="Drawing" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Drawing__Word_id__5AEE82B9" Association="Self.FK__Drawing__Word_id__5AEE82B9">
+            <End Role="Word" EntitySet="Word" />
+            <End Role="Drawing" EntitySet="Drawing" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Friendshi__Frien__4BAC3F29" Association="Self.FK__Friendshi__Frien__4BAC3F29">
+            <End Role="FriendShipStatus" EntitySet="FriendShipStatus" />
+            <End Role="Friendship" EntitySet="Friendship" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Friendshi__Playe__49C3F6B7" Association="Self.FK__Friendshi__Playe__49C3F6B7">
+            <End Role="Player" EntitySet="Player" />
+            <End Role="Friendship" EntitySet="Friendship" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Friendshi__Playe__4AB81AF0" Association="Self.FK__Friendshi__Playe__4AB81AF0">
+            <End Role="Player" EntitySet="Player" />
+            <End Role="Friendship" EntitySet="Friendship" />
+          </AssociationSet>
+          <AssociationSet Name="FK__KickVote__Match___6383C8BA" Association="Self.FK__KickVote__Match___6383C8BA">
+            <End Role="Match" EntitySet="Match" />
+            <End Role="KickVote" EntitySet="KickVote" />
+          </AssociationSet>
+          <AssociationSet Name="FK__KickVote__Player__619B8048" Association="Self.FK__KickVote__Player__619B8048">
+            <End Role="Player" EntitySet="Player" />
+            <End Role="KickVote" EntitySet="KickVote" />
+          </AssociationSet>
+          <AssociationSet Name="FK__KickVote__Player__628FA481" Association="Self.FK__KickVote__Player__628FA481">
+            <End Role="Player" EntitySet="Player" />
+            <End Role="KickVote" EntitySet="KickVote" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Match__MatchDiff__5165187F" Association="Self.FK__Match__MatchDiff__5165187F">
+            <End Role="MatchDifficulty" EntitySet="MatchDifficulty" />
+            <End Role="Match" EntitySet="Match" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Match__Player_id__5070F446" Association="Self.FK__Match__Player_id__5070F446">
+            <End Role="Player" EntitySet="Player" />
+            <End Role="Match" EntitySet="Match" />
+          </AssociationSet>
+          <AssociationSet Name="FK__MatchHist__Match__5DCAEF64" Association="Self.FK__MatchHist__Match__5DCAEF64">
+            <End Role="Match" EntitySet="Match" />
+            <End Role="MatchHistory" EntitySet="MatchHistory" />
+          </AssociationSet>
+          <AssociationSet Name="FK__MatchHist__Playe__5EBF139D" Association="Self.FK__MatchHist__Playe__5EBF139D">
+            <End Role="Player" EntitySet="Player" />
+            <End Role="MatchHistory" EntitySet="MatchHistory" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Player__Avatar_i__3F466844" Association="Self.FK__Player__Avatar_i__3F466844">
+            <End Role="Avatar" EntitySet="Avatar" />
+            <End Role="Player" EntitySet="Player" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Player__Gender_i__403A8C7D" Association="Self.FK__Player__Gender_i__403A8C7D">
+            <End Role="Gender" EntitySet="Gender" />
+            <End Role="Player" EntitySet="Player" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Player__UserStat__412EB0B6" Association="Self.FK__Player__UserStat__412EB0B6">
+            <End Role="UserStatus" EntitySet="UserStatus" />
+            <End Role="Player" EntitySet="Player" />
+          </AssociationSet>
+          <AssociationSet Name="FK__SocialNet__Playe__440B1D61" Association="Self.FK__SocialNet__Playe__440B1D61">
+            <End Role="Player" EntitySet="Player" />
+            <End Role="SocialNetwork" EntitySet="SocialNetwork" />
+          </AssociationSet>
+          <AssociationSet Name="FK__SocialNet__TypeS__44FF419A" Association="Self.FK__SocialNet__TypeS__44FF419A">
+            <End Role="TypeSocialNetwork" EntitySet="TypeSocialNetwork" />
+            <End Role="SocialNetwork" EntitySet="SocialNetwork" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Word__WordDiffic__5629CD9C" Association="Self.FK__Word__WordDiffic__5629CD9C">
+            <End Role="WordDifficulty" EntitySet="WordDifficulty" />
+            <End Role="Word" EntitySet="Word" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="GuessMyMessDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Avatar">
+          <Key>
+            <PropertyRef Name="idAvatar" />
+          </Key>
+          <Property Name="idAvatar" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="avatarData" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <NavigationProperty Name="Player" Relationship="Self.FK__Player__Avatar_i__3F466844" FromRole="Avatar" ToRole="Player" />
+        </EntityType>
+        <EntityType Name="Drawing">
+          <Key>
+            <PropertyRef Name="idDrawing" />
+          </Key>
+          <Property Name="idDrawing" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="drawingData" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="isGuessed" Type="Byte" />
+          <Property Name="Player_idPlayer" Type="Int32" />
+          <Property Name="Match_idMatch" Type="Int32" />
+          <Property Name="Word_idWord" Type="Int32" />
+          <NavigationProperty Name="Match" Relationship="Self.FK__Drawing__Match_i__59FA5E80" FromRole="Drawing" ToRole="Match" />
+          <NavigationProperty Name="Player" Relationship="Self.FK__Drawing__Player___59063A47" FromRole="Drawing" ToRole="Player" />
+          <NavigationProperty Name="Word" Relationship="Self.FK__Drawing__Word_id__5AEE82B9" FromRole="Drawing" ToRole="Word" />
+        </EntityType>
+        <EntityType Name="Friendship">
+          <Key>
+            <PropertyRef Name="idFriendship" />
+          </Key>
+          <Property Name="idFriendship" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Player_idPlayer1" Type="Int32" />
+          <Property Name="Player_idPlayer2" Type="Int32" />
+          <Property Name="FriendShipStatus_idFriendShipStatus" Type="Int32" />
+          <NavigationProperty Name="FriendShipStatus" Relationship="Self.FK__Friendshi__Frien__4BAC3F29" FromRole="Friendship" ToRole="FriendShipStatus" />
+          <NavigationProperty Name="Player" Relationship="Self.FK__Friendshi__Playe__49C3F6B7" FromRole="Friendship" ToRole="Player" />
+          <NavigationProperty Name="Player1" Relationship="Self.FK__Friendshi__Playe__4AB81AF0" FromRole="Friendship" ToRole="Player" />
+        </EntityType>
+        <EntityType Name="FriendShipStatus">
+          <Key>
+            <PropertyRef Name="idFriendShipStatus" />
+          </Key>
+          <Property Name="idFriendShipStatus" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="status" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Friendship" Relationship="Self.FK__Friendshi__Frien__4BAC3F29" FromRole="FriendShipStatus" ToRole="Friendship" />
+        </EntityType>
+        <EntityType Name="Gender">
+          <Key>
+            <PropertyRef Name="idGender" />
+          </Key>
+          <Property Name="idGender" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="gender1" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Player" Relationship="Self.FK__Player__Gender_i__403A8C7D" FromRole="Gender" ToRole="Player" />
+        </EntityType>
+        <EntityType Name="KickVote">
+          <Key>
+            <PropertyRef Name="idKickVote" />
+          </Key>
+          <Property Name="idKickVote" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="voteCast" Type="Byte" />
+          <Property Name="Player_idVoterPlayer" Type="Int32" />
+          <Property Name="Player_idTargetPlayer" Type="Int32" />
+          <Property Name="Match_idMatch" Type="Int32" />
+          <NavigationProperty Name="Match" Relationship="Self.FK__KickVote__Match___6383C8BA" FromRole="KickVote" ToRole="Match" />
+          <NavigationProperty Name="Player" Relationship="Self.FK__KickVote__Player__619B8048" FromRole="KickVote" ToRole="Player" />
+          <NavigationProperty Name="Player1" Relationship="Self.FK__KickVote__Player__628FA481" FromRole="KickVote" ToRole="Player" />
+        </EntityType>
+        <EntityType Name="Match">
+          <Key>
+            <PropertyRef Name="idMatch" />
+          </Key>
+          <Property Name="idMatch" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="maxPlayers" Type="Int32" />
+          <Property Name="currentPlayers" Type="Int32" />
+          <Property Name="totalRounds" Type="Int32" />
+          <Property Name="startTime" Type="DateTime" Precision="3" />
+          <Property Name="isPrivate" Type="Byte" />
+          <Property Name="matchCode" Type="String" MaxLength="12" FixedLength="false" Unicode="false" />
+          <Property Name="Player_idHost" Type="Int32" />
+          <Property Name="MatchDifficulty_idMatchDifficulty" Type="Int32" />
+          <NavigationProperty Name="Drawing" Relationship="Self.FK__Drawing__Match_i__59FA5E80" FromRole="Match" ToRole="Drawing" />
+          <NavigationProperty Name="KickVote" Relationship="Self.FK__KickVote__Match___6383C8BA" FromRole="Match" ToRole="KickVote" />
+          <NavigationProperty Name="MatchDifficulty" Relationship="Self.FK__Match__MatchDiff__5165187F" FromRole="Match" ToRole="MatchDifficulty" />
+          <NavigationProperty Name="Player" Relationship="Self.FK__Match__Player_id__5070F446" FromRole="Match" ToRole="Player" />
+          <NavigationProperty Name="MatchHistory" Relationship="Self.FK__MatchHist__Match__5DCAEF64" FromRole="Match" ToRole="MatchHistory" />
+        </EntityType>
+        <EntityType Name="MatchDifficulty">
+          <Key>
+            <PropertyRef Name="idMatchDifficulty" />
+          </Key>
+          <Property Name="idMatchDifficulty" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="difficulty" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Match" Relationship="Self.FK__Match__MatchDiff__5165187F" FromRole="MatchDifficulty" ToRole="Match" />
+        </EntityType>
+        <EntityType Name="MatchHistory">
+          <Key>
+            <PropertyRef Name="idMatchHistory" />
+          </Key>
+          <Property Name="idMatchHistory" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="finalScore" Type="Int32" />
+          <Property Name="ranking" Type="Int32" />
+          <Property Name="Match_idMatch" Type="Int32" />
+          <Property Name="Player_idPlayer" Type="Int32" />
+          <NavigationProperty Name="Match" Relationship="Self.FK__MatchHist__Match__5DCAEF64" FromRole="MatchHistory" ToRole="Match" />
+          <NavigationProperty Name="Player" Relationship="Self.FK__MatchHist__Playe__5EBF139D" FromRole="MatchHistory" ToRole="Player" />
+        </EntityType>
+        <EntityType Name="Player">
+          <Key>
+            <PropertyRef Name="idPlayer" />
+          </Key>
+          <Property Name="idPlayer" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="lastName" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="email" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="username" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="password" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="Avatar_idAvatar" Type="Int32" />
+          <Property Name="Gender_idGender" Type="Int32" />
+          <Property Name="UserStatus_idUserStatus" Type="Int32" />
+          <NavigationProperty Name="Avatar" Relationship="Self.FK__Player__Avatar_i__3F466844" FromRole="Player" ToRole="Avatar" />
+          <NavigationProperty Name="Drawing" Relationship="Self.FK__Drawing__Player___59063A47" FromRole="Player" ToRole="Drawing" />
+          <NavigationProperty Name="Friendship" Relationship="Self.FK__Friendshi__Playe__49C3F6B7" FromRole="Player" ToRole="Friendship" />
+          <NavigationProperty Name="Friendship1" Relationship="Self.FK__Friendshi__Playe__4AB81AF0" FromRole="Player" ToRole="Friendship" />
+          <NavigationProperty Name="Gender" Relationship="Self.FK__Player__Gender_i__403A8C7D" FromRole="Player" ToRole="Gender" />
+          <NavigationProperty Name="KickVote" Relationship="Self.FK__KickVote__Player__619B8048" FromRole="Player" ToRole="KickVote" />
+          <NavigationProperty Name="KickVote1" Relationship="Self.FK__KickVote__Player__628FA481" FromRole="Player" ToRole="KickVote" />
+          <NavigationProperty Name="Match" Relationship="Self.FK__Match__Player_id__5070F446" FromRole="Player" ToRole="Match" />
+          <NavigationProperty Name="MatchHistory" Relationship="Self.FK__MatchHist__Playe__5EBF139D" FromRole="Player" ToRole="MatchHistory" />
+          <NavigationProperty Name="UserStatus" Relationship="Self.FK__Player__UserStat__412EB0B6" FromRole="Player" ToRole="UserStatus" />
+          <NavigationProperty Name="SocialNetwork" Relationship="Self.FK__SocialNet__Playe__440B1D61" FromRole="Player" ToRole="SocialNetwork" />
+        </EntityType>
+        <EntityType Name="SocialNetwork">
+          <Key>
+            <PropertyRef Name="idSocialNetwork" />
+          </Key>
+          <Property Name="idSocialNetwork" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="userLink" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="Player_idPlayer" Type="Int32" />
+          <Property Name="TypeSocialNetwork_idTypeSocialNetwork" Type="Int32" />
+          <NavigationProperty Name="Player" Relationship="Self.FK__SocialNet__Playe__440B1D61" FromRole="SocialNetwork" ToRole="Player" />
+          <NavigationProperty Name="TypeSocialNetwork" Relationship="Self.FK__SocialNet__TypeS__44FF419A" FromRole="SocialNetwork" ToRole="TypeSocialNetwork" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="TypeSocialNetwork">
+          <Key>
+            <PropertyRef Name="idTypeSocialNetwork" />
+          </Key>
+          <Property Name="idTypeSocialNetwork" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="type" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="SocialNetwork" Relationship="Self.FK__SocialNet__TypeS__44FF419A" FromRole="TypeSocialNetwork" ToRole="SocialNetwork" />
+        </EntityType>
+        <EntityType Name="UserStatus">
+          <Key>
+            <PropertyRef Name="idUserStatus" />
+          </Key>
+          <Property Name="idUserStatus" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="status" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Player" Relationship="Self.FK__Player__UserStat__412EB0B6" FromRole="UserStatus" ToRole="Player" />
+        </EntityType>
+        <EntityType Name="Word">
+          <Key>
+            <PropertyRef Name="idWord" />
+          </Key>
+          <Property Name="idWord" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="word1" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="WordDifficulty_idWordDifficulty" Type="Int32" />
+          <NavigationProperty Name="Drawing" Relationship="Self.FK__Drawing__Word_id__5AEE82B9" FromRole="Word" ToRole="Drawing" />
+          <NavigationProperty Name="WordDifficulty" Relationship="Self.FK__Word__WordDiffic__5629CD9C" FromRole="Word" ToRole="WordDifficulty" />
+        </EntityType>
+        <EntityType Name="WordDifficulty">
+          <Key>
+            <PropertyRef Name="idWordDifficulty" />
+          </Key>
+          <Property Name="idWordDifficulty" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="difficulty" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Word" Relationship="Self.FK__Word__WordDiffic__5629CD9C" FromRole="WordDifficulty" ToRole="Word" />
+        </EntityType>
+        <Association Name="FK__Player__Avatar_i__3F466844">
+          <End Role="Avatar" Type="Self.Avatar" Multiplicity="0..1" />
+          <End Role="Player" Type="Self.Player" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Avatar">
+              <PropertyRef Name="idAvatar" />
+            </Principal>
+            <Dependent Role="Player">
+              <PropertyRef Name="Avatar_idAvatar" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Drawing__Match_i__59FA5E80">
+          <End Role="Match" Type="Self.Match" Multiplicity="0..1" />
+          <End Role="Drawing" Type="Self.Drawing" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Match">
+              <PropertyRef Name="idMatch" />
+            </Principal>
+            <Dependent Role="Drawing">
+              <PropertyRef Name="Match_idMatch" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Drawing__Player___59063A47">
+          <End Role="Player" Type="Self.Player" Multiplicity="0..1" />
+          <End Role="Drawing" Type="Self.Drawing" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="idPlayer" />
+            </Principal>
+            <Dependent Role="Drawing">
+              <PropertyRef Name="Player_idPlayer" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Drawing__Word_id__5AEE82B9">
+          <End Role="Word" Type="Self.Word" Multiplicity="0..1" />
+          <End Role="Drawing" Type="Self.Drawing" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Word">
+              <PropertyRef Name="idWord" />
+            </Principal>
+            <Dependent Role="Drawing">
+              <PropertyRef Name="Word_idWord" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Friendshi__Frien__4BAC3F29">
+          <End Role="FriendShipStatus" Type="Self.FriendShipStatus" Multiplicity="0..1" />
+          <End Role="Friendship" Type="Self.Friendship" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FriendShipStatus">
+              <PropertyRef Name="idFriendShipStatus" />
+            </Principal>
+            <Dependent Role="Friendship">
+              <PropertyRef Name="FriendShipStatus_idFriendShipStatus" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Friendshi__Playe__49C3F6B7">
+          <End Role="Player" Type="Self.Player" Multiplicity="0..1" />
+          <End Role="Friendship" Type="Self.Friendship" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="idPlayer" />
+            </Principal>
+            <Dependent Role="Friendship">
+              <PropertyRef Name="Player_idPlayer1" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Friendshi__Playe__4AB81AF0">
+          <End Role="Player" Type="Self.Player" Multiplicity="0..1" />
+          <End Role="Friendship" Type="Self.Friendship" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="idPlayer" />
+            </Principal>
+            <Dependent Role="Friendship">
+              <PropertyRef Name="Player_idPlayer2" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Player__Gender_i__403A8C7D">
+          <End Role="Gender" Type="Self.Gender" Multiplicity="0..1" />
+          <End Role="Player" Type="Self.Player" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Gender">
+              <PropertyRef Name="idGender" />
+            </Principal>
+            <Dependent Role="Player">
+              <PropertyRef Name="Gender_idGender" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__KickVote__Match___6383C8BA">
+          <End Role="Match" Type="Self.Match" Multiplicity="0..1" />
+          <End Role="KickVote" Type="Self.KickVote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Match">
+              <PropertyRef Name="idMatch" />
+            </Principal>
+            <Dependent Role="KickVote">
+              <PropertyRef Name="Match_idMatch" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__KickVote__Player__619B8048">
+          <End Role="Player" Type="Self.Player" Multiplicity="0..1" />
+          <End Role="KickVote" Type="Self.KickVote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="idPlayer" />
+            </Principal>
+            <Dependent Role="KickVote">
+              <PropertyRef Name="Player_idVoterPlayer" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__KickVote__Player__628FA481">
+          <End Role="Player" Type="Self.Player" Multiplicity="0..1" />
+          <End Role="KickVote" Type="Self.KickVote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="idPlayer" />
+            </Principal>
+            <Dependent Role="KickVote">
+              <PropertyRef Name="Player_idTargetPlayer" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Match__MatchDiff__5165187F">
+          <End Role="MatchDifficulty" Type="Self.MatchDifficulty" Multiplicity="0..1" />
+          <End Role="Match" Type="Self.Match" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MatchDifficulty">
+              <PropertyRef Name="idMatchDifficulty" />
+            </Principal>
+            <Dependent Role="Match">
+              <PropertyRef Name="MatchDifficulty_idMatchDifficulty" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Match__Player_id__5070F446">
+          <End Role="Player" Type="Self.Player" Multiplicity="0..1" />
+          <End Role="Match" Type="Self.Match" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="idPlayer" />
+            </Principal>
+            <Dependent Role="Match">
+              <PropertyRef Name="Player_idHost" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__MatchHist__Match__5DCAEF64">
+          <End Role="Match" Type="Self.Match" Multiplicity="0..1" />
+          <End Role="MatchHistory" Type="Self.MatchHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Match">
+              <PropertyRef Name="idMatch" />
+            </Principal>
+            <Dependent Role="MatchHistory">
+              <PropertyRef Name="Match_idMatch" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__MatchHist__Playe__5EBF139D">
+          <End Role="Player" Type="Self.Player" Multiplicity="0..1" />
+          <End Role="MatchHistory" Type="Self.MatchHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="idPlayer" />
+            </Principal>
+            <Dependent Role="MatchHistory">
+              <PropertyRef Name="Player_idPlayer" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Player__UserStat__412EB0B6">
+          <End Role="UserStatus" Type="Self.UserStatus" Multiplicity="0..1" />
+          <End Role="Player" Type="Self.Player" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserStatus">
+              <PropertyRef Name="idUserStatus" />
+            </Principal>
+            <Dependent Role="Player">
+              <PropertyRef Name="UserStatus_idUserStatus" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__SocialNet__Playe__440B1D61">
+          <End Role="Player" Type="Self.Player" Multiplicity="0..1" />
+          <End Role="SocialNetwork" Type="Self.SocialNetwork" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="idPlayer" />
+            </Principal>
+            <Dependent Role="SocialNetwork">
+              <PropertyRef Name="Player_idPlayer" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__SocialNet__TypeS__44FF419A">
+          <End Role="TypeSocialNetwork" Type="Self.TypeSocialNetwork" Multiplicity="0..1" />
+          <End Role="SocialNetwork" Type="Self.SocialNetwork" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TypeSocialNetwork">
+              <PropertyRef Name="idTypeSocialNetwork" />
+            </Principal>
+            <Dependent Role="SocialNetwork">
+              <PropertyRef Name="TypeSocialNetwork_idTypeSocialNetwork" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Word__WordDiffic__5629CD9C">
+          <End Role="WordDifficulty" Type="Self.WordDifficulty" Multiplicity="0..1" />
+          <End Role="Word" Type="Self.Word" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="WordDifficulty">
+              <PropertyRef Name="idWordDifficulty" />
+            </Principal>
+            <Dependent Role="Word">
+              <PropertyRef Name="WordDifficulty_idWordDifficulty" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="GuessMyMessDBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Avatar" EntityType="Self.Avatar" />
+          <EntitySet Name="Drawing" EntityType="Self.Drawing" />
+          <EntitySet Name="Friendship" EntityType="Self.Friendship" />
+          <EntitySet Name="FriendShipStatus" EntityType="Self.FriendShipStatus" />
+          <EntitySet Name="Gender" EntityType="Self.Gender" />
+          <EntitySet Name="KickVote" EntityType="Self.KickVote" />
+          <EntitySet Name="Match" EntityType="Self.Match" />
+          <EntitySet Name="MatchDifficulty" EntityType="Self.MatchDifficulty" />
+          <EntitySet Name="MatchHistory" EntityType="Self.MatchHistory" />
+          <EntitySet Name="Player" EntityType="Self.Player" />
+          <EntitySet Name="SocialNetwork" EntityType="Self.SocialNetwork" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
+          <EntitySet Name="TypeSocialNetwork" EntityType="Self.TypeSocialNetwork" />
+          <EntitySet Name="UserStatus" EntityType="Self.UserStatus" />
+          <EntitySet Name="Word" EntityType="Self.Word" />
+          <EntitySet Name="WordDifficulty" EntityType="Self.WordDifficulty" />
+          <AssociationSet Name="FK__Player__Avatar_i__3F466844" Association="Self.FK__Player__Avatar_i__3F466844">
+            <End Role="Avatar" EntitySet="Avatar" />
+            <End Role="Player" EntitySet="Player" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Drawing__Match_i__59FA5E80" Association="Self.FK__Drawing__Match_i__59FA5E80">
+            <End Role="Match" EntitySet="Match" />
+            <End Role="Drawing" EntitySet="Drawing" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Drawing__Player___59063A47" Association="Self.FK__Drawing__Player___59063A47">
+            <End Role="Player" EntitySet="Player" />
+            <End Role="Drawing" EntitySet="Drawing" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Drawing__Word_id__5AEE82B9" Association="Self.FK__Drawing__Word_id__5AEE82B9">
+            <End Role="Word" EntitySet="Word" />
+            <End Role="Drawing" EntitySet="Drawing" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Friendshi__Frien__4BAC3F29" Association="Self.FK__Friendshi__Frien__4BAC3F29">
+            <End Role="FriendShipStatus" EntitySet="FriendShipStatus" />
+            <End Role="Friendship" EntitySet="Friendship" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Friendshi__Playe__49C3F6B7" Association="Self.FK__Friendshi__Playe__49C3F6B7">
+            <End Role="Player" EntitySet="Player" />
+            <End Role="Friendship" EntitySet="Friendship" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Friendshi__Playe__4AB81AF0" Association="Self.FK__Friendshi__Playe__4AB81AF0">
+            <End Role="Player" EntitySet="Player" />
+            <End Role="Friendship" EntitySet="Friendship" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Player__Gender_i__403A8C7D" Association="Self.FK__Player__Gender_i__403A8C7D">
+            <End Role="Gender" EntitySet="Gender" />
+            <End Role="Player" EntitySet="Player" />
+          </AssociationSet>
+          <AssociationSet Name="FK__KickVote__Match___6383C8BA" Association="Self.FK__KickVote__Match___6383C8BA">
+            <End Role="Match" EntitySet="Match" />
+            <End Role="KickVote" EntitySet="KickVote" />
+          </AssociationSet>
+          <AssociationSet Name="FK__KickVote__Player__619B8048" Association="Self.FK__KickVote__Player__619B8048">
+            <End Role="Player" EntitySet="Player" />
+            <End Role="KickVote" EntitySet="KickVote" />
+          </AssociationSet>
+          <AssociationSet Name="FK__KickVote__Player__628FA481" Association="Self.FK__KickVote__Player__628FA481">
+            <End Role="Player" EntitySet="Player" />
+            <End Role="KickVote" EntitySet="KickVote" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Match__MatchDiff__5165187F" Association="Self.FK__Match__MatchDiff__5165187F">
+            <End Role="MatchDifficulty" EntitySet="MatchDifficulty" />
+            <End Role="Match" EntitySet="Match" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Match__Player_id__5070F446" Association="Self.FK__Match__Player_id__5070F446">
+            <End Role="Player" EntitySet="Player" />
+            <End Role="Match" EntitySet="Match" />
+          </AssociationSet>
+          <AssociationSet Name="FK__MatchHist__Match__5DCAEF64" Association="Self.FK__MatchHist__Match__5DCAEF64">
+            <End Role="Match" EntitySet="Match" />
+            <End Role="MatchHistory" EntitySet="MatchHistory" />
+          </AssociationSet>
+          <AssociationSet Name="FK__MatchHist__Playe__5EBF139D" Association="Self.FK__MatchHist__Playe__5EBF139D">
+            <End Role="Player" EntitySet="Player" />
+            <End Role="MatchHistory" EntitySet="MatchHistory" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Player__UserStat__412EB0B6" Association="Self.FK__Player__UserStat__412EB0B6">
+            <End Role="UserStatus" EntitySet="UserStatus" />
+            <End Role="Player" EntitySet="Player" />
+          </AssociationSet>
+          <AssociationSet Name="FK__SocialNet__Playe__440B1D61" Association="Self.FK__SocialNet__Playe__440B1D61">
+            <End Role="Player" EntitySet="Player" />
+            <End Role="SocialNetwork" EntitySet="SocialNetwork" />
+          </AssociationSet>
+          <AssociationSet Name="FK__SocialNet__TypeS__44FF419A" Association="Self.FK__SocialNet__TypeS__44FF419A">
+            <End Role="TypeSocialNetwork" EntitySet="TypeSocialNetwork" />
+            <End Role="SocialNetwork" EntitySet="SocialNetwork" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Word__WordDiffic__5629CD9C" Association="Self.FK__Word__WordDiffic__5629CD9C">
+            <End Role="WordDifficulty" EntitySet="WordDifficulty" />
+            <End Role="Word" EntitySet="Word" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="GuessMyMessDBModelStoreContainer" CdmEntityContainer="GuessMyMessDBEntities">
+          <EntitySetMapping Name="Avatar">
+            <EntityTypeMapping TypeName="GuessMyMessDBModel.Avatar">
+              <MappingFragment StoreEntitySet="Avatar">
+                <ScalarProperty Name="idAvatar" ColumnName="idAvatar" />
+                <ScalarProperty Name="avatarData" ColumnName="avatarData" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Drawing">
+            <EntityTypeMapping TypeName="GuessMyMessDBModel.Drawing">
+              <MappingFragment StoreEntitySet="Drawing">
+                <ScalarProperty Name="idDrawing" ColumnName="idDrawing" />
+                <ScalarProperty Name="drawingData" ColumnName="drawingData" />
+                <ScalarProperty Name="isGuessed" ColumnName="isGuessed" />
+                <ScalarProperty Name="Player_idPlayer" ColumnName="Player_idPlayer" />
+                <ScalarProperty Name="Match_idMatch" ColumnName="Match_idMatch" />
+                <ScalarProperty Name="Word_idWord" ColumnName="Word_idWord" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Friendship">
+            <EntityTypeMapping TypeName="GuessMyMessDBModel.Friendship">
+              <MappingFragment StoreEntitySet="Friendship">
+                <ScalarProperty Name="idFriendship" ColumnName="idFriendship" />
+                <ScalarProperty Name="Player_idPlayer1" ColumnName="Player_idPlayer1" />
+                <ScalarProperty Name="Player_idPlayer2" ColumnName="Player_idPlayer2" />
+                <ScalarProperty Name="FriendShipStatus_idFriendShipStatus" ColumnName="FriendShipStatus_idFriendShipStatus" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FriendShipStatus">
+            <EntityTypeMapping TypeName="GuessMyMessDBModel.FriendShipStatus">
+              <MappingFragment StoreEntitySet="FriendShipStatus">
+                <ScalarProperty Name="idFriendShipStatus" ColumnName="idFriendShipStatus" />
+                <ScalarProperty Name="status" ColumnName="status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Gender">
+            <EntityTypeMapping TypeName="GuessMyMessDBModel.Gender">
+              <MappingFragment StoreEntitySet="Gender">
+                <ScalarProperty Name="idGender" ColumnName="idGender" />
+                <ScalarProperty Name="gender1" ColumnName="gender" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="KickVote">
+            <EntityTypeMapping TypeName="GuessMyMessDBModel.KickVote">
+              <MappingFragment StoreEntitySet="KickVote">
+                <ScalarProperty Name="idKickVote" ColumnName="idKickVote" />
+                <ScalarProperty Name="voteCast" ColumnName="voteCast" />
+                <ScalarProperty Name="Player_idVoterPlayer" ColumnName="Player_idVoterPlayer" />
+                <ScalarProperty Name="Player_idTargetPlayer" ColumnName="Player_idTargetPlayer" />
+                <ScalarProperty Name="Match_idMatch" ColumnName="Match_idMatch" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Match">
+            <EntityTypeMapping TypeName="GuessMyMessDBModel.Match">
+              <MappingFragment StoreEntitySet="Match">
+                <ScalarProperty Name="idMatch" ColumnName="idMatch" />
+                <ScalarProperty Name="maxPlayers" ColumnName="maxPlayers" />
+                <ScalarProperty Name="currentPlayers" ColumnName="currentPlayers" />
+                <ScalarProperty Name="totalRounds" ColumnName="totalRounds" />
+                <ScalarProperty Name="startTime" ColumnName="startTime" />
+                <ScalarProperty Name="isPrivate" ColumnName="isPrivate" />
+                <ScalarProperty Name="matchCode" ColumnName="matchCode" />
+                <ScalarProperty Name="Player_idHost" ColumnName="Player_idHost" />
+                <ScalarProperty Name="MatchDifficulty_idMatchDifficulty" ColumnName="MatchDifficulty_idMatchDifficulty" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MatchDifficulty">
+            <EntityTypeMapping TypeName="GuessMyMessDBModel.MatchDifficulty">
+              <MappingFragment StoreEntitySet="MatchDifficulty">
+                <ScalarProperty Name="idMatchDifficulty" ColumnName="idMatchDifficulty" />
+                <ScalarProperty Name="difficulty" ColumnName="difficulty" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MatchHistory">
+            <EntityTypeMapping TypeName="GuessMyMessDBModel.MatchHistory">
+              <MappingFragment StoreEntitySet="MatchHistory">
+                <ScalarProperty Name="idMatchHistory" ColumnName="idMatchHistory" />
+                <ScalarProperty Name="finalScore" ColumnName="finalScore" />
+                <ScalarProperty Name="ranking" ColumnName="ranking" />
+                <ScalarProperty Name="Match_idMatch" ColumnName="Match_idMatch" />
+                <ScalarProperty Name="Player_idPlayer" ColumnName="Player_idPlayer" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Player">
+            <EntityTypeMapping TypeName="GuessMyMessDBModel.Player">
+              <MappingFragment StoreEntitySet="Player">
+                <ScalarProperty Name="idPlayer" ColumnName="idPlayer" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="lastName" ColumnName="lastName" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="username" ColumnName="username" />
+                <ScalarProperty Name="password" ColumnName="password" />
+                <ScalarProperty Name="Avatar_idAvatar" ColumnName="Avatar_idAvatar" />
+                <ScalarProperty Name="Gender_idGender" ColumnName="Gender_idGender" />
+                <ScalarProperty Name="UserStatus_idUserStatus" ColumnName="UserStatus_idUserStatus" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SocialNetwork">
+            <EntityTypeMapping TypeName="GuessMyMessDBModel.SocialNetwork">
+              <MappingFragment StoreEntitySet="SocialNetwork">
+                <ScalarProperty Name="idSocialNetwork" ColumnName="idSocialNetwork" />
+                <ScalarProperty Name="userLink" ColumnName="userLink" />
+                <ScalarProperty Name="Player_idPlayer" ColumnName="Player_idPlayer" />
+                <ScalarProperty Name="TypeSocialNetwork_idTypeSocialNetwork" ColumnName="TypeSocialNetwork_idTypeSocialNetwork" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="GuessMyMessDBModel.sysdiagrams">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="definition" ColumnName="definition" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TypeSocialNetwork">
+            <EntityTypeMapping TypeName="GuessMyMessDBModel.TypeSocialNetwork">
+              <MappingFragment StoreEntitySet="TypeSocialNetwork">
+                <ScalarProperty Name="idTypeSocialNetwork" ColumnName="idTypeSocialNetwork" />
+                <ScalarProperty Name="type" ColumnName="type" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserStatus">
+            <EntityTypeMapping TypeName="GuessMyMessDBModel.UserStatus">
+              <MappingFragment StoreEntitySet="UserStatus">
+                <ScalarProperty Name="idUserStatus" ColumnName="idUserStatus" />
+                <ScalarProperty Name="status" ColumnName="status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Word">
+            <EntityTypeMapping TypeName="GuessMyMessDBModel.Word">
+              <MappingFragment StoreEntitySet="Word">
+                <ScalarProperty Name="idWord" ColumnName="idWord" />
+                <ScalarProperty Name="word1" ColumnName="word" />
+                <ScalarProperty Name="WordDifficulty_idWordDifficulty" ColumnName="WordDifficulty_idWordDifficulty" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="WordDifficulty">
+            <EntityTypeMapping TypeName="GuessMyMessDBModel.WordDifficulty">
+              <MappingFragment StoreEntitySet="WordDifficulty">
+                <ScalarProperty Name="idWordDifficulty" ColumnName="idWordDifficulty" />
+                <ScalarProperty Name="difficulty" ColumnName="difficulty" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Ninguno" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

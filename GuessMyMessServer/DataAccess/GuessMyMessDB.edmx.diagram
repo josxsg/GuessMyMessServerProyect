@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="f9cfb7676c6e4449b082dd0e5c767407" Name="Diagram1">
+        <EntityTypeShape EntityType="GuessMyMessDBModel.Avatar" Width="1.5" PointX="0.75" PointY="9.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="GuessMyMessDBModel.Drawing" Width="1.5" PointX="5.25" PointY="8.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="GuessMyMessDBModel.Friendship" Width="1.5" PointX="8.25" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="GuessMyMessDBModel.FriendShipStatus" Width="1.5" PointX="6" PointY="17.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="GuessMyMessDBModel.Gender" Width="1.5" PointX="0.75" PointY="6" IsExpanded="true" />
+        <EntityTypeShape EntityType="GuessMyMessDBModel.KickVote" Width="1.5" PointX="5.25" PointY="4.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="GuessMyMessDBModel.Match" Width="1.5" PointX="5.25" PointY="12.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="GuessMyMessDBModel.MatchDifficulty" Width="1.5" PointX="3" PointY="13.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="GuessMyMessDBModel.MatchHistory" Width="1.5" PointX="7.5" PointY="12.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="GuessMyMessDBModel.Player" Width="1.5" PointX="3" PointY="7.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="GuessMyMessDBModel.SocialNetwork" Width="1.5" PointX="8.25" PointY="5.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="GuessMyMessDBModel.sysdiagrams" Width="1.5" PointX="8.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="GuessMyMessDBModel.TypeSocialNetwork" Width="1.5" PointX="6" PointY="2.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="GuessMyMessDBModel.UserStatus" Width="1.5" PointX="0.75" PointY="12.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="GuessMyMessDBModel.Word" Width="1.5" PointX="3" PointY="3" IsExpanded="true" />
+        <EntityTypeShape EntityType="GuessMyMessDBModel.WordDifficulty" Width="1.5" PointX="0.75" PointY="3.125" IsExpanded="true" />
+        <AssociationConnector Association="GuessMyMessDBModel.FK__Player__Avatar_i__3F466844" ManuallyRouted="false" />
+        <AssociationConnector Association="GuessMyMessDBModel.FK__Drawing__Match_i__59FA5E80" ManuallyRouted="false" />
+        <AssociationConnector Association="GuessMyMessDBModel.FK__Drawing__Player___59063A47" ManuallyRouted="false" />
+        <AssociationConnector Association="GuessMyMessDBModel.FK__Drawing__Word_id__5AEE82B9" ManuallyRouted="false" />
+        <AssociationConnector Association="GuessMyMessDBModel.FK__Friendshi__Frien__4BAC3F29" ManuallyRouted="false" />
+        <AssociationConnector Association="GuessMyMessDBModel.FK__Friendshi__Playe__49C3F6B7" ManuallyRouted="false" />
+        <AssociationConnector Association="GuessMyMessDBModel.FK__Friendshi__Playe__4AB81AF0" ManuallyRouted="false" />
+        <AssociationConnector Association="GuessMyMessDBModel.FK__Player__Gender_i__403A8C7D" ManuallyRouted="false" />
+        <AssociationConnector Association="GuessMyMessDBModel.FK__KickVote__Match___6383C8BA" ManuallyRouted="false" />
+        <AssociationConnector Association="GuessMyMessDBModel.FK__KickVote__Player__619B8048" ManuallyRouted="false" />
+        <AssociationConnector Association="GuessMyMessDBModel.FK__KickVote__Player__628FA481" ManuallyRouted="false" />
+        <AssociationConnector Association="GuessMyMessDBModel.FK__Match__MatchDiff__5165187F" ManuallyRouted="false" />
+        <AssociationConnector Association="GuessMyMessDBModel.FK__Match__Player_id__5070F446" ManuallyRouted="false" />
+        <AssociationConnector Association="GuessMyMessDBModel.FK__MatchHist__Match__5DCAEF64" ManuallyRouted="false" />
+        <AssociationConnector Association="GuessMyMessDBModel.FK__MatchHist__Playe__5EBF139D" ManuallyRouted="false" />
+        <AssociationConnector Association="GuessMyMessDBModel.FK__Player__UserStat__412EB0B6" ManuallyRouted="false" />
+        <AssociationConnector Association="GuessMyMessDBModel.FK__SocialNet__Playe__440B1D61" ManuallyRouted="false" />
+        <AssociationConnector Association="GuessMyMessDBModel.FK__SocialNet__TypeS__44FF419A" ManuallyRouted="false" />
+        <AssociationConnector Association="GuessMyMessDBModel.FK__Word__WordDiffic__5629CD9C" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
