@@ -10,8 +10,8 @@
             <PropertyRef Name="idAvatar" />
           </Key>
           <Property Name="idAvatar" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="avatarData" Type="varbinary(max)" />
           <Property Name="avatarName" Type="varchar" MaxLength="50" />
+          <Property Name="avatarUrl" Type="nvarchar" MaxLength="255" />
         </EntityType>
         <EntityType Name="Drawing">
           <Key>
@@ -487,9 +487,9 @@
             <PropertyRef Name="idAvatar" />
           </Key>
           <Property Name="idAvatar" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="avatarData" Type="Binary" MaxLength="Max" FixedLength="false" />
           <NavigationProperty Name="Player" Relationship="Self.FK__Player__Avatar_i__3F466844" FromRole="Avatar" ToRole="Player" />
           <Property Name="avatarName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="avatarUrl" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Drawing">
           <Key>
@@ -1002,9 +1002,9 @@
           <EntitySetMapping Name="Avatar">
             <EntityTypeMapping TypeName="GuessMyMessDBModel.Avatar">
               <MappingFragment StoreEntitySet="Avatar">
+                <ScalarProperty Name="avatarUrl" ColumnName="avatarUrl" />
                 <ScalarProperty Name="avatarName" ColumnName="avatarName" />
                 <ScalarProperty Name="idAvatar" ColumnName="idAvatar" />
-                <ScalarProperty Name="avatarData" ColumnName="avatarData" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

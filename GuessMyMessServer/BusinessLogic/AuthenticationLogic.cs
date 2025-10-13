@@ -36,11 +36,11 @@ namespace GuessMyMessServer.BusinessLogic
             using (var context = new GuessMyMessDBEntities())
             {
                 // 1. Validar unicidad (Username y Email)
-                if (context.Player.Any(p => p.username == userProfile.username))
+                if (context.Player.Any(p => p.username == userProfile.Username))
                 {
                     return new OperationResultDto { success = false, message = "El nombre de usuario ya está en uso." };
                 }
-                if (context.Player.Any(p => p.email == userProfile.email))
+                if (context.Player.Any(p => p.email == userProfile.Email))
                 {
                     return new OperationResultDto { success = false, message = "El correo electrónico ya está registrado." };
                 }
@@ -51,15 +51,15 @@ namespace GuessMyMessServer.BusinessLogic
                 // 3. Crear el nuevo registro de Player
                 var newPlayer = new Player
                 {
-                    username = userProfile.username,
-                    email = userProfile.email,
+                    username = userProfile.Username,
+                    email = userProfile.Email,
                     password = PasswordHasher.hashPassword(password), // Usamos el hash de BCrypt
-                    name = userProfile.firstName,
-                    lastName = userProfile.lastName,
+                    name = userProfile.FirstName,
+                    lastName = userProfile.LastName,
 
                     // Claves Foráneas
-                    Gender_idGender = userProfile.genderId, // Asumimos que la UI asegura un valor
-                    Avatar_idAvatar = userProfile.avatarId > 0 ? userProfile.avatarId : 1, // Usar ID del avatar o ID 1 por defecto
+                    Gender_idGender = userProfile.GenderId, // Asumimos que la UI asegura un valor
+                    Avatar_idAvatar = userProfile.AvatarId > 0 ? userProfile.AvatarId : 1, // Usar ID del avatar o ID 1 por defecto
                     UserStatus_idUserStatus = STATUS_OFFLINE, // Estado inicial: offline
 
                     // Campos de verificación

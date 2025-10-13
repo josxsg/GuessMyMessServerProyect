@@ -11,6 +11,7 @@ using GuessMyMessServer.DataAccess;
 using GuessMyMessServer.Utilities;
 using GuessMyMessServer.Utilities.Email;
 using System.Data.Entity;
+using System.IO;
 
 namespace GuessMyMessServer.Services
 {
@@ -42,13 +43,13 @@ namespace GuessMyMessServer.Services
                 // Mapeo con GetValueOrDefault() para manejar int? de la BD
                 return new UserProfileDto
                 {
-                    username = player.username, // Se asume que no hay error de nomenclatura aquí
-                    firstName = player.name,
-                    lastName = player.lastName,
-                    email = player.email,
+                    Username = player.username, // Se asume que no hay error de nomenclatura aquí
+                    FirstName = player.name,
+                    LastName = player.lastName,
+                    Email = player.email,
                     // CONVERSIÓN: int? -> int
-                    genderId = player.Gender_idGender.GetValueOrDefault(),
-                    avatarId = player.Avatar_idAvatar.GetValueOrDefault()
+                    GenderId = player.Gender_idGender.GetValueOrDefault(),
+                    AvatarId = player.Avatar_idAvatar.GetValueOrDefault()
                 };
             }
         }
@@ -70,10 +71,10 @@ namespace GuessMyMessServer.Services
                 }
 
                 // Aplicar solo los cambios permitidos
-                playerToUpdate.name = profileData.firstName;
-                playerToUpdate.lastName = profileData.lastName;
-                playerToUpdate.Gender_idGender = profileData.genderId;
-                playerToUpdate.Avatar_idAvatar = profileData.avatarId > 0 ? profileData.avatarId : playerToUpdate.Avatar_idAvatar;
+                playerToUpdate.name = profileData.FirstName;
+                playerToUpdate.lastName = profileData.LastName;
+                playerToUpdate.Gender_idGender = profileData.GenderId;
+                playerToUpdate.Avatar_idAvatar = profileData.AvatarId > 0 ? profileData.AvatarId : playerToUpdate.Avatar_idAvatar;
 
                 context.SaveChanges();
                 return new OperationResultDto { success = true, message = "Perfil actualizado correctamente." };
@@ -146,45 +147,61 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                // **IMPLEMENTACIÓN DE LECTURA DE BASE DE DATOS**
-                // Reemplaza 'GuessMyMessDBEntities' con el nombre real de tu clase DbContext 
-                // si es diferente, y asegúrate de que 'Avatar' sea la tabla correcta.
+                var avatarsDtoList = new List<AvatarDto>();
 
-                
-                using (var context = new GuessMyMessDBEntities()) 
+                using (var context = new GuessMyMessDBEntities())
                 {
-                    var avatars = context.Avatar // Accede a la tabla Avatars
-                        .Select(a => new AvatarDto 
+                    // 1. Obtenemos todos los registros de avatares de la base de datos
+                    var avatarsFromDb = context.Avatar.ToList();
+
+                    foreach (var avatarRecord in avatarsFromDb)
+                    {
+                        byte[] imageData = null; // Inicializamos los datos de la imagen como nulos
+
+                        // Verificamos que la URL no esté vacía
+                        if (!string.IsNullOrEmpty(avatarRecord.avatarUrl))
                         {
-                            // Mapea directamente los campos de la entidad a tu DTO
-                            idAvatar = a.idAvatar,
-                            avatarName = a.avatarName,
-                            avatarData = a.avatarData // El byte[] se transfiere por WCF
-                        })
-                        .ToList();
+                            try
+                            {
+                                // 2. Construimos la ruta física completa del archivo en el servidor
+                                string basePath = AppDomain.CurrentDomain.BaseDirectory; // Apunta a la carpeta /bin/Debug/ del servidor
+                                string filePath = Path.Combine(basePath, avatarRecord.avatarUrl);
 
-                    return avatars;
+                                // 3. Leemos el archivo de imagen si existe y lo convertimos a un array de bytes
+                                if (File.Exists(filePath))
+                                {
+                                    imageData = File.ReadAllBytes(filePath);
+                                }
+                                else
+                                {
+                                    // Opcional: Registra un aviso si un archivo de imagen no se encuentra
+                                    Console.WriteLine($"Aviso: No se encontró el archivo de imagen para el avatar ID {avatarRecord.idAvatar} en la ruta: {filePath}");
+                                }
+                            }
+                            catch (Exception fileEx)
+                            {
+                                // Opcional: Registra el error si algo falla durante la lectura del archivo
+                                Console.WriteLine($"Error al leer el archivo para el avatar ID {avatarRecord.idAvatar}: {fileEx.Message}");
+                            }
+                        }
+
+                        // 4. Creamos el DTO para enviarlo al cliente
+                        avatarsDtoList.Add(new AvatarDto
+                        {
+                            idAvatar = avatarRecord.idAvatar,
+                            // Si tienes un campo para el nombre en la BD, mapealo aquí. Si no, puedes quitarlo.
+                            // avatarName = avatarRecord.avatarName, 
+                            avatarData = imageData // Enviamos los datos binarios de la imagen al cliente
+                        });
+                    }
                 }
-                /*
 
-                // --- MOCK FUNCIONAL TEMPORAL para pruebas sin DB ---
-                // Si la línea de 'using (var context...' te da error, usa este MOCK:
-                // Crea un array de bytes vacío para simular una imagen
-                byte[] emptyImage = new byte[0];
-                return new List<AvatarDto>
-            {
-                new AvatarDto { idAvatar = 1, avatarName = "Default Male", avatarData = emptyImage },
-                new AvatarDto { idAvatar = 2, avatarName = "Default Female", avatarData = emptyImage },
-                new AvatarDto { idAvatar = 3, avatarName = "Generic Bot", avatarData = emptyImage }
-            };
-                // ----------------------------------------------------
-                */
+                return avatarsDtoList;
             }
-            catch (Exception ex)
+            catch (Exception dbEx)
             {
-                // Nota: Es crucial NO lanzar la excepción aquí, sino encapsularla, para que WCF no falle.
-                Console.WriteLine($"Error al obtener avatares desde la BD: {ex.Message}");
-                // Devuelve una lista vacía en caso de error de BD.
+                // Si hay un error conectando a la base de datos, lo registramos y devolvemos una lista vacía.
+                Console.WriteLine($"Error crítico al obtener avatares desde la BD: {dbEx.Message}");
                 return new List<AvatarDto>();
             }
         }

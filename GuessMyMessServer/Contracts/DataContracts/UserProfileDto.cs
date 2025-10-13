@@ -10,26 +10,19 @@ namespace GuessMyMessServer.Contracts.DataContracts
     [DataContract]
     public class UserProfileDto
     {
-        [DataMember]
-        public string username { get; set; }
+        [DataMember] public string Username { get; set; }
+
+        [DataMember] public string FirstName { get; set; }
+
+        [DataMember] public string LastName { get; set; }
+
+        [DataMember] public string Email { get; set; }
 
         [DataMember]
-        public string firstName { get; set; }
+        public int GenderId { get; set; }
 
         [DataMember]
-        public string lastName { get; set; }
-
-        [DataMember]
-        public string email { get; set; }
-
-        [DataMember]
-        public int genderId { get; set; }
-
-        [DataMember]
-        public int avatarId { get; set; }
-
-        [DataMember]
-        public DateTime? dateOfBirth { get; set; }
+        public int AvatarId { get; set; }
 
         [DataMember]
         public List<SocialNetworkDto> socialNetworks { get; set; } 
