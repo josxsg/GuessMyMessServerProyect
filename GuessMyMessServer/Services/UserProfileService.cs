@@ -28,7 +28,7 @@ namespace GuessMyMessServer.Services
         // --------------------------------------------------
         // OBTENER PERFIL
         // --------------------------------------------------
-        public UserProfileDto getUserProfile(string username)
+        public UserProfileDto GetUserProfile(string username)
         {
             using (var context = new GuessMyMessDBEntities())
             {
@@ -56,7 +56,7 @@ namespace GuessMyMessServer.Services
         // --------------------------------------------------
         // ACTUALIZAR PERFIL (Nombre, Apellido, Avatar)
         // --------------------------------------------------
-        public OperationResultDto updateProfile(string username, UserProfileDto profileData)
+        public OperationResultDto UpdateProfile(string username, UserProfileDto profileData)
         {
             if (profileData == null) return new OperationResultDto { success = false, message = "Datos de perfil inválidos." };
 
@@ -83,7 +83,7 @@ namespace GuessMyMessServer.Services
         // --------------------------------------------------
         // CAMBIAR CONTRASEÑA
         // --------------------------------------------------
-        public OperationResultDto confirmChangePassword(string username, string newPassword, string verificationCode)
+        public OperationResultDto ConfirmChangePassword(string username, string newPassword, string verificationCode)
         {
             // Este método asume que el RequestChangePassword ya ha sido llamado y el código ya fue validado en el servidor.
             using (var context = new GuessMyMessDBEntities())
@@ -106,7 +106,7 @@ namespace GuessMyMessServer.Services
         // --------------------------------------------------
         // CAMBIAR CORREO ELECTRÓNICO
         // --------------------------------------------------
-        public OperationResultDto confirmChangeEmail(string username, string verificationCode)
+        public OperationResultDto ConfirmChangeEmail(string username, string verificationCode)
         {
             // Este método asume que RequestChangeEmail ya envió el código al correo antiguo 
             // y que la lógica del servidor validará el código.
@@ -114,7 +114,7 @@ namespace GuessMyMessServer.Services
             return new OperationResultDto { success = false, message = "La funcionalidad de confirmación de cambio de email no está implementada." };
         }
 
-        public OperationResultDto requestChangeEmail(string username, string newEmail)
+        public OperationResultDto RequestChangeEmail(string username, string newEmail)
         {
             try
             {
@@ -128,7 +128,7 @@ namespace GuessMyMessServer.Services
             }
         }
 
-        public OperationResultDto requestChangePassword(string username)
+        public OperationResultDto RequestChangePassword(string username)
         {
             try
             {
@@ -142,7 +142,7 @@ namespace GuessMyMessServer.Services
             }
         }
 
-        public List<AvatarDto> getAvailableAvatars()
+        public List<AvatarDto> GetAvailableAvatars()
         {
             try
             {

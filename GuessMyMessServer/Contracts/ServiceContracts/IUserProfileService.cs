@@ -12,26 +12,26 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
     public interface IUserProfileService
     {
         [OperationContract] // GetUserProfile [cite: 706]
-        UserProfileDto getUserProfile(string username);
+        UserProfileDto GetUserProfile(string username);
 
         [OperationContract] // UpdateUserProfile [cite: 707]
-        OperationResultDto updateProfile(string username, UserProfileDto profileData);
+        OperationResultDto UpdateProfile(string username, UserProfileDto profileData);
 
         [OperationContract] // RequestChangeEmail [cite: 708]
-        OperationResultDto requestChangeEmail(string username, string newEmail);
+        OperationResultDto RequestChangeEmail(string username, string newEmail);
 
         [OperationContract] // ConfirmChangeEmail [cite: 709]
-        OperationResultDto confirmChangeEmail(string username, string verificationCode);
+        OperationResultDto ConfirmChangeEmail(string username, string verificationCode);
 
         [OperationContract] // RequestChange Password [cite: 710]
-        OperationResultDto requestChangePassword(string username);
+        OperationResultDto RequestChangePassword(string username);
 
         [OperationContract] // ConfirmChange Password [cite: 711]
-        OperationResultDto confirmChangePassword(string username, string newPassword, string verificationCode);
+        OperationResultDto ConfirmChangePassword(string username, string newPassword, string verificationCode);
 
         // En IUserProfileService.cs
         [OperationContract]
-        List<AvatarDto> getAvailableAvatars();
+        List<AvatarDto> GetAvailableAvatars();
 
     }
 }

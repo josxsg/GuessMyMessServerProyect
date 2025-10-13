@@ -23,7 +23,7 @@ namespace GuessMyMessServer.Services
             authenticationLogic = new AuthenticationLogic(new SmtpEmailService());
         }
 
-        public OperationResultDto login(string emailOrUsername, string password)
+        public OperationResultDto Login(string emailOrUsername, string password)
         {
             try
             {
@@ -36,7 +36,7 @@ namespace GuessMyMessServer.Services
             }
         }
 
-        public OperationResultDto register(UserProfileDto userProfile, string password)
+        public OperationResultDto Register(UserProfileDto userProfile, string password)
         {
             try
             {
@@ -49,7 +49,7 @@ namespace GuessMyMessServer.Services
             }
         }
 
-        public OperationResultDto verifyAccount(string email, string code)
+        public OperationResultDto VerifyAccount(string email, string code)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace GuessMyMessServer.Services
             }
         }
 
-        public void logOut(string username)
+        public void LogOut(string username)
         {
             try
             {
@@ -76,8 +76,8 @@ namespace GuessMyMessServer.Services
         }
 
         // ... (otros métodos de IAuthenticationService) ...
-        public OperationResultDto loginAsGuest(string username, string avatarPath) { throw new NotImplementedException(); }
-        public OperationResultDto sendPasswordRecoveryCode(string email) { throw new NotImplementedException(); }
-        public OperationResultDto resetPasswordWithCode(string email, string code, string newPassword) { throw new NotImplementedException(); }
+        public OperationResultDto LoginAsGuest(string username, string avatarPath) { throw new NotImplementedException(); }
+        public OperationResultDto SendPasswordRecoveryCode(string email) { throw new NotImplementedException(); }
+        public OperationResultDto ResetPasswordWithCode(string email, string code, string newPassword) { throw new NotImplementedException(); }
     }
 }

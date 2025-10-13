@@ -72,8 +72,22 @@ namespace GuessMyMessServer.BusinessLogic
                 await context.SaveChangesAsync();
 
                 // 4. Enviar correo de verificación
-                var emailTemplate = new VerificationEmailTemplate(newPlayer.username, verificationCode);
-                await emailService.sendEmailAsync(newPlayer.email, newPlayer.username, emailTemplate);
+                try
+                {
+                    var emailTemplate = new VerificationEmailTemplate(newPlayer.username, verificationCode);
+                    await emailService.sendEmailAsync(newPlayer.email, newPlayer.username, emailTemplate);
+
+                    // Si el correo se envía con éxito, continuar.
+
+                }
+                catch (Exception ex)
+                {
+                    // Captura cualquier excepción de MailKit (credenciales, conexión, TLS)
+                    Console.WriteLine($"\n¡ERROR DE CORREO CRÍTICO!: {ex.Message}");
+                    Console.WriteLine("Por favor, verifica tus credenciales de SmtpPass y SmtpUser en App.config.");
+                    // Retornamos éxito porque la cuenta YA se guardó en la BD.
+                    return new OperationResultDto { success = true, message = "Registro exitoso, pero el correo de verificación falló al enviarse. Revisa la consola del servidor." };
+                }
 
                 return new OperationResultDto { success = true, message = "Registro exitoso. Se ha enviado un código de verificación a tu correo." };
             }

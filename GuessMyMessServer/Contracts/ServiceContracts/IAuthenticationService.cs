@@ -12,25 +12,25 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
     public interface IAuthenticationService
     {
         [OperationContract] // LogIn [cite: 698]
-        OperationResultDto login(string email, string password);
+        OperationResultDto Login(string email, string password);
 
         [OperationContract] // SignUp [cite: 699]
-        OperationResultDto register(UserProfileDto userProfile, string password);
+        OperationResultDto Register(UserProfileDto userProfile, string password);
 
         [OperationContract] // Verify Account [cite: 701]
-        OperationResultDto verifyAccount(string email, string verificationCode);
+        OperationResultDto VerifyAccount(string email, string verificationCode);
 
         [OperationContract] // LoginAsGuest [cite: 702]
-        OperationResultDto loginAsGuest(string username, string avatarPath);
+        OperationResultDto LoginAsGuest(string username, string avatarPath);
 
         [OperationContract(IsOneWay = true)] // LogOut [cite: 703]
-        void logOut(string username);
+        void LogOut(string username);
 
         // Funciones de MindWeave para recuperación de contraseña
         [OperationContract]
-        OperationResultDto sendPasswordRecoveryCode(string email);
+        OperationResultDto SendPasswordRecoveryCode(string email);
 
         [OperationContract]
-        OperationResultDto resetPasswordWithCode(string email, string code, string newPassword);
+        OperationResultDto ResetPasswordWithCode(string email, string code, string newPassword);
     }
 }
