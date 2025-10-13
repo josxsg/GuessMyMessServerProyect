@@ -36,6 +36,12 @@ namespace GuessMyMessServer.DataAccess
         public Nullable<int> Avatar_idAvatar { get; set; }
         public Nullable<int> Gender_idGender { get; set; }
         public Nullable<int> UserStatus_idUserStatus { get; set; }
+        public byte is_verified { get; set; }
+        public string verification_code { get; set; }
+        public Nullable<System.DateTime> code_expiry_date { get; set; }
+        public string temp_code { get; set; }
+        public Nullable<System.DateTime> temp_code_expiry { get; set; }
+        public string new_email_pending { get; set; }
     
         public virtual Avatar Avatar { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

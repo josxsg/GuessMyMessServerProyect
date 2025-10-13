@@ -22,6 +22,7 @@ namespace GuessMyMessServer.DataAccess
     
         public int idAvatar { get; set; }
         public byte[] avatarData { get; set; }
+        public string avatarName { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Player> Player { get; set; }

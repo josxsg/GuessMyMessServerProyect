@@ -4,13 +4,14 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="GuessMyMessDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="GuessMyMessDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Avatar">
           <Key>
             <PropertyRef Name="idAvatar" />
           </Key>
           <Property Name="idAvatar" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="avatarData" Type="varbinary(max)" />
+          <Property Name="avatarName" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Drawing">
           <Key>
@@ -94,19 +95,25 @@
           <Property Name="idPlayer" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="name" Type="varchar" MaxLength="45" />
           <Property Name="lastName" Type="varchar" MaxLength="45" />
-          <Property Name="email" Type="varchar" MaxLength="45" />
+          <Property Name="email" Type="varchar" MaxLength="100" />
           <Property Name="username" Type="varchar" MaxLength="45" />
-          <Property Name="password" Type="varchar" MaxLength="45" />
+          <Property Name="password" Type="varchar" MaxLength="255" />
           <Property Name="Avatar_idAvatar" Type="int" />
           <Property Name="Gender_idGender" Type="int" />
           <Property Name="UserStatus_idUserStatus" Type="int" />
+          <Property Name="is_verified" Type="tinyint" Nullable="false" />
+          <Property Name="verification_code" Type="varchar" MaxLength="6" />
+          <Property Name="code_expiry_date" Type="datetime" />
+          <Property Name="temp_code" Type="varchar" MaxLength="6" />
+          <Property Name="temp_code_expiry" Type="datetime" />
+          <Property Name="new_email_pending" Type="varchar" MaxLength="45" />
         </EntityType>
         <EntityType Name="SocialNetwork">
           <Key>
             <PropertyRef Name="idSocialNetwork" />
           </Key>
           <Property Name="idSocialNetwork" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="userLink" Type="varchar" MaxLength="45" />
+          <Property Name="userLink" Type="varchar" MaxLength="100" />
           <Property Name="Player_idPlayer" Type="int" />
           <Property Name="TypeSocialNetwork_idTypeSocialNetwork" Type="int" />
         </EntityType>
@@ -471,8 +478,7 @@
             <End Role="Word" EntitySet="Word" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="GuessMyMessDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -483,6 +489,7 @@
           <Property Name="idAvatar" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="avatarData" Type="Binary" MaxLength="Max" FixedLength="false" />
           <NavigationProperty Name="Player" Relationship="Self.FK__Player__Avatar_i__3F466844" FromRole="Avatar" ToRole="Player" />
+          <Property Name="avatarName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Drawing">
           <Key>
@@ -585,9 +592,9 @@
           <Property Name="idPlayer" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="name" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
           <Property Name="lastName" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="email" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="username" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-          <Property Name="password" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="password" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="Avatar_idAvatar" Type="Int32" />
           <Property Name="Gender_idGender" Type="Int32" />
           <Property Name="UserStatus_idUserStatus" Type="Int32" />
@@ -602,13 +609,19 @@
           <NavigationProperty Name="MatchHistory" Relationship="Self.FK__MatchHist__Playe__5EBF139D" FromRole="Player" ToRole="MatchHistory" />
           <NavigationProperty Name="UserStatus" Relationship="Self.FK__Player__UserStat__412EB0B6" FromRole="Player" ToRole="UserStatus" />
           <NavigationProperty Name="SocialNetwork" Relationship="Self.FK__SocialNet__Playe__440B1D61" FromRole="Player" ToRole="SocialNetwork" />
+          <Property Name="is_verified" Type="Byte" Nullable="false" />
+          <Property Name="verification_code" Type="String" MaxLength="6" FixedLength="false" Unicode="false" />
+          <Property Name="code_expiry_date" Type="DateTime" Precision="3" />
+          <Property Name="temp_code" Type="String" MaxLength="6" FixedLength="false" Unicode="false" />
+          <Property Name="temp_code_expiry" Type="DateTime" Precision="3" />
+          <Property Name="new_email_pending" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="SocialNetwork">
           <Key>
             <PropertyRef Name="idSocialNetwork" />
           </Key>
           <Property Name="idSocialNetwork" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="userLink" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="userLink" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Player_idPlayer" Type="Int32" />
           <Property Name="TypeSocialNetwork_idTypeSocialNetwork" Type="Int32" />
           <NavigationProperty Name="Player" Relationship="Self.FK__SocialNet__Playe__440B1D61" FromRole="SocialNetwork" ToRole="Player" />
@@ -989,6 +1002,7 @@
           <EntitySetMapping Name="Avatar">
             <EntityTypeMapping TypeName="GuessMyMessDBModel.Avatar">
               <MappingFragment StoreEntitySet="Avatar">
+                <ScalarProperty Name="avatarName" ColumnName="avatarName" />
                 <ScalarProperty Name="idAvatar" ColumnName="idAvatar" />
                 <ScalarProperty Name="avatarData" ColumnName="avatarData" />
               </MappingFragment>
@@ -1080,6 +1094,12 @@
           <EntitySetMapping Name="Player">
             <EntityTypeMapping TypeName="GuessMyMessDBModel.Player">
               <MappingFragment StoreEntitySet="Player">
+                <ScalarProperty Name="new_email_pending" ColumnName="new_email_pending" />
+                <ScalarProperty Name="temp_code_expiry" ColumnName="temp_code_expiry" />
+                <ScalarProperty Name="temp_code" ColumnName="temp_code" />
+                <ScalarProperty Name="code_expiry_date" ColumnName="code_expiry_date" />
+                <ScalarProperty Name="verification_code" ColumnName="verification_code" />
+                <ScalarProperty Name="is_verified" ColumnName="is_verified" />
                 <ScalarProperty Name="idPlayer" ColumnName="idPlayer" />
                 <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="lastName" ColumnName="lastName" />
