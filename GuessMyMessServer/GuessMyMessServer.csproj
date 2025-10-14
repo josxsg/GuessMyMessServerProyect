@@ -211,14 +211,30 @@
       <DependentUpon>GuessMyMessDB.edmx</DependentUpon>
       <LastGenOutput>GuessMyMessDB.cs</LastGenOutput>
     </Content>
-    <Content Include="Resources\Images\Avatars\Bear.png" />
-    <Content Include="Resources\Images\Avatars\Duck.png" />
-    <Content Include="Resources\Images\Avatars\Flamengo.png" />
-    <Content Include="Resources\Images\Avatars\Raccoon.png" />
-    <Content Include="Resources\Images\Avatars\Rhino.png" />
-    <Content Include="Resources\Images\Avatars\Shark.png" />
-    <Content Include="Resources\Images\Avatars\Toucan.png" />
-    <Content Include="Resources\Images\Avatars\Zebra.png" />
+    <Content Include="Resources\Images\Avatars\Bear.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Avatars\Duck.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Avatars\Flamengo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Avatars\Raccoon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Avatars\Rhino.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Avatars\Shark.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Avatars\Toucan.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Images\Avatars\Zebra.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

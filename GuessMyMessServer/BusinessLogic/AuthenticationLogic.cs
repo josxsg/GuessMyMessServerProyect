@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,9 +21,6 @@ namespace GuessMyMessServer.BusinessLogic
             this.emailService = emailService;
         }
 
-        // --------------------------------------------------
-        // REGISTRO DE USUARIO
-        // --------------------------------------------------
         public async Task<OperationResultDto> registerPlayerAsync(UserProfileDto userProfile, string password)
         {
             if (userProfile == null || string.IsNullOrWhiteSpace(password))
@@ -30,12 +28,10 @@ namespace GuessMyMessServer.BusinessLogic
                 return new OperationResultDto { success = false, message = "El perfil de usuario y la contraseña son obligatorios." };
             }
 
-            // Usaremos el ID 1 para 'offline' y el ID 1 para el Avatar si no se especifica.
             const int STATUS_OFFLINE = 1;
 
             using (var context = new GuessMyMessDBEntities())
             {
-                // 1. Validar unicidad (Username y Email)
                 if (context.Player.Any(p => p.username == userProfile.Username))
                 {
                     return new OperationResultDto { success = false, message = "El nombre de usuario ya está en uso." };
@@ -45,47 +41,43 @@ namespace GuessMyMessServer.BusinessLogic
                     return new OperationResultDto { success = false, message = "El correo electrónico ya está registrado." };
                 }
 
-                // 2. Generar código de verificación
                 string verificationCode = random.Next(100000, 999999).ToString("D6");
 
-                // 3. Crear el nuevo registro de Player
                 var newPlayer = new Player
                 {
                     username = userProfile.Username,
                     email = userProfile.Email,
-                    password = PasswordHasher.hashPassword(password), // Usamos el hash de BCrypt
+                    password = PasswordHasher.hashPassword(password),
                     name = userProfile.FirstName,
                     lastName = userProfile.LastName,
-
-                    // Claves Foráneas
-                    Gender_idGender = userProfile.GenderId, // Asumimos que la UI asegura un valor
-                    Avatar_idAvatar = userProfile.AvatarId > 0 ? userProfile.AvatarId : 1, // Usar ID del avatar o ID 1 por defecto
-                    UserStatus_idUserStatus = STATUS_OFFLINE, // Estado inicial: offline
-
-                    // Campos de verificación
+                    Gender_idGender = userProfile.GenderId,
+                    Avatar_idAvatar = userProfile.AvatarId > 0 ? userProfile.AvatarId : 1,
+                    UserStatus_idUserStatus = STATUS_OFFLINE,
                     is_verified = (byte)0,
                     verification_code = verificationCode,
-                    code_expiry_date = DateTime.UtcNow.AddMinutes(15) // Código válido por 15 minutos
+                    code_expiry_date = DateTime.UtcNow.AddMinutes(15)
                 };
 
                 context.Player.Add(newPlayer);
-                await context.SaveChangesAsync();
+                try
+                {
+                    await context.SaveChangesAsync();
+                }
+                catch (DbUpdateException dbEx)
+                {
+                    Console.WriteLine($"ERROR DE BASE DE DATOS: {dbEx.InnerException?.Message ?? dbEx.Message}");
+                    return new OperationResultDto { success = false, message = "Error al guardar el usuario. Es posible que el avatar o el género seleccionado no sea válido." };
+                }
 
-                // 4. Enviar correo de verificación
                 try
                 {
                     var emailTemplate = new VerificationEmailTemplate(newPlayer.username, verificationCode);
                     await emailService.sendEmailAsync(newPlayer.email, newPlayer.username, emailTemplate);
-
-                    // Si el correo se envía con éxito, continuar.
-
                 }
                 catch (Exception ex)
                 {
-                    // Captura cualquier excepción de MailKit (credenciales, conexión, TLS)
                     Console.WriteLine($"\n¡ERROR DE CORREO CRÍTICO!: {ex.Message}");
                     Console.WriteLine("Por favor, verifica tus credenciales de SmtpPass y SmtpUser en App.config.");
-                    // Retornamos éxito porque la cuenta YA se guardó en la BD.
                     return new OperationResultDto { success = true, message = "Registro exitoso, pero el correo de verificación falló al enviarse. Revisa la consola del servidor." };
                 }
 
@@ -93,9 +85,6 @@ namespace GuessMyMessServer.BusinessLogic
             }
         }
 
-        // --------------------------------------------------
-        // VERIFICACIÓN DE CUENTA
-        // --------------------------------------------------
         public OperationResultDto verifyAccount(string email, string code)
         {
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(code))
@@ -117,17 +106,15 @@ namespace GuessMyMessServer.BusinessLogic
                     return new OperationResultDto { success = false, message = "Esta cuenta ya está verificada." };
                 }
 
-                // Validar código y tiempo de expiración
                 if (playerToVerify.verification_code != code || playerToVerify.code_expiry_date < DateTime.UtcNow)
                 {
                     return new OperationResultDto { success = false, message = "Código de verificación inválido o expirado." };
                 }
 
-                // Marcar como verificado y limpiar campos
                 playerToVerify.is_verified = (byte)1;
                 playerToVerify.verification_code = null;
                 playerToVerify.code_expiry_date = null;
-                playerToVerify.UserStatus_idUserStatus = 2; // Marcar como 'online' al verificar
+                playerToVerify.UserStatus_idUserStatus = 2;
 
                 context.SaveChanges();
 
@@ -135,9 +122,6 @@ namespace GuessMyMessServer.BusinessLogic
             }
         }
 
-        // --------------------------------------------------
-        // INICIO DE SESIÓN
-        // --------------------------------------------------
         public OperationResultDto login(string emailOrUsername, string password)
         {
             if (string.IsNullOrWhiteSpace(emailOrUsername) || string.IsNullOrWhiteSpace(password))
@@ -149,7 +133,6 @@ namespace GuessMyMessServer.BusinessLogic
 
             using (var context = new GuessMyMessDBEntities())
             {
-                // Buscar por username o email
                 var player = context.Player.FirstOrDefault(p =>
                     p.username == emailOrUsername || p.email == emailOrUsername);
 
@@ -158,28 +141,23 @@ namespace GuessMyMessServer.BusinessLogic
                     return new OperationResultDto { success = false, message = "Credenciales incorrectas." };
                 }
 
-                if (player.is_verified == (byte)0) 
+                if (player.is_verified == (byte)0)
                 {
                     return new OperationResultDto { success = false, message = "La cuenta no ha sido verificada. Por favor, revisa tu correo." };
                 }
 
-                // Verificar contraseña
                 if (!PasswordHasher.verifyPassword(password, player.password))
                 {
                     return new OperationResultDto { success = false, message = "Credenciales incorrectas." };
                 }
 
-                // Actualizar estado a 'online'
                 player.UserStatus_idUserStatus = STATUS_ONLINE;
                 context.SaveChanges();
 
-                return new OperationResultDto { success = true, message = player.username }; // Devuelve el username para la sesión
+                return new OperationResultDto { success = true, message = player.username };
             }
         }
 
-        // --------------------------------------------------
-        // CIERRE DE SESIÓN
-        // --------------------------------------------------
         public void logOut(string username)
         {
             const int STATUS_OFFLINE = 1;
@@ -197,7 +175,6 @@ namespace GuessMyMessServer.BusinessLogic
 
         public OperationResultDto loginAsGuest(string username, string avatarPath)
         {
-            // Lógica para crear un perfil temporal si es necesario y asignar estado 'online'
             return new OperationResultDto { success = true, message = "GuestLogin success (Placeholder)." };
         }
 

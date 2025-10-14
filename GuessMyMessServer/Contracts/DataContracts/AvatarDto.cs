@@ -14,9 +14,9 @@ namespace GuessMyMessServer.Contracts.DataContracts
         public int idAvatar { get; set; }
 
         [DataMember]
-        public string avatarName { get; set; } // Nombre legible del avatar
+        public string avatarName { get; set; } 
 
         [DataMember]
-        public byte[] avatarData { get; set; } // Datos binarios de la imagen
+        public byte[] avatarData { get; set; } 
     }
 }

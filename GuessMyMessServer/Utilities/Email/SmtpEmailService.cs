@@ -20,7 +20,6 @@ namespace GuessMyMessServer.Utilities.Email
 
         public SmtpEmailService()
         {
-            // Nota: Configuración extraída del App.config de MindWeave. Debe copiarlas a su App.config.
             host = ConfigurationManager.AppSettings["SmtpHost"];
             port = Convert.ToInt32(ConfigurationManager.AppSettings["SmtpPort"]);
             user = ConfigurationManager.AppSettings["SmtpUser"];

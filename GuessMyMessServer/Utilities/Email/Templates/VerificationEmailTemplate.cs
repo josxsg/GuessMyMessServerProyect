@@ -13,7 +13,6 @@ namespace GuessMyMessServer.Utilities.Email
 
         public VerificationEmailTemplate(string username, string verificationCode)
         {
-            // Diseño de correo adaptable
             htmlBody = $@"
                 <div style='font-family: Arial, sans-serif; text-align: center; color: #333;'>
                     <div style='max-width: 600px; margin: auto; border: 1px solid #ddd; padding: 20px; background-color: #f9f9f9; border-radius: 10px;'>

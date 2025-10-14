@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
@@ -7,11 +8,11 @@ using System.Threading.Tasks;
 using GuessMyMessServer.BusinessLogic;
 using GuessMyMessServer.Contracts.DataContracts;
 using GuessMyMessServer.Contracts.ServiceContracts;
+using GuessMyMessServer.DataAccess;
 using GuessMyMessServer.Utilities.Email;
 
 namespace GuessMyMessServer.Services
 {
-    // Usa PerCall para operaciones sin estado como autenticación
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
     public class AuthenticationService : IAuthenticationService
     {
@@ -19,7 +20,6 @@ namespace GuessMyMessServer.Services
 
         public AuthenticationService()
         {
-            // Inicialización con el servicio de email
             authenticationLogic = new AuthenticationLogic(new SmtpEmailService());
         }
 
@@ -71,11 +71,9 @@ namespace GuessMyMessServer.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"Error de LogOut: {ex}");
-                // No devuelve nada, solo registra el error
             }
         }
 
-        // ... (otros métodos de IAuthenticationService) ...
         public OperationResultDto LoginAsGuest(string username, string avatarPath) { throw new NotImplementedException(); }
         public OperationResultDto SendPasswordRecoveryCode(string email) { throw new NotImplementedException(); }
         public OperationResultDto ResetPasswordWithCode(string email, string code, string newPassword) { throw new NotImplementedException(); }
