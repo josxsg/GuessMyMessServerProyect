@@ -18,7 +18,7 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
         List<FriendRequestInfoDto> getFriendRequests(string username);
 
         [OperationContract] // Search Users [cite: 715]
-        List<UserProfileDto> searchUsers(string searchUsername);
+        List<UserProfileDto> searchUsers(string searchUsername, string requesterUsername);
 
         [OperationContract(IsOneWay = true)] // Send Friend Request [cite: 716]
         void sendFriendRequest(string requesterUsername, string targetUsername);

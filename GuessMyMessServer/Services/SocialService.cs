@@ -65,12 +65,12 @@ namespace GuessMyMessServer.Services
             }
         }
 
-        public List<UserProfileDto> searchUsers(string searchUsername)
+        public List<UserProfileDto> searchUsers(string searchUsername, string requesterUsername)
         {
             using (var context = new GuessMyMessDBEntities())
             {
                 return context.Player
-                    .Where(p => p.username.Contains(searchUsername))
+                    .Where(p => p.username.Contains(searchUsername) && p.username != requesterUsername)
                     .Select(p => new UserProfileDto
                     {
                         Username = p.username
