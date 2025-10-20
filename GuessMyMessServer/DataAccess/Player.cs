@@ -25,6 +25,8 @@ namespace GuessMyMessServer.DataAccess
             this.Match = new HashSet<Match>();
             this.MatchHistory = new HashSet<MatchHistory>();
             this.SocialNetwork = new HashSet<SocialNetwork>();
+            this.DirectMessages = new HashSet<DirectMessages>();
+            this.DirectMessages1 = new HashSet<DirectMessages>();
         }
     
         public int idPlayer { get; set; }
@@ -62,5 +64,9 @@ namespace GuessMyMessServer.DataAccess
         public virtual UserStatus UserStatus { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SocialNetwork> SocialNetwork { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DirectMessages> DirectMessages { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DirectMessages> DirectMessages1 { get; set; }
     }
 }

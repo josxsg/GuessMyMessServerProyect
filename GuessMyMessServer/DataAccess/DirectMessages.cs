@@ -12,12 +12,15 @@ namespace GuessMyMessServer.DataAccess
     using System;
     using System.Collections.Generic;
     
-    public partial class sysdiagrams
+    public partial class DirectMessages
     {
-        public string name { get; set; }
-        public int principal_id { get; set; }
-        public int diagram_id { get; set; }
-        public Nullable<int> version { get; set; }
-        public byte[] definition { get; set; }
+        public int MessageID { get; set; }
+        public int SenderPlayerID { get; set; }
+        public int RecipientPlayerID { get; set; }
+        public string MessageContent { get; set; }
+        public System.DateTime Timestamp { get; set; }
+    
+        public virtual Player Player { get; set; }
+        public virtual Player Player1 { get; set; }
     }
 }

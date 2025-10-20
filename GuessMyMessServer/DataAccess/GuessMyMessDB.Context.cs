@@ -36,10 +36,10 @@ namespace GuessMyMessServer.DataAccess
         public virtual DbSet<MatchHistory> MatchHistory { get; set; }
         public virtual DbSet<Player> Player { get; set; }
         public virtual DbSet<SocialNetwork> SocialNetwork { get; set; }
-        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<TypeSocialNetwork> TypeSocialNetwork { get; set; }
         public virtual DbSet<UserStatus> UserStatus { get; set; }
         public virtual DbSet<Word> Word { get; set; }
         public virtual DbSet<WordDifficulty> WordDifficulty { get; set; }
+        public virtual DbSet<DirectMessages> DirectMessages { get; set; }
     }
 }

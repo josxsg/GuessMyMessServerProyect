@@ -1,4 +1,4 @@
-﻿// La generación de código T4 está habilitada para el modelo 'C:\Users\zenbook i5\Tecnologias_para_la_construccion_de_sw\ServidorProyecto\GuessMyMessServer\GuessMyMessServer\DataAccess\GuessMyMessDB.edmx'. 
+﻿// La generación de código T4 está habilitada para el modelo 'C:\Users\Raul\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstrucción\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\GuessMyMessDB.edmx'. 
 // Para habilitar la generación de código heredada, cambie el valor de la propiedad del diseñador 'Estrategia de generación de código'
 // por 'ObjectContext heredado'. Esta propiedad está disponible en la ventana Propiedades cuando se abre
 // el modelo en el diseñador.

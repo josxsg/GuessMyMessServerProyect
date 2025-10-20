@@ -14,13 +14,15 @@ namespace GuessMyMessServer.Contracts.DataContracts
         public string senderUsername { get; set; }
 
         [DataMember]
+        public string recipientUsername { get; set; }
+
+        [DataMember]
         public string content { get; set; }
 
         [DataMember]
         public DateTime timestamp { get; set; }
 
         // Indica si el mensaje es de chat preestablecido (lobby) o escrito (in-game)
-        [DataMember]
-        public bool isPredefined { get; set; }
+
     }
 }

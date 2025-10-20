@@ -96,6 +96,7 @@
     <Compile Include="BusinessLogic\UserProfileLogic.cs" />
     <Compile Include="Contracts\DataContracts\AvatarDto.cs" />
     <Compile Include="Contracts\DataContracts\ChatMessageDto.cs" />
+    <Compile Include="Contracts\DataContracts\DirectMessageDto.cs" />
     <Compile Include="Contracts\DataContracts\FriendDto.cs" />
     <Compile Include="Contracts\DataContracts\FriendRequestInfoDto.cs" />
     <Compile Include="Contracts\DataContracts\LobbySettingsDto.cs" />
@@ -112,6 +113,9 @@
     <Compile Include="Contracts\ServiceContracts\ISocialService.cs" />
     <Compile Include="Contracts\ServiceContracts\IUserProfileService.cs" />
     <Compile Include="DataAccess\Avatar.cs">
+      <DependentUpon>GuessMyMessDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccess\DirectMessages.cs">
       <DependentUpon>GuessMyMessDB.tt</DependentUpon>
     </Compile>
     <Compile Include="DataAccess\Drawing.cs">
@@ -157,9 +161,6 @@
       <DependentUpon>GuessMyMessDB.tt</DependentUpon>
     </Compile>
     <Compile Include="DataAccess\SocialNetwork.cs">
-      <DependentUpon>GuessMyMessDB.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DataAccess\sysdiagrams.cs">
       <DependentUpon>GuessMyMessDB.tt</DependentUpon>
     </Compile>
     <Compile Include="DataAccess\TypeSocialNetwork.cs">
