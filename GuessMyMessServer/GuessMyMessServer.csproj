@@ -188,6 +188,8 @@
     <Compile Include="Utilities\Email\IEmailService.cs" />
     <Compile Include="Utilities\Email\IEmailTemplate.cs" />
     <Compile Include="Utilities\Email\SmtpEmailService.cs" />
+    <Compile Include="Utilities\Email\Templates\EmailChangeVerificationEmailTemplate.cs" />
+    <Compile Include="Utilities\Email\Templates\PasswordChangeVerificationEmailTemplate.cs" />
     <Compile Include="Utilities\Email\Templates\VerificationEmailTemplate.cs" />
     <Compile Include="Utilities\PasswordHasher.cs" />
   </ItemGroup>

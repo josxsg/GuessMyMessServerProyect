@@ -9,6 +9,7 @@ using GuessMyMessServer.DataAccess;
 using GuessMyMessServer.Utilities;
 using GuessMyMessServer.Utilities.Email;
 using System.Data.Entity.Infrastructure;
+using GuessMyMessServer.Utilities.Email.Templates;
 
 namespace GuessMyMessServer.BusinessLogic
 {
@@ -29,7 +30,7 @@ namespace GuessMyMessServer.BusinessLogic
             using (var context = new GuessMyMessDBEntities())
             {
                 var player = await context.Player
-                    .AsNoTracking() // Optimización para solo lectura
+                    .AsNoTracking() 
                     .Include(p => p.Gender)
                     .Include(p => p.Avatar)
                     .FirstOrDefaultAsync(p => p.username == username);
@@ -84,14 +85,11 @@ namespace GuessMyMessServer.BusinessLogic
 
                         if (File.Exists(filePath))
                         {
-                            // ----- INICIO DE LA CORRECCIÓN -----
-                            // Reemplazamos File.ReadAllBytes(filePath) por su versión asíncrona
                             using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 4096, useAsync: true))
                             {
                                 imageData = new byte[stream.Length];
                                 await stream.ReadAsync(imageData, 0, imageData.Length);
                             }
-                            // ----- FIN DE LA CORRECCIÓN -----
                         }
                         else
                         {
@@ -109,7 +107,6 @@ namespace GuessMyMessServer.BusinessLogic
             }
         }
 
-        // --- RESTO DE TUS MÉTODOS ASÍNCRONOS (YA ESTABAN BIEN) ---
 
         public async Task<OperationResultDto> RequestChangePasswordAsync(string username)
         {
@@ -123,7 +120,7 @@ namespace GuessMyMessServer.BusinessLogic
                 player.temp_code_expiry = DateTime.UtcNow.AddMinutes(10);
                 await context.SaveChangesAsync();
 
-                var emailTemplate = new VerificationEmailTemplate(player.username, code);
+                var emailTemplate = new PasswordChangeVerificationEmailTemplate(player.username, code); 
                 await emailService.sendEmailAsync(player.email, player.username, emailTemplate);
 
                 return new OperationResultDto { success = true, message = "Se ha enviado un código de verificación a tu correo registrado." };
@@ -148,8 +145,8 @@ namespace GuessMyMessServer.BusinessLogic
                 player.new_email_pending = newEmail;
                 await context.SaveChangesAsync();
 
-                var emailTemplate = new VerificationEmailTemplate(player.username, code);
-                await emailService.sendEmailAsync(player.email, player.username, emailTemplate);
+                var emailTemplate = new EmailChangeVerificationEmailTemplate(player.username, code); 
+                await emailService.sendEmailAsync(player.email, player.username, emailTemplate); 
 
                 return new OperationResultDto { success = true, message = $"Se ha enviado un código a tu correo actual ({player.email}) para confirmar." };
             }
