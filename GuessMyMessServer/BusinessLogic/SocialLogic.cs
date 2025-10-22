@@ -224,8 +224,8 @@ namespace GuessMyMessServer.BusinessLogic
                     .OrderBy(m => m.Timestamp)
                     .Select(m => new DirectMessageDto
                     {
-                        senderUsername = m.Player.username,
-                        recipientUsername = m.Player1.username,
+                        senderUsername = m.Player1.username,
+                        recipientUsername = m.Player.username,
                         content = m.MessageContent,
                         timestamp = m.Timestamp,
                     })
