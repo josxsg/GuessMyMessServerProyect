@@ -11,26 +11,32 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
     [ServiceContract]
     public interface IUserProfileService
     {
-        [OperationContract] 
-        UserProfileDto GetUserProfile(string username);
-
-        [OperationContract] 
-        OperationResultDto UpdateProfile(string username, UserProfileDto profileData);
-
-        [OperationContract] 
-        OperationResultDto RequestChangeEmail(string username, string newEmail);
-
-        [OperationContract] 
-        OperationResultDto ConfirmChangeEmail(string username, string verificationCode);
-
-        [OperationContract] 
-        OperationResultDto RequestChangePassword(string username);
-
-        [OperationContract] 
-        OperationResultDto ConfirmChangePassword(string username, string newPassword, string verificationCode);
+        [OperationContract]
+        [FaultContract(typeof(string))]
+        Task<UserProfileDto> GetUserProfileAsync(string username);
 
         [OperationContract]
-        List<AvatarDto> GetAvailableAvatars();
+        [FaultContract(typeof(string))]
+        Task<OperationResultDto> UpdateProfileAsync(string username, UserProfileDto profileData);
 
+        [OperationContract]
+        [FaultContract(typeof(string))]
+        Task<OperationResultDto> RequestChangeEmailAsync(string username, string newEmail);
+
+        [OperationContract]
+        [FaultContract(typeof(string))]
+        Task<OperationResultDto> ConfirmChangeEmailAsync(string username, string verificationCode);
+
+        [OperationContract]
+        [FaultContract(typeof(string))]
+        Task<OperationResultDto> RequestChangePasswordAsync(string username);
+
+        [OperationContract]
+        [FaultContract(typeof(string))]
+        Task<OperationResultDto> ConfirmChangePasswordAsync(string username, string newPassword, string verificationCode);
+
+        [OperationContract]
+        [FaultContract(typeof(string))]
+        Task<List<AvatarDto>> GetAvailableAvatarsAsync();
     }
 }

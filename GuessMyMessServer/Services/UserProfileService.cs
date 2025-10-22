@@ -25,141 +25,88 @@ namespace GuessMyMessServer.Services
             this.profileLogic = new UserProfileLogic(new SmtpEmailService());
         }
 
-        public UserProfileDto GetUserProfile(string username)
-        {
-            using (var context = new GuessMyMessDBEntities())
-            {
-                var player = context.Player
-                    .Include(p => p.Gender)
-                    .Include(p => p.Avatar)
-                    .FirstOrDefault(p => p.username == username);
-
-                if (player == null) return null;
-
-                return new UserProfileDto
-                {
-                    Username = player.username,
-                    FirstName = player.name,
-                    LastName = player.lastName,
-                    Email = player.email,
-                    GenderId = player.Gender_idGender.GetValueOrDefault(),
-                    AvatarId = player.Avatar_idAvatar.GetValueOrDefault()
-                };
-            }
-        }
-
-        public OperationResultDto UpdateProfile(string username, UserProfileDto profileData)
-        {
-            if (profileData == null) return new OperationResultDto { success = false, message = "Datos de perfil inválidos." };
-
-            using (var context = new GuessMyMessDBEntities())
-            {
-                var playerToUpdate = context.Player.FirstOrDefault(p => p.username == username);
-
-                if (playerToUpdate == null)
-                {
-                    return new OperationResultDto { success = false, message = "Usuario no encontrado." };
-                }
-
-                playerToUpdate.name = profileData.FirstName;
-                playerToUpdate.lastName = profileData.LastName;
-                playerToUpdate.Gender_idGender = profileData.GenderId;
-                playerToUpdate.Avatar_idAvatar = profileData.AvatarId > 0 ? profileData.AvatarId : playerToUpdate.Avatar_idAvatar;
-
-                context.SaveChanges();
-                return new OperationResultDto { success = true, message = "Perfil actualizado correctamente." };
-            }
-        }
-
-        public OperationResultDto ConfirmChangePassword(string username, string newPassword, string verificationCode)
-        {
-            using (var context = new GuessMyMessDBEntities())
-            {
-                var player = context.Player.FirstOrDefault(p => p.username == username);
-
-                if (player == null) return new OperationResultDto { success = false, message = "Usuario no encontrado." };
-
-                player.password = PasswordHasher.hashPassword(newPassword);
-                context.SaveChanges();
-
-                return new OperationResultDto { success = true, message = "Contraseña actualizada con éxito." };
-            }
-        }
-
-        public OperationResultDto ConfirmChangeEmail(string username, string verificationCode)
-        {
-            return new OperationResultDto { success = false, message = "La funcionalidad de confirmación de cambio de email no está implementada." };
-        }
-
-        public OperationResultDto RequestChangeEmail(string username, string newEmail)
+        public async Task<UserProfileDto> GetUserProfileAsync(string username)
         {
             try
             {
-                return profileLogic.RequestChangeEmailAsync(username, newEmail).Result;
+                return await profileLogic.GetUserProfileAsync(username);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error RequestChangeEmail: {ex}");
-                return new OperationResultDto { success = false, message = "Error inesperado al solicitar el cambio de correo." };
+                throw new FaultException(ex.Message);
             }
         }
 
-        public OperationResultDto RequestChangePassword(string username)
+        public async Task<OperationResultDto> UpdateProfileAsync(string username, UserProfileDto profileData)
         {
             try
             {
-                return profileLogic.RequestChangePasswordAsync(username).Result;
+                return await profileLogic.UpdateProfileAsync(username, profileData);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error RequestChangePassword: {ex}");
-                return new OperationResultDto { success = false, message = "Error inesperado al solicitar el cambio de contraseña." };
+                throw new FaultException(ex.Message);
             }
         }
 
-        public List<AvatarDto> GetAvailableAvatars()
+        public async Task<OperationResultDto> RequestChangeEmailAsync(string username, string newEmail)
         {
-            var avatarsDtoList = new List<AvatarDto>();
             try
             {
-                using (var context = new GuessMyMessDBEntities())
-                {
-                    var avatarsFromDb = context.Avatar.ToList();
-
-                    foreach (var avatarRecord in avatarsFromDb)
-                    {
-                        byte[] imageData = null;
-
-                        if (!string.IsNullOrEmpty(avatarRecord.avatarUrl))
-                        {
-                            string basePath = AppDomain.CurrentDomain.BaseDirectory;
-                            string filePath = Path.Combine(basePath, avatarRecord.avatarUrl);
-
-                            if (File.Exists(filePath))
-                            {
-                                imageData = File.ReadAllBytes(filePath);
-                            }
-                            else
-                            {
-                                Console.WriteLine($"ADVERTENCIA: No se encontró el archivo de avatar en la ruta: {filePath}");
-                            }
-                        }
-
-                        avatarsDtoList.Add(new AvatarDto
-                        {
-                            idAvatar = avatarRecord.idAvatar,
-                            avatarName = avatarRecord.avatarName,
-                            avatarData = imageData
-                        });
-                    }
-                }
+                return await profileLogic.RequestChangeEmailAsync(username, newEmail);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al obtener avatares: {ex.Message}");
-                return new List<AvatarDto>();
+                throw new FaultException(ex.Message);
             }
-            return avatarsDtoList;
+        }
+
+        public async Task<OperationResultDto> ConfirmChangeEmailAsync(string username, string verificationCode)
+        {
+            try
+            {
+                return await profileLogic.ConfirmChangeEmailAsync(username, verificationCode);
+            }
+            catch (Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
+        }
+
+        public async Task<OperationResultDto> RequestChangePasswordAsync(string username)
+        {
+            try
+            {
+                return await profileLogic.RequestChangePasswordAsync(username);
+            }
+            catch (Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
+        }
+
+        public async Task<OperationResultDto> ConfirmChangePasswordAsync(string username, string newPassword, string verificationCode)
+        {
+            try
+            {
+                return await profileLogic.ConfirmChangePasswordAsync(username, newPassword, verificationCode);
+            }
+            catch (Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
+        }
+
+        public async Task<List<AvatarDto>> GetAvailableAvatarsAsync()
+        {
+            try
+            {
+                return await profileLogic.GetAvailableAvatarsAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
         }
     }
 }

@@ -1,61 +1,69 @@
-﻿using System;
+﻿using GuessMyMessServer.Contracts.DataContracts;
 using System.Collections.Generic;
-using System.Linq;
 using System.ServiceModel;
-using System.Text;
 using System.Threading.Tasks;
-using GuessMyMessServer.Contracts.DataContracts;
 
 namespace GuessMyMessServer.Contracts.ServiceContracts
 {
-    [ServiceContract(CallbackContract = typeof(ISocialServiceCallback))] // [cite: 712]
+    [ServiceContract(CallbackContract = typeof(ISocialServiceCallback))]
     public interface ISocialService
     {
+        [OperationContract(IsOneWay = true)]
+        void Connect(string username);
 
-        [OperationContract] // GetFriendsList [cite: 714]
-        List<FriendDto> getFriendsList(string username);
+        [OperationContract]
+        [FaultContract(typeof(string))]
+        Task<List<FriendDto>> GetFriendsListAsync(string username);
 
-        [OperationContract] // Necesario para gestionar solicitudes
-        List<FriendRequestInfoDto> getFriendRequests(string username);
+        [OperationContract]
+        [FaultContract(typeof(string))]
+        Task<List<FriendRequestInfoDto>> GetFriendRequestsAsync(string username);
 
-        [OperationContract] // Search Users [cite: 715]
-        List<UserProfileDto> searchUsers(string searchUsername, string requesterUsername);
-
-        [OperationContract(IsOneWay = true)] // Send Friend Request [cite: 716]
-        void sendFriendRequest(string requesterUsername, string targetUsername);
-
-        [OperationContract(IsOneWay = true)] // Manage Friend Request [cite: 717]
-        void respondToFriendRequest(string targetUsername, string requesterUsername, bool accepted);
+        [OperationContract]
+        [FaultContract(typeof(string))]
+        Task<List<UserProfileDto>> SearchUsersAsync(string searchUsername, string requesterUsername);
 
         [OperationContract(IsOneWay = true)]
-        void removeFriend(string username, string friendToRemove);
+        void SendFriendRequest(string requesterUsername, string targetUsername);
 
-        [OperationContract] // Invite FriendToGameByEmail [cite: 718]
-        OperationResultDto inviteFriendToGameByEmail(string fromUsername, string friendEmail, string matchCode);
+        [OperationContract(IsOneWay = true)]
+        void RespondToFriendRequest(string targetUsername, string requesterUsername, bool accepted);
 
-        [OperationContract(IsOneWay = true)] // Cliente envía, no espera respuesta inmediata
+        [OperationContract(IsOneWay = true)]
+        void RemoveFriend(string username, string friendToRemove);
+
+        [OperationContract]
+        [FaultContract(typeof(string))]
+        Task<OperationResultDto> InviteFriendToGameByEmailAsync(string fromUsername, string friendEmail, string matchCode);
+
+        [OperationContract(IsOneWay = true)]
         void SendDirectMessage(DirectMessageDto message);
 
-        [OperationContract] // Cliente pide la lista de usuarios con quienes tiene mensajes
-        List<FriendDto> GetConversations(string username); // Devuelve lista de usernames
+        [OperationContract]
+        [FaultContract(typeof(string))]
+        Task<List<FriendDto>> GetConversationsAsync(string username);
 
-        [OperationContract] // Cliente pide el historial de mensajes con un usuario específico
-        List<DirectMessageDto> GetConversationHistory(string user1, string user2);
+        [OperationContract]
+        [FaultContract(typeof(string))]
+        Task<List<DirectMessageDto>> GetConversationHistoryAsync(string user1, string user2);
+
+        [OperationContract(IsOneWay = true)]
+        void Disconnect(string username);
     }
 
     [ServiceContract]
     public interface ISocialServiceCallback
     {
         [OperationContract(IsOneWay = true)]
-        void notifyFriendRequest(string fromUsername);
+        void NotifyFriendRequest(string fromUsername);
 
         [OperationContract(IsOneWay = true)]
-        void notifyFriendResponse(string fromUsername, bool accepted);
+        void NotifyFriendResponse(string fromUsername, bool accepted);
 
-        [OperationContract(IsOneWay = true)] // Notifica cambio de estado (online, in game, offline)
-        void notifyFriendStatusChanged(string friendUsername, bool isOnline);
+        [OperationContract(IsOneWay = true)]
+        void NotifyFriendStatusChanged(string friendUsername, string status);
 
-        [OperationContract(IsOneWay = true)] // Servidor notifica, no espera respuesta
+        [OperationContract(IsOneWay = true)]
         void NotifyMessageReceived(DirectMessageDto message);
     }
 }

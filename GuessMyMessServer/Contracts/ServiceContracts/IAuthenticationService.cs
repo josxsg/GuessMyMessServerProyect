@@ -11,25 +11,25 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
     [ServiceContract]
     public interface IAuthenticationService
     {
-        [OperationContract] 
-        OperationResultDto Login(string email, string password);
+        [OperationContract]
+        Task<OperationResultDto> LoginAsync(string emailOrUsername, string password);
 
-        [OperationContract] 
-        OperationResultDto Register(UserProfileDto userProfile, string password);
+        [OperationContract]
+        Task<OperationResultDto> RegisterAsync(UserProfileDto userProfile, string password);
 
-        [OperationContract] 
-        OperationResultDto VerifyAccount(string email, string verificationCode);
+        [OperationContract]
+        Task<OperationResultDto> VerifyAccountAsync(string email, string verificationCode);
 
-        [OperationContract] 
-        OperationResultDto LoginAsGuest(string username, string avatarPath);
-
-        [OperationContract(IsOneWay = true)] 
+        [OperationContract(IsOneWay = true)]
         void LogOut(string username);
 
         [OperationContract]
-        OperationResultDto SendPasswordRecoveryCode(string email);
+        Task<OperationResultDto> LoginAsGuestAsync(string username, string avatarPath);
 
         [OperationContract]
-        OperationResultDto ResetPasswordWithCode(string email, string code, string newPassword);
+        Task<OperationResultDto> SendPasswordRecoveryCodeAsync(string email);
+
+        [OperationContract]
+        Task<OperationResultDto> ResetPasswordWithCodeAsync(string email, string code, string newPassword);
     }
 }

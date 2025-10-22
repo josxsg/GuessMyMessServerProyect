@@ -16,49 +16,46 @@ namespace GuessMyMessServer.Services
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
     public class AuthenticationService : IAuthenticationService
     {
-        private readonly AuthenticationLogic authenticationLogic;
+        private readonly AuthenticationLogic _authenticationLogic;
 
         public AuthenticationService()
         {
-            authenticationLogic = new AuthenticationLogic(new SmtpEmailService());
+            _authenticationLogic = new AuthenticationLogic(new SmtpEmailService());
         }
 
-        public OperationResultDto Login(string emailOrUsername, string password)
+        public async Task<OperationResultDto> LoginAsync(string emailOrUsername, string password)
         {
             try
             {
-                return authenticationLogic.login(emailOrUsername, password);
+                return await _authenticationLogic.loginAsync(emailOrUsername, password);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error de Login: {ex}");
-                return new OperationResultDto { success = false, message = "Error inesperado del servidor." };
+                throw new FaultException(ex.Message);
             }
         }
 
-        public OperationResultDto Register(UserProfileDto userProfile, string password)
+        public async Task<OperationResultDto> RegisterAsync(UserProfileDto userProfile, string password)
         {
             try
             {
-                return authenticationLogic.registerPlayerAsync(userProfile, password).Result;
+                return await _authenticationLogic.registerPlayerAsync(userProfile, password);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error de Registro: {ex}");
-                return new OperationResultDto { success = false, message = "Error inesperado del servidor durante el registro." };
+                throw new FaultException(ex.Message);
             }
         }
 
-        public OperationResultDto VerifyAccount(string email, string code)
+        public async Task<OperationResultDto> VerifyAccountAsync(string email, string code)
         {
             try
             {
-                return authenticationLogic.verifyAccount(email, code);
+                return await _authenticationLogic.verifyAccountAsync(email, code);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error de Verificación: {ex}");
-                return new OperationResultDto { success = false, message = "Error inesperado del servidor durante la verificación." };
+                throw new FaultException(ex.Message);
             }
         }
 
@@ -66,16 +63,16 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                authenticationLogic.logOut(username);
+                _authenticationLogic.logOut(username);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error de LogOut: {ex}");
+                Console.WriteLine($"Error en LogOut (OneWay): {ex.Message}");
             }
         }
 
-        public OperationResultDto LoginAsGuest(string username, string avatarPath) { throw new NotImplementedException(); }
-        public OperationResultDto SendPasswordRecoveryCode(string email) { throw new NotImplementedException(); }
-        public OperationResultDto ResetPasswordWithCode(string email, string code, string newPassword) { throw new NotImplementedException(); }
+        public Task<OperationResultDto> LoginAsGuestAsync(string username, string avatarPath) { throw new NotImplementedException(); }
+        public Task<OperationResultDto> SendPasswordRecoveryCodeAsync(string email) { throw new NotImplementedException(); }
+        public Task<OperationResultDto> ResetPasswordWithCodeAsync(string email, string code, string newPassword) { throw new NotImplementedException(); }
     }
 }
