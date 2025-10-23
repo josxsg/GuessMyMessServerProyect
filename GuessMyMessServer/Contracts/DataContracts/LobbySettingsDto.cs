@@ -11,18 +11,18 @@ namespace GuessMyMessServer.Contracts.DataContracts
     public class LobbySettingsDto
     {
         [DataMember]
-        public string matchName { get; set; }
+        public string MatchName { get; set; }
 
         [DataMember]
-        public int maxPlayers { get; set; } 
+        public int MaxPlayers { get; set; } 
 
         [DataMember]
-        public int rounds { get; set; } 
+        public int Rounds { get; set; } 
 
         [DataMember]
-        public int difficultyId { get; set; }
+        public int DifficultyId { get; set; }
 
         [DataMember]
-        public bool isPrivate { get; set; }
+        public bool IsPrivate { get; set; }
     }
 }
