@@ -8,44 +8,44 @@ using GuessMyMessServer.Contracts.DataContracts;
 
 namespace GuessMyMessServer.Contracts.ServiceContracts
 {
-    [ServiceContract(CallbackContract = typeof(IGameServiceCallback))] // [cite: 738]
+    [ServiceContract(CallbackContract = typeof(IGameServiceCallback))] 
     public interface IGameService
     {
-        [OperationContract(IsOneWay = true)] // SelectWord [cite: 740]
+        [OperationContract(IsOneWay = true)] 
         void selectWord(string username, string matchId, string selectedWord);
 
-        [OperationContract(IsOneWay = true)] // SubmitDrawing [cite: 741]
+        [OperationContract(IsOneWay = true)] 
         void submitDrawing(string username, string matchId, byte[] drawingData);
 
-        [OperationContract(IsOneWay = true)] // SubmitGuess [cite: 742]
+        [OperationContract(IsOneWay = true)] 
         void submitGuess(string username, string matchId, string guess);
 
-        [OperationContract(IsOneWay = true)] // SendInGameChatMessage [cite: 743]
+        [OperationContract(IsOneWay = true)] 
         void sendInGameChatMessage(string username, string matchId, string message);
     }
 
     [ServiceContract]
     public interface IGameServiceCallback
     {
-        [OperationContract(IsOneWay = true)] // OnRoundStart [cite: 745]
+        [OperationContract(IsOneWay = true)] 
         void onRoundStart(int roundNumber, List<string> wordOptions);
 
-        [OperationContract(IsOneWay = true)] // OnDrawingPhaseStart [cite: 746]
+        [OperationContract(IsOneWay = true)]
         void onDrawingPhaseStart(int durationSeconds);
 
-        [OperationContract(IsOneWay = true)] // OnGuessing PhaseStart [cite: 747]
+        [OperationContract(IsOneWay = true)] 
         void onGuessingPhaseStart(byte[] drawingData, string artistUsername);
 
-        [OperationContract(IsOneWay = true)] // OnPlayerGuessedCorrectly [cite: 748]
+        [OperationContract(IsOneWay = true)] 
         void onPlayerGuessedCorrectly(string username);
 
-        [OperationContract(IsOneWay = true)] // OnTimeUpdate [cite: 751]
+        [OperationContract(IsOneWay = true)] 
         void onTimeUpdate(int remainingSeconds);
 
-        [OperationContract(IsOneWay = true)] // OnRoundEnd [cite: 752]
+        [OperationContract(IsOneWay = true)] 
         void onRoundEnd(List<PlayerScoreDto> roundScores, string correctWord);
 
-        [OperationContract(IsOneWay = true)] // OnGameEnd [cite: 753]
+        [OperationContract(IsOneWay = true)] 
         void onGameEnd(List<PlayerScoreDto> finalScores);
     }
 }

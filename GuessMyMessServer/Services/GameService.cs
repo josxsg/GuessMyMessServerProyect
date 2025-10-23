@@ -20,25 +20,21 @@ namespace GuessMyMessServer.Services
 
         public void selectWord(string username, string matchId, string selectedWord)
         {
-            // Lógica para registrar la palabra elegida [cite: 740]
             throw new NotImplementedException();
         }
 
         public void submitDrawing(string username, string matchId, byte[] drawingData)
         {
-            // Lógica para recibir y almacenar el dibujo [cite: 741]
             throw new NotImplementedException();
         }
 
         public void submitGuess(string username, string matchId, string guess)
         {
-            // Lógica para procesar la adivinanza y calcular puntos [cite: 742, 825]
             throw new NotImplementedException();
         }
 
         public void sendInGameChatMessage(string username, string matchId, string message)
         {
-            // Lógica para enviar el mensaje de chat in-game [cite: 743]
             throw new NotImplementedException();
         }
     }

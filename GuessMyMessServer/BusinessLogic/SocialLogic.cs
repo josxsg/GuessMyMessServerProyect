@@ -13,7 +13,6 @@ namespace GuessMyMessServer.BusinessLogic
     {
         private readonly IEmailService _emailService;
 
-        // El constructor puede aceptar el servicio de email si lo necesitas para invitaciones
         public SocialLogic(IEmailService emailService)
         {
             _emailService = emailService;
@@ -26,16 +25,22 @@ namespace GuessMyMessServer.BusinessLogic
                 var player = await context.Player.FirstOrDefaultAsync(p => p.username == username);
                 if (player == null) throw new Exception("Usuario no encontrado.");
 
-                return await context.Friendship
+                var friendships = await context.Friendship
                     .Where(f => (f.Player_idPlayer1 == player.idPlayer || f.Player_idPlayer2 == player.idPlayer)
                                 && f.FriendShipStatus.status == "Accepted")
-                    .Select(f => f.Player_idPlayer1 == player.idPlayer ? f.Player1 : f.Player)
-                    .Select(p => new FriendDto
+                    .Select(f => f.Player_idPlayer1 == player.idPlayer ? f.Player1 : f.Player) 
+                    .Select(p => new
                     {
-                        username = p.username,
-                        isOnline = p.UserStatus.status == "Online"
+                        p.username,
+                        isOnline = p.UserStatus.status 
                     })
                     .ToListAsync();
+
+                return friendships.Select(f => new FriendDto
+                {
+                    username = f.username,
+                    isOnline = f.isOnline == "Online"
+                }).ToList();
             }
         }
 
@@ -50,7 +55,7 @@ namespace GuessMyMessServer.BusinessLogic
                     .Where(f => f.Player_idPlayer2 == player.idPlayer && f.FriendShipStatus.status == "Pending")
                     .Select(f => new FriendRequestInfoDto
                     {
-                        requesterUsername = f.Player.username
+                        requesterUsername = f.Player.username 
                     }).ToListAsync();
             }
         }
@@ -59,8 +64,21 @@ namespace GuessMyMessServer.BusinessLogic
         {
             using (var context = new GuessMyMessDBEntities())
             {
+                var requester = await context.Player.FirstOrDefaultAsync(p => p.username == requesterUsername);
+                if (requester == null) throw new Exception("Usuario solicitante no encontrado.");
+
+                var requesterId = requester.idPlayer;
+
+                var existingRelationshipsPlayerIds = await context.Friendship
+                    .Where(f => (f.Player_idPlayer1 == requesterId || f.Player_idPlayer2 == requesterId))
+                    .Select(f => f.Player_idPlayer1 == requesterId ? f.Player_idPlayer2 : f.Player_idPlayer1)
+                    .Distinct()
+                    .ToListAsync();
+
                 return await context.Player
-                    .Where(p => p.username.Contains(searchUsername) && p.username != requesterUsername)
+                    .Where(p => p.username.Contains(searchUsername) &&
+                                p.idPlayer != requesterId &&
+                                !existingRelationshipsPlayerIds.Contains(p.idPlayer))
                     .Select(p => new UserProfileDto
                     {
                         Username = p.username
@@ -74,19 +92,29 @@ namespace GuessMyMessServer.BusinessLogic
             {
                 var requester = await context.Player.FirstOrDefaultAsync(p => p.username == requesterUsername);
                 var target = await context.Player.FirstOrDefaultAsync(p => p.username == targetUsername);
-                var pendingStatus = await context.FriendShipStatus.FirstOrDefaultAsync(fs => fs.status == "Pending");
 
-                if (requester != null && target != null && pendingStatus != null)
+                if (requester == null || target == null) throw new Exception("Usuario no válido.");
+
+                var existing = await context.Friendship.FirstOrDefaultAsync(f =>
+                    (f.Player_idPlayer1 == requester.idPlayer && f.Player_idPlayer2 == target.idPlayer) ||
+                    (f.Player_idPlayer1 == target.idPlayer && f.Player_idPlayer2 == requester.idPlayer));
+
+                if (existing != null)
                 {
-                    var friendship = new Friendship
-                    {
-                        Player_idPlayer1 = requester.idPlayer,
-                        Player_idPlayer2 = target.idPlayer,
-                        FriendShipStatus_idFriendShipStatus = pendingStatus.idFriendShipStatus
-                    };
-                    context.Friendship.Add(friendship);
-                    await context.SaveChangesAsync();
+                    throw new Exception("Ya existe una relación o solicitud pendiente.");
                 }
+
+                var pendingStatus = await context.FriendShipStatus.FirstOrDefaultAsync(fs => fs.status == "Pending");
+                if (pendingStatus == null) throw new Exception("Estado 'Pending' no configurado en la DB.");
+
+                var friendship = new Friendship
+                {
+                    Player_idPlayer1 = requester.idPlayer,
+                    Player_idPlayer2 = target.idPlayer,
+                    FriendShipStatus_idFriendShipStatus = pendingStatus.idFriendShipStatus
+                };
+                context.Friendship.Add(friendship);
+                await context.SaveChangesAsync();
             }
         }
 
@@ -144,6 +172,21 @@ namespace GuessMyMessServer.BusinessLogic
             }
         }
 
+        public async Task UpdatePlayerStatusAsync(string username, string status)
+        {
+            using (var context = new GuessMyMessDBEntities())
+            {
+                var player = await context.Player.FirstOrDefaultAsync(p => p.username == username);
+                if (player == null) throw new Exception("Usuario no encontrado.");
+
+                var userStatus = await context.UserStatus.FirstOrDefaultAsync(s => s.status == status);
+                if (userStatus == null) throw new Exception($"Estado '{status}' no encontrado en la DB.");
+
+                player.UserStatus_idUserStatus = userStatus.idUserStatus;
+                await context.SaveChangesAsync();
+            }
+        }
+
         public async Task SendDirectMessageAsync(DirectMessageDto message)
         {
             if (message == null || string.IsNullOrEmpty(message.senderUsername) || string.IsNullOrEmpty(message.recipientUsername) || string.IsNullOrEmpty(message.content))
@@ -166,7 +209,7 @@ namespace GuessMyMessServer.BusinessLogic
                     SenderPlayerID = sender.idPlayer,
                     RecipientPlayerID = recipient.idPlayer,
                     MessageContent = message.content,
-                    Timestamp = DateTime.UtcNow // Asignar timestamp aquí
+                    Timestamp = DateTime.UtcNow 
                 };
 
                 dbContext.DirectMessages.Add(dbMessage);

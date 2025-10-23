@@ -27,7 +27,7 @@ namespace GuessMyMessServer.BusinessLogic
                 throw new Exception("Usuario/Correo y contraseña son obligatorios.");
             }
 
-            const int STATUS_ONLINE = 2; 
+            const int STATUS_ONLINE = 2;
 
             using (var context = new GuessMyMessDBEntities())
             {
@@ -58,12 +58,38 @@ namespace GuessMyMessServer.BusinessLogic
 
         public async Task<OperationResultDto> registerPlayerAsync(UserProfileDto userProfile, string password)
         {
+
             if (userProfile == null || string.IsNullOrWhiteSpace(password))
             {
                 throw new Exception("El perfil de usuario y la contraseña son obligatorios.");
             }
 
-            const int STATUS_OFFLINE = 1; 
+            if (string.IsNullOrWhiteSpace(userProfile.Username) ||
+                string.IsNullOrWhiteSpace(userProfile.Email) ||
+                string.IsNullOrWhiteSpace(userProfile.FirstName) ||
+                string.IsNullOrWhiteSpace(userProfile.LastName))
+            {
+                throw new Exception("Todos los campos (Usuario, Nombre, Apellido, Email) son obligatorios.");
+            }
+
+            if (!InputValidator.IsValidEmail(userProfile.Email))
+            {
+                throw new Exception("El formato del correo electrónico no es válido. (Ej: usuario@dominio.com)");
+            }
+
+            if (!InputValidator.IsPasswordSecure(password))
+            {
+                throw new Exception("La contraseña no es segura. Debe tener:\n" +
+                                    "- Mínimo 8 caracteres\n" +
+                                    "- Al menos una mayúscula (A-Z)\n" +
+                                    "- Al menos una minúscula (a-z)\n" +
+                                    "- Al menos un número (0-9)\n" +
+                                    "- Al menos un caracter especial (ej: @, $, !, %)");
+            }
+
+
+            const int STATUS_OFFLINE = 1;
+            string verificationCode = random.Next(100000, 999999).ToString("D6");
 
             using (var context = new GuessMyMessDBEntities())
             {
@@ -76,7 +102,19 @@ namespace GuessMyMessServer.BusinessLogic
                     throw new Exception("El correo electrónico ya está registrado.");
                 }
 
-                string verificationCode = random.Next(100000, 999999).ToString("D6");
+                try
+                {
+                    var emailTemplate = new VerificationEmailTemplate(userProfile.Username, verificationCode);
+                    await emailService.sendEmailAsync(userProfile.Email, userProfile.Username, emailTemplate);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"\n¡ERROR DE ENVÍO DE CORREO!: {ex.Message}");
+
+                    throw new Exception("No se pudo enviar el correo de verificación. " +
+                                        "Por favor, revisa que el correo proporcionado sea correcto y exista.");
+                }
+
 
                 var newPlayer = new Player
                 {
@@ -86,7 +124,7 @@ namespace GuessMyMessServer.BusinessLogic
                     name = userProfile.FirstName,
                     lastName = userProfile.LastName,
                     Gender_idGender = userProfile.GenderId,
-                    Avatar_idAvatar = userProfile.AvatarId > 0 ? userProfile.AvatarId : 1, 
+                    Avatar_idAvatar = userProfile.AvatarId > 0 ? userProfile.AvatarId : 1,
                     UserStatus_idUserStatus = STATUS_OFFLINE,
                     is_verified = (byte)0,
                     verification_code = verificationCode,
@@ -102,18 +140,6 @@ namespace GuessMyMessServer.BusinessLogic
                 {
                     Console.WriteLine($"ERROR DE BASE DE DATOS: {dbEx.InnerException?.Message ?? dbEx.Message}");
                     throw new Exception("Error al guardar el usuario. Es posible que el avatar o el género seleccionado no sea válido.");
-                }
-
-                try
-                {
-                    var emailTemplate = new VerificationEmailTemplate(newPlayer.username, verificationCode);
-                    await emailService.sendEmailAsync(newPlayer.email, newPlayer.username, emailTemplate);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"\n¡ERROR DE CORREO CRÍTICO!: {ex.Message}");
-                    Console.WriteLine("Por favor, verifica tus credenciales de SmtpPass y SmtpUser en App.config.");
-                    return new OperationResultDto { success = true, message = "Registro exitoso, pero el correo de verificación falló al enviarse. Revisa la consola del servidor." };
                 }
 
                 return new OperationResultDto { success = true, message = "Registro exitoso. Se ha enviado un código de verificación a tu correo." };

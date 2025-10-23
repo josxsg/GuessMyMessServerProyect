@@ -191,6 +191,7 @@
     <Compile Include="Utilities\Email\Templates\EmailChangeVerificationEmailTemplate.cs" />
     <Compile Include="Utilities\Email\Templates\PasswordChangeVerificationEmailTemplate.cs" />
     <Compile Include="Utilities\Email\Templates\VerificationEmailTemplate.cs" />
+    <Compile Include="Utilities\InputValidator.cs" />
     <Compile Include="Utilities\PasswordHasher.cs" />
   </ItemGroup>
   <ItemGroup>

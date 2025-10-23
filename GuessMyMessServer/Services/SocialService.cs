@@ -19,12 +19,84 @@ namespace GuessMyMessServer.Services
 
         public SocialService()
         {
-            // Puedes inyectar dependencias aquí si es necesario
             _socialLogic = new SocialLogic(new SmtpEmailService());
+        }
+
+        private async Task NotifyFriendStatusUpdate(string username, string status)
+        {
+            List<string> friendUsernames;
+            try
+            {
+                var friends = await _socialLogic.GetFriendsListAsync(username);
+                friendUsernames = friends.Select(f => f.username).ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener lista de amigos para notificación de estado: {ex.Message}");
+                return;
+            }
+
+            List<string> clientsToRemove = new List<string>(); 
+
+            lock (connectedClients)
+            {
+                foreach (var friendUsername in friendUsernames)
+                {
+                    if (connectedClients.TryGetValue(friendUsername, out var callback))
+                    {
+                        try
+                        {
+                            Console.WriteLine($"Notificando a {friendUsername} sobre {username} ({status})..."); 
+                            callback?.NotifyFriendStatusChanged(username, status);
+                            Console.WriteLine($"Notificación enviada a {friendUsername}."); 
+                        }
+                        catch (ObjectDisposedException odEx)
+                        {
+                            Console.WriteLine($"Error al notificar a {friendUsername} (ObjectDisposed): {odEx.Message}. Marcado para remover.");
+                            clientsToRemove.Add(friendUsername); 
+                        }
+                        catch (CommunicationObjectAbortedException coaEx)
+                        {
+                            Console.WriteLine($"Error al notificar a {friendUsername} (Aborted): {coaEx.Message}. Marcado para remover.");
+                            clientsToRemove.Add(friendUsername);
+                        }
+                        catch (CommunicationObjectFaultedException cofEx)
+                        {
+                            Console.WriteLine($"Error al notificar a {friendUsername} (Faulted): {cofEx.Message}. Marcado para remover.");
+                            clientsToRemove.Add(friendUsername);
+                        }
+                        catch (TimeoutException tEx)
+                        {
+                            Console.WriteLine($"Timeout al notificar a {friendUsername}: {tEx.Message}. Marcado para remover.");
+                            clientsToRemove.Add(friendUsername);
+                        }
+                        catch (Exception ex) 
+                        {
+                            Console.WriteLine($"Error GENÉRICO al notificar a {friendUsername}: {ex.GetType().Name} - {ex.Message}. Marcado para remover.");
+                            clientsToRemove.Add(friendUsername);
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{friendUsername} es amigo de {username} pero no está en connectedClients."); 
+                    }
+                }
+
+                foreach (var clientToRemove in clientsToRemove)
+                {
+                    if (connectedClients.ContainsKey(clientToRemove))
+                    {
+                        Console.WriteLine($"Removiendo cliente fallido: {clientToRemove}");
+                        connectedClients.Remove(clientToRemove);
+                    }
+                }
+            } 
         }
 
         public void Connect(string username)
         {
+            if (string.IsNullOrEmpty(username)) return;
+
             var callback = OperationContext.Current.GetCallbackChannel<ISocialServiceCallback>();
             lock (connectedClients)
             {
@@ -34,13 +106,28 @@ namespace GuessMyMessServer.Services
                 }
                 else
                 {
-                    connectedClients[username] = callback; // Actualizar canal por si se reconecta
+                    connectedClients[username] = callback; 
                 }
             }
+
+            Task.Run(async () =>
+            {
+                try
+                {
+                    await _socialLogic.UpdatePlayerStatusAsync(username, "Online");
+                    await NotifyFriendStatusUpdate(username, "Online");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error al actualizar estado en Connect: {ex.Message}");
+                }
+            });
         }
 
         public void Disconnect(string username)
         {
+            if (string.IsNullOrEmpty(username)) return;
+
             lock (connectedClients)
             {
                 if (connectedClients.ContainsKey(username))
@@ -48,6 +135,19 @@ namespace GuessMyMessServer.Services
                     connectedClients.Remove(username);
                 }
             }
+            
+            Task.Run(async () =>
+            {
+                try
+                {
+                    await _socialLogic.UpdatePlayerStatusAsync(username, "Offline");
+                    await NotifyFriendStatusUpdate(username, "Offline");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error al actualizar estado en Disconnect: {ex.Message}");
+                }
+            });
         }
 
         public async Task<List<FriendDto>> GetFriendsListAsync(string username)
@@ -117,6 +217,23 @@ namespace GuessMyMessServer.Services
                     connectedClients.TryGetValue(requesterUsername, out callback);
                 }
                 callback?.NotifyFriendResponse(targetUsername, accepted);
+
+                if (accepted)
+                {
+                    bool requesterIsOnline;
+                    bool targetIsOnline;
+                    ISocialServiceCallback targetCallback;
+
+                    lock (connectedClients)
+                    {
+                        requesterIsOnline = connectedClients.ContainsKey(requesterUsername);
+                        targetIsOnline = connectedClients.TryGetValue(targetUsername, out targetCallback);
+                    }
+
+                    callback?.NotifyFriendStatusChanged(targetUsername, targetIsOnline ? "Online" : "Offline");
+
+                    targetCallback?.NotifyFriendStatusChanged(requesterUsername, requesterIsOnline ? "Online" : "Offline");
+                }
             }
             catch (Exception ex)
             {

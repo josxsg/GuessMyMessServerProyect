@@ -14,8 +14,6 @@ namespace GuessMyMessServer.Contracts.DataContracts
         public string username { get; set; }
 
         [DataMember]
-        // isOnline representa el estado actual (en línea, en partida, desconectado)
-        // Podrías cambiar a un enum para estados más detallados si es necesario.
         public bool isOnline { get; set; }
     }
 

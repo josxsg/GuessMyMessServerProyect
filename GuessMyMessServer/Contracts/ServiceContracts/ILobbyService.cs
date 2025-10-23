@@ -8,44 +8,44 @@ using GuessMyMessServer.Contracts.DataContracts;
 
 namespace GuessMyMessServer.Contracts.ServiceContracts
 {
-    [ServiceContract(CallbackContract = typeof(ILobbyServiceCallback))] // [cite: 726]
+    [ServiceContract(CallbackContract = typeof(ILobbyServiceCallback))] 
     public interface ILobbyService
     {
-        [OperationContract(IsOneWay = true)] // ConnectToLobby [cite: 728]
+        [OperationContract(IsOneWay = true)] 
         void connectToLobby(string username, string matchId);
 
-        [OperationContract(IsOneWay = true)] // SendMessage (Chat preestablecido) [cite: 729]
+        [OperationContract(IsOneWay = true)] 
         void sendLobbyMessage(string senderUsername, string matchId, string message);
 
-        [OperationContract(IsOneWay = true)] // StartGame (Host) [cite: 730]
+        [OperationContract(IsOneWay = true)] 
         void startGame(string hostUsername, string matchId);
 
-        [OperationContract(IsOneWay = true)] // LeaveLobby [cite: 731]
+        [OperationContract(IsOneWay = true)] 
         void leaveLobby(string username, string matchId);
 
-        [OperationContract(IsOneWay = true)] // Expulsar (Host) [cite: 855]
+        [OperationContract(IsOneWay = true)] 
         void kickPlayer(string hostUsername, string playerToKickUsername, string matchId);
 
-        [OperationContract(IsOneWay = true)] // Iniciar votación de expulsión [cite: 856]
+        [OperationContract(IsOneWay = true)] 
         void startKickVote(string voterUsername, string targetUsername, string matchId);
 
-        [OperationContract(IsOneWay = true)] // Emitir voto [cite: 856]
+        [OperationContract(IsOneWay = true)] 
         void submitKickVote(string voterUsername, string targetUsername, string matchId, bool vote);
     }
 
     [ServiceContract]
     public interface ILobbyServiceCallback
     {
-        [OperationContract(IsOneWay = true)] // OnPlayerJoined / OnPlayerLeft [cite: 732, 733]
+        [OperationContract(IsOneWay = true)] 
         void updateLobbyState(LobbyStateDto lobbyStateDto);
 
-        [OperationContract(IsOneWay = true)] // OnLobbyMessage Received [cite: 734]
+        [OperationContract(IsOneWay = true)] 
         void receiveLobbyMessage(ChatMessageDto messageDto);
 
-        [OperationContract(IsOneWay = true)] // OnGameStarting (conteo regresivo) [cite: 736]
+        [OperationContract(IsOneWay = true)]
         void onGameStarting(int countdownSeconds);
 
-        [OperationContract(IsOneWay = true)] // OnGameStarted [cite: 737]
+        [OperationContract(IsOneWay = true)] 
         void onGameStarted();
 
         [OperationContract(IsOneWay = true)]

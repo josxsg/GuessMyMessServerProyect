@@ -31,7 +31,6 @@ namespace GuessMyMessServer.Services
 
         public void joinPublicMatch(string username, string matchId)
         {
-            // Lógica para unir al jugador y transferirlo al LobbyService
             throw new NotImplementedException();
         }
 
@@ -42,7 +41,6 @@ namespace GuessMyMessServer.Services
 
         public void inviteToMatch(string inviterUsername, string invitedUsername, string matchId)
         {
-            // Lógica para notificar al jugador invitado (usando el callback)
             throw new NotImplementedException();
         }
     }

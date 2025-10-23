@@ -17,6 +17,6 @@ namespace GuessMyMessServer.Contracts.DataContracts
         public int score { get; set; }
 
         [DataMember]
-        public int? rank { get; set; } // Posición final
+        public int? rank { get; set; } 
     }
 }

@@ -22,7 +22,6 @@ namespace GuessMyMessServer.Contracts.DataContracts
         [DataMember]
         public DateTime timestamp { get; set; }
 
-        // Indica si el mensaje es de chat preestablecido (lobby) o escrito (in-game)
 
     }
 }

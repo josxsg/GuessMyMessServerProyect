@@ -11,9 +11,9 @@ namespace GuessMyMessServer.Contracts.DataContracts
     public class SocialNetworkDto
     {
         [DataMember]
-        public string networkType { get; set; } // Ejemplo: "Instagram", "Discord", "X"
+        public string networkType { get; set; } 
 
         [DataMember]
-        public string userLink { get; set; } // El handle o enlace del usuario
+        public string userLink { get; set; } 
     }
 }

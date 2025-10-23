@@ -17,7 +17,7 @@ namespace GuessMyMessServer.Contracts.DataContracts
         public string hostUsername { get; set; }
 
         [DataMember]
-        public List<string> players { get; set; } // Lista de usernames
+        public List<string> players { get; set; } 
 
         [DataMember]
         public LobbySettingsDto currentSettings { get; set; }
