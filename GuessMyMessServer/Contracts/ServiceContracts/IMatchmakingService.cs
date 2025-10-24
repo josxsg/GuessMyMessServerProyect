@@ -12,34 +12,34 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
     public interface IMatchmakingService
     {
         [OperationContract] 
-        List<MatchInfoDto> getPublicMatches();
+        List<MatchInfoDto> GetPublicMatches();
 
         [OperationContract]
-        OperationResultDto createMatch(string hostUsername, LobbySettingsDto settings);
+        OperationResultDto CreateMatch(string hostUsername, LobbySettingsDto settings);
 
         [OperationContract(IsOneWay = true)] 
-        void joinPublicMatch(string username, string matchId);
+        void JoinPublicMatch(string username, string matchId);
 
         [OperationContract] 
-        OperationResultDto joinPrivateMatch(string username, string matchCode);
+        OperationResultDto JoinPrivateMatch(string username, string matchCode);
 
         [OperationContract(IsOneWay = true)]
-        void inviteToMatch(string inviterUsername, string invitedUsername, string matchId);
+        void InviteToMatch(string inviterUsername, string invitedUsername, string matchId);
     }
 
     [ServiceContract]
     public interface IMatchmakingServiceCallback
     {
         [OperationContract(IsOneWay = true)]
-        void receiveMatchInvite(string fromUsername, string matchId);
+        void ReceiveMatchInvite(string fromUsername, string matchId);
 
         [OperationContract(IsOneWay = true)]
-        void matchUpdate(MatchInfoDto matchInfo); 
+        void MatchUpdate(MatchInfoDto matchInfo); 
 
         [OperationContract(IsOneWay = true)]
-        void matchJoined(string matchId); 
+        void MatchJoined(string matchId); 
 
         [OperationContract(IsOneWay = true)]
-        void matchmakingFailed(string reason);
+        void MatchmakingFailed(string reason);
     }
 }

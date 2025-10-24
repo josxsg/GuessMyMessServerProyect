@@ -12,9 +12,9 @@ namespace GuessMyMessServer.Contracts.DataContracts
     {
 
         [DataMember]
-        public string requesterUsername { get; set; }
+        public string RequesterUsername { get; set; }
 
         [DataMember]
-        public DateTime requestDate { get; set; }
+        public DateTime RequestDate { get; set; }
     }
 }

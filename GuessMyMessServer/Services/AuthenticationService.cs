@@ -27,7 +27,7 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                return await _authenticationLogic.loginAsync(emailOrUsername, password);
+                return await _authenticationLogic.LoginAsync(emailOrUsername, password);
             }
             catch (Exception ex)
             {
@@ -39,7 +39,7 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                return await _authenticationLogic.registerPlayerAsync(userProfile, password);
+                return await _authenticationLogic.RegisterPlayerAsync(userProfile, password);
             }
             catch (Exception ex)
             {
@@ -51,7 +51,7 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                return await _authenticationLogic.verifyAccountAsync(email, code);
+                return await _authenticationLogic.VerifyAccountAsync(email, code);
             }
             catch (Exception ex)
             {
@@ -63,7 +63,7 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                _authenticationLogic.logOut(username);
+                _authenticationLogic.LogOut(username);
             }
             catch (Exception ex)
             {

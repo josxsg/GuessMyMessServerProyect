@@ -7,16 +7,16 @@ namespace GuessMyMessServer.Contracts.DataContracts
     public class DirectMessageDto
     {
         [DataMember] 
-        public string senderUsername { get; set; }
+        public string SenderUsername { get; set; }
 
         [DataMember]
-        public string recipientUsername { get; set; }
+        public string RecipientUsername { get; set; }
 
         [DataMember] 
-        public string content { get; set; }
+        public string Content { get; set; }
 
         [DataMember] 
-        public DateTime timestamp { get; set; }
+        public DateTime Timestamp { get; set; }
 
         
     }

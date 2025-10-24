@@ -11,12 +11,12 @@ namespace GuessMyMessServer.Contracts.DataContracts
     public class PlayerScoreDto
     {
         [DataMember]
-        public string username { get; set; }
+        public string Username { get; set; }
 
         [DataMember]
-        public int score { get; set; }
+        public int Score { get; set; }
 
         [DataMember]
-        public int? rank { get; set; } 
+        public int? Rank { get; set; } 
     }
 }

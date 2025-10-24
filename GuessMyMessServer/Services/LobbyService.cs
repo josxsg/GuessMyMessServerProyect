@@ -18,37 +18,37 @@ namespace GuessMyMessServer.Services
             callback = OperationContext.Current.GetCallbackChannel<ILobbyServiceCallback>();
         }
 
-        public void connectToLobby(string username, string matchId)
+        public void ConnectToLobby(string username, string matchId)
         {
             throw new NotImplementedException();
         }
 
-        public void sendLobbyMessage(string senderUsername, string matchId, string message)
+        public void SendLobbyMessage(string senderUsername, string matchId, string message)
         {
             throw new NotImplementedException();
         }
 
-        public void startGame(string hostUsername, string matchId)
+        public void StartGame(string hostUsername, string matchId)
         {
             throw new NotImplementedException();
         }
 
-        public void leaveLobby(string username, string matchId)
+        public void LeaveLobby(string username, string matchId)
         {
             throw new NotImplementedException();
         }
 
-        public void kickPlayer(string hostUsername, string playerToKickUsername, string matchId)
+        public void KickPlayer(string hostUsername, string playerToKickUsername, string matchId)
         {
             throw new NotImplementedException();
         }
 
-        public void startKickVote(string voterUsername, string targetUsername, string matchId)
+        public void StartKickVote(string voterUsername, string targetUsername, string matchId)
         {
             throw new NotImplementedException();
         }
 
-        public void submitKickVote(string voterUsername, string targetUsername, string matchId, bool vote)
+        public void SubmitKickVote(string voterUsername, string targetUsername, string matchId, bool vote)
         {
             throw new NotImplementedException();
         }

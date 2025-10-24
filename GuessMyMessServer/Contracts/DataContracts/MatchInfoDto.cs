@@ -11,21 +11,21 @@ namespace GuessMyMessServer.Contracts.DataContracts
     public class MatchInfoDto
     {
         [DataMember]
-        public string matchId { get; set; }
+        public string MatchId { get; set; }
 
         [DataMember]
-        public string matchName { get; set; }
+        public string MatchName { get; set; }
 
         [DataMember]
-        public string hostUsername { get; set; }
+        public string HostUsername { get; set; }
 
         [DataMember]
-        public int currentPlayers { get; set; }
+        public int CurrentPlayers { get; set; }
 
         [DataMember]
-        public int maxPlayers { get; set; }
+        public int MaxPlayers { get; set; }
 
         [DataMember]
-        public string difficultyName { get; set; }
+        public string DifficultyName { get; set; }
     }
 }

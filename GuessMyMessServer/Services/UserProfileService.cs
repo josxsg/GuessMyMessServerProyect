@@ -2,38 +2,34 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
-using System.Text;
 using System.Threading.Tasks;
 using GuessMyMessServer.BusinessLogic;
 using GuessMyMessServer.Contracts.DataContracts;
 using GuessMyMessServer.Contracts.ServiceContracts;
-using GuessMyMessServer.DataAccess;
-using GuessMyMessServer.Utilities;
 using GuessMyMessServer.Utilities.Email;
-using System.Data.Entity;
-using System.IO;
+
 
 namespace GuessMyMessServer.Services
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
     public class UserProfileService : IUserProfileService
     {
-        private readonly UserProfileLogic profileLogic;
+        private readonly UserProfileLogic _profileLogic;
 
         public UserProfileService()
         {
-            this.profileLogic = new UserProfileLogic(new SmtpEmailService());
+            _profileLogic = new UserProfileLogic(new SmtpEmailService());
         }
 
         public async Task<UserProfileDto> GetUserProfileAsync(string username)
         {
             try
             {
-                return await profileLogic.GetUserProfileAsync(username);
+                return await _profileLogic.GetUserProfileAsync(username);
             }
             catch (Exception ex)
             {
-                throw new FaultException(ex.Message);
+                throw new FaultException($"Error al obtener el perfil de usuario: {ex.Message}");
             }
         }
 
@@ -41,11 +37,11 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                return await profileLogic.UpdateProfileAsync(username, profileData);
+                return await _profileLogic.UpdateProfileAsync(username, profileData);
             }
             catch (Exception ex)
             {
-                throw new FaultException(ex.Message);
+                throw new FaultException($"Error al actualizar el perfil: {ex.Message}");
             }
         }
 
@@ -53,11 +49,11 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                return await profileLogic.RequestChangeEmailAsync(username, newEmail);
+                return await _profileLogic.RequestChangeEmailAsync(username, newEmail);
             }
             catch (Exception ex)
             {
-                throw new FaultException(ex.Message);
+                throw new FaultException($"Error al solicitar cambio de correo: {ex.Message}");
             }
         }
 
@@ -65,11 +61,11 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                return await profileLogic.ConfirmChangeEmailAsync(username, verificationCode);
+                return await _profileLogic.ConfirmChangeEmailAsync(username, verificationCode);
             }
             catch (Exception ex)
             {
-                throw new FaultException(ex.Message);
+                throw new FaultException($"Error al confirmar cambio de correo: {ex.Message}");
             }
         }
 
@@ -77,11 +73,11 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                return await profileLogic.RequestChangePasswordAsync(username);
+                return await _profileLogic.RequestChangePasswordAsync(username);
             }
             catch (Exception ex)
             {
-                throw new FaultException(ex.Message);
+                throw new FaultException($"Error al solicitar cambio de contraseña: {ex.Message}");
             }
         }
 
@@ -89,11 +85,11 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                return await profileLogic.ConfirmChangePasswordAsync(username, newPassword, verificationCode);
+                return await _profileLogic.ConfirmChangePasswordAsync(username, newPassword, verificationCode);
             }
             catch (Exception ex)
             {
-                throw new FaultException(ex.Message);
+                throw new FaultException($"Error al confirmar cambio de contraseña: {ex.Message}");
             }
         }
 
@@ -101,11 +97,11 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                return await profileLogic.GetAvailableAvatarsAsync();
+                return await _profileLogic.GetAvailableAvatarsAsync();
             }
             catch (Exception ex)
             {
-                throw new FaultException(ex.Message);
+                throw new FaultException($"Error al obtener avatares disponibles: {ex.Message}");
             }
         }
     }

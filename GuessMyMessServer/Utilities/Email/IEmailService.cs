@@ -8,7 +8,7 @@ namespace GuessMyMessServer.Utilities.Email
 {
     public interface IEmailService
     {
-        Task sendEmailAsync(string recipientEmail, string recipientName, IEmailTemplate template);
+        Task SendEmailAsync(string recipientEmail, string recipientName, IEmailTemplate template);
 
     }
 }

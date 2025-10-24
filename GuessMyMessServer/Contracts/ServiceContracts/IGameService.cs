@@ -12,40 +12,40 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
     public interface IGameService
     {
         [OperationContract(IsOneWay = true)] 
-        void selectWord(string username, string matchId, string selectedWord);
+        void SelectWord(string username, string matchId, string selectedWord);
 
         [OperationContract(IsOneWay = true)] 
-        void submitDrawing(string username, string matchId, byte[] drawingData);
+        void SubmitDrawing(string username, string matchId, byte[] drawingData);
 
         [OperationContract(IsOneWay = true)] 
-        void submitGuess(string username, string matchId, string guess);
+        void SubmitGuess(string username, string matchId, string guess);
 
         [OperationContract(IsOneWay = true)] 
-        void sendInGameChatMessage(string username, string matchId, string message);
+        void SendInGameChatMessage(string username, string matchId, string message);
     }
 
     [ServiceContract]
     public interface IGameServiceCallback
     {
         [OperationContract(IsOneWay = true)] 
-        void onRoundStart(int roundNumber, List<string> wordOptions);
+        void OnRoundStart(int roundNumber, List<string> wordOptions);
 
         [OperationContract(IsOneWay = true)]
-        void onDrawingPhaseStart(int durationSeconds);
+        void OnDrawingPhaseStart(int durationSeconds);
 
         [OperationContract(IsOneWay = true)] 
-        void onGuessingPhaseStart(byte[] drawingData, string artistUsername);
+        void OnGuessingPhaseStart(byte[] drawingData, string artistUsername);
 
         [OperationContract(IsOneWay = true)] 
-        void onPlayerGuessedCorrectly(string username);
+        void OnPlayerGuessedCorrectly(string username);
 
         [OperationContract(IsOneWay = true)] 
-        void onTimeUpdate(int remainingSeconds);
+        void OnTimeUpdate(int remainingSeconds);
 
         [OperationContract(IsOneWay = true)] 
-        void onRoundEnd(List<PlayerScoreDto> roundScores, string correctWord);
+        void OnRoundEnd(List<PlayerScoreDto> roundScores, string correctWord);
 
         [OperationContract(IsOneWay = true)] 
-        void onGameEnd(List<PlayerScoreDto> finalScores);
+        void OnGameEnd(List<PlayerScoreDto> finalScores);
     }
 }

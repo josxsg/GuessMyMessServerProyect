@@ -8,12 +8,12 @@ namespace GuessMyMessServer.Utilities.Email
 {
     public class VerificationEmailTemplate : IEmailTemplate
     {
-        public string subject => "Tu Código de Verificación para Guess My Mess!";
-        public string htmlBody { get; }
+        public string Subject => "Tu Código de Verificación para Guess My Mess!";
+        public string HtmlBody { get; }
 
         public VerificationEmailTemplate(string username, string verificationCode)
         {
-            htmlBody = $@"
+            HtmlBody = $@"
                 <div style='font-family: Arial, sans-serif; text-align: center; color: #333;'>
                     <div style='max-width: 600px; margin: auto; border: 1px solid #ddd; padding: 20px; background-color: #f9f9f9; border-radius: 10px;'>
                         <h2 style='color: #FFD5A100;'>¡Bienvenido a Guess My Mess, {username}!</h2>

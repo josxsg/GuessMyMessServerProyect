@@ -11,15 +11,15 @@ namespace GuessMyMessServer.Contracts.DataContracts
     public class LobbyStateDto
     {
         [DataMember]
-        public string lobbyId { get; set; }
+        public string LobbyId { get; set; }
 
         [DataMember]
-        public string hostUsername { get; set; }
+        public string HostUsername { get; set; }
 
         [DataMember]
-        public List<string> players { get; set; } 
+        public List<string> Players { get; set; } 
 
         [DataMember]
-        public LobbySettingsDto currentSettings { get; set; }
+        public LobbySettingsDto CurrentSettings { get; set; }
     }
 }

@@ -18,22 +18,22 @@ namespace GuessMyMessServer.Services
             callback = OperationContext.Current.GetCallbackChannel<IGameServiceCallback>();
         }
 
-        public void selectWord(string username, string matchId, string selectedWord)
+        public void SelectWord(string username, string matchId, string selectedWord)
         {
             throw new NotImplementedException();
         }
 
-        public void submitDrawing(string username, string matchId, byte[] drawingData)
+        public void SubmitDrawing(string username, string matchId, byte[] drawingData)
         {
             throw new NotImplementedException();
         }
 
-        public void submitGuess(string username, string matchId, string guess)
+        public void SubmitGuess(string username, string matchId, string guess)
         {
             throw new NotImplementedException();
         }
 
-        public void sendInGameChatMessage(string username, string matchId, string message)
+        public void SendInGameChatMessage(string username, string matchId, string message)
         {
             throw new NotImplementedException();
         }

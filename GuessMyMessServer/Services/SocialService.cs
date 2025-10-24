@@ -28,7 +28,7 @@ namespace GuessMyMessServer.Services
             try
             {
                 var friends = await _socialLogic.GetFriendsListAsync(username);
-                friendUsernames = friends.Select(f => f.username).ToList();
+                friendUsernames = friends.Select(f => f.Username).ToList();
             }
             catch (Exception ex)
             {
@@ -36,7 +36,7 @@ namespace GuessMyMessServer.Services
                 return;
             }
 
-            List<string> clientsToRemove = new List<string>(); 
+            List<string> clientsToRemove = new List<string>();
 
             lock (connectedClients)
             {
@@ -46,14 +46,14 @@ namespace GuessMyMessServer.Services
                     {
                         try
                         {
-                            Console.WriteLine($"Notificando a {friendUsername} sobre {username} ({status})..."); 
+                            Console.WriteLine($"Notificando a {friendUsername} sobre {username} ({status})...");
                             callback?.NotifyFriendStatusChanged(username, status);
-                            Console.WriteLine($"Notificación enviada a {friendUsername}."); 
+                            Console.WriteLine($"Notificación enviada a {friendUsername}.");
                         }
                         catch (ObjectDisposedException odEx)
                         {
                             Console.WriteLine($"Error al notificar a {friendUsername} (ObjectDisposed): {odEx.Message}. Marcado para remover.");
-                            clientsToRemove.Add(friendUsername); 
+                            clientsToRemove.Add(friendUsername);
                         }
                         catch (CommunicationObjectAbortedException coaEx)
                         {
@@ -70,7 +70,7 @@ namespace GuessMyMessServer.Services
                             Console.WriteLine($"Timeout al notificar a {friendUsername}: {tEx.Message}. Marcado para remover.");
                             clientsToRemove.Add(friendUsername);
                         }
-                        catch (Exception ex) 
+                        catch (Exception ex)
                         {
                             Console.WriteLine($"Error GENÉRICO al notificar a {friendUsername}: {ex.GetType().Name} - {ex.Message}. Marcado para remover.");
                             clientsToRemove.Add(friendUsername);
@@ -78,7 +78,7 @@ namespace GuessMyMessServer.Services
                     }
                     else
                     {
-                        Console.WriteLine($"{friendUsername} es amigo de {username} pero no está en connectedClients."); 
+                        Console.WriteLine($"{friendUsername} es amigo de {username} pero no está en connectedClients.");
                     }
                 }
 
@@ -90,12 +90,15 @@ namespace GuessMyMessServer.Services
                         connectedClients.Remove(clientToRemove);
                     }
                 }
-            } 
+            }
         }
 
         public void Connect(string username)
         {
-            if (string.IsNullOrEmpty(username)) return;
+            if (string.IsNullOrEmpty(username))
+            {
+                return;
+            }
 
             var callback = OperationContext.Current.GetCallbackChannel<ISocialServiceCallback>();
             lock (connectedClients)
@@ -106,7 +109,7 @@ namespace GuessMyMessServer.Services
                 }
                 else
                 {
-                    connectedClients[username] = callback; 
+                    connectedClients[username] = callback;
                 }
             }
 
@@ -126,16 +129,16 @@ namespace GuessMyMessServer.Services
 
         public void Disconnect(string username)
         {
-            if (string.IsNullOrEmpty(username)) return;
+            if (string.IsNullOrEmpty(username))
+            {
+                return;
+            }
 
             lock (connectedClients)
             {
-                if (connectedClients.ContainsKey(username))
-                {
-                    connectedClients.Remove(username);
-                }
+                connectedClients.Remove(username);
             }
-            
+
             Task.Run(async () =>
             {
                 try
@@ -158,7 +161,7 @@ namespace GuessMyMessServer.Services
             }
             catch (Exception ex)
             {
-                throw new FaultException(ex.Message);
+                throw new FaultException($"Error al obtener lista de amigos: {ex.Message}");
             }
         }
 
@@ -170,7 +173,7 @@ namespace GuessMyMessServer.Services
             }
             catch (Exception ex)
             {
-                throw new FaultException(ex.Message);
+                throw new FaultException($"Error al obtener solicitudes de amistad: {ex.Message}");
             }
         }
 
@@ -182,7 +185,7 @@ namespace GuessMyMessServer.Services
             }
             catch (Exception ex)
             {
-                throw new FaultException(ex.Message);
+                throw new FaultException($"Error al buscar usuarios: {ex.Message}");
             }
         }
 
@@ -211,12 +214,12 @@ namespace GuessMyMessServer.Services
             {
                 await _socialLogic.RespondToFriendRequestAsync(targetUsername, requesterUsername, accepted);
 
-                ISocialServiceCallback callback;
+                ISocialServiceCallback requesterCallback;
                 lock (connectedClients)
                 {
-                    connectedClients.TryGetValue(requesterUsername, out callback);
+                    connectedClients.TryGetValue(requesterUsername, out requesterCallback);
                 }
-                callback?.NotifyFriendResponse(targetUsername, accepted);
+                requesterCallback?.NotifyFriendResponse(targetUsername, accepted);
 
                 if (accepted)
                 {
@@ -230,8 +233,7 @@ namespace GuessMyMessServer.Services
                         targetIsOnline = connectedClients.TryGetValue(targetUsername, out targetCallback);
                     }
 
-                    callback?.NotifyFriendStatusChanged(targetUsername, targetIsOnline ? "Online" : "Offline");
-
+                    requesterCallback?.NotifyFriendStatusChanged(targetUsername, targetIsOnline ? "Online" : "Offline");
                     targetCallback?.NotifyFriendStatusChanged(requesterUsername, requesterIsOnline ? "Online" : "Offline");
                 }
             }
@@ -255,6 +257,12 @@ namespace GuessMyMessServer.Services
 
         public async void SendDirectMessage(DirectMessageDto message)
         {
+            if (message == null || string.IsNullOrEmpty(message.RecipientUsername))
+            {
+                Console.WriteLine("Error: Mensaje directo inválido.");
+                return;
+            }
+
             try
             {
                 await _socialLogic.SendDirectMessageAsync(message);
@@ -262,7 +270,7 @@ namespace GuessMyMessServer.Services
                 ISocialServiceCallback callback;
                 lock (connectedClients)
                 {
-                    connectedClients.TryGetValue(message.recipientUsername, out callback);
+                    connectedClients.TryGetValue(message.RecipientUsername, out callback);
                 }
                 callback?.NotifyMessageReceived(message);
             }
@@ -280,7 +288,7 @@ namespace GuessMyMessServer.Services
             }
             catch (Exception ex)
             {
-                throw new FaultException(ex.Message);
+                throw new FaultException($"Error al obtener conversaciones: {ex.Message}");
             }
         }
 
@@ -292,13 +300,14 @@ namespace GuessMyMessServer.Services
             }
             catch (Exception ex)
             {
-                throw new FaultException(ex.Message);
+                throw new FaultException($"Error al obtener historial de conversación: {ex.Message}");
             }
         }
 
         public Task<OperationResultDto> InviteFriendToGameByEmailAsync(string fromUsername, string friendEmail, string matchCode)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Advertencia: InviteFriendToGameByEmailAsync no está implementado.");
+            throw new NotImplementedException("La función de invitar por correo electrónico aún no está implementada.");
         }
     }
 }

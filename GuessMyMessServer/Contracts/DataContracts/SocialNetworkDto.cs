@@ -11,9 +11,9 @@ namespace GuessMyMessServer.Contracts.DataContracts
     public class SocialNetworkDto
     {
         [DataMember]
-        public string networkType { get; set; } 
+        public string NetworkType { get; set; } 
 
         [DataMember]
-        public string userLink { get; set; } 
+        public string UserLink { get; set; } 
     }
 }

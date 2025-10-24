@@ -11,10 +11,10 @@ namespace GuessMyMessServer.Contracts.DataContracts
     public class FriendDto
     {
         [DataMember]
-        public string username { get; set; }
+        public string Username { get; set; }
 
         [DataMember]
-        public bool isOnline { get; set; }
+        public bool IsOnline { get; set; }
     }
 
 }

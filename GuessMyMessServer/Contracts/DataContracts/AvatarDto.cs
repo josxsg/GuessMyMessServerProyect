@@ -11,12 +11,12 @@ namespace GuessMyMessServer.Contracts.DataContracts
     public class AvatarDto
     {
         [DataMember]
-        public int idAvatar { get; set; }
+        public int IdAvatar { get; set; }
 
         [DataMember]
-        public string avatarName { get; set; } 
+        public string AvatarName { get; set; } 
 
         [DataMember]
-        public byte[] avatarData { get; set; } 
+        public byte[] AvatarData { get; set; } 
     }
 }

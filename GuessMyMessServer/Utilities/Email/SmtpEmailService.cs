@@ -12,43 +12,43 @@ namespace GuessMyMessServer.Utilities.Email
 {
     public class SmtpEmailService : IEmailService
     {
-        private readonly string host;
-        private readonly int port;
-        private readonly string user;
-        private readonly string pass;
-        private readonly string senderName;
+        private readonly string _host;
+        private readonly int _port;
+        private readonly string _user;
+        private readonly string _pass;
+        private readonly string _senderName;
 
         public SmtpEmailService()
         {
-            host = ConfigurationManager.AppSettings["SmtpHost"];
-            port = Convert.ToInt32(ConfigurationManager.AppSettings["SmtpPort"]);
-            user = ConfigurationManager.AppSettings["SmtpUser"];
-            pass = ConfigurationManager.AppSettings["SmtpPass"];
-            senderName = ConfigurationManager.AppSettings["SenderName"] ?? "Guess My Mess Team";
+            _host = ConfigurationManager.AppSettings["SmtpHost"];
+            _port = Convert.ToInt32(ConfigurationManager.AppSettings["SmtpPort"]);
+            _user = ConfigurationManager.AppSettings["SmtpUser"];
+            _pass = ConfigurationManager.AppSettings["SmtpPass"];
+            _senderName = ConfigurationManager.AppSettings["SenderName"] ?? "Guess My Mess Team";
 
-            if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(user) || string.IsNullOrEmpty(pass))
+            if (string.IsNullOrEmpty(_host) || string.IsNullOrEmpty(_user) || string.IsNullOrEmpty(_pass))
             {
-                throw new InvalidOperationException("Email settings (SmtpHost, SmtpUser, SmtpPass) are missing in App.config.");
+                throw new InvalidOperationException("Email settings (SmtpHost, SmtpUser, SmtpPass) are missing or invalid in App.config.");
             }
         }
 
-        public async Task sendEmailAsync(string recipientEmail, string recipientName, IEmailTemplate template)
+        public async Task SendEmailAsync(string recipientEmail, string recipientName, IEmailTemplate template)
         {
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress(senderName, user));
+            message.From.Add(new MailboxAddress(_senderName, _user));
             message.To.Add(new MailboxAddress(recipientName, recipientEmail));
-            message.Subject = template.subject;
+            message.Subject = template.Subject;
 
             var bodyBuilder = new BodyBuilder
             {
-                HtmlBody = template.htmlBody
+                HtmlBody = template.HtmlBody
             };
             message.Body = bodyBuilder.ToMessageBody();
 
             using (var client = new SmtpClient())
             {
-                await client.ConnectAsync(host, port, SecureSocketOptions.StartTls);
-                await client.AuthenticateAsync(user, pass);
+                await client.ConnectAsync(_host, _port, SecureSocketOptions.StartTls);
+                await client.AuthenticateAsync(_user, _pass);
                 await client.SendAsync(message);
                 await client.DisconnectAsync(true);
             }

@@ -19,27 +19,27 @@ namespace GuessMyMessServer.Services
             callback = OperationContext.Current.GetCallbackChannel<IMatchmakingServiceCallback>();
         }
 
-        public List<MatchInfoDto> getPublicMatches()
+        public List<MatchInfoDto> GetPublicMatches()
         {
             throw new NotImplementedException();
         }
 
-        public OperationResultDto createMatch(string hostUsername, LobbySettingsDto settings)
+        public OperationResultDto CreateMatch(string hostUsername, LobbySettingsDto settings)
         {
             throw new NotImplementedException();
         }
 
-        public void joinPublicMatch(string username, string matchId)
+        public void JoinPublicMatch(string username, string matchId)
         {
             throw new NotImplementedException();
         }
 
-        public OperationResultDto joinPrivateMatch(string username, string matchCode)
+        public OperationResultDto JoinPrivateMatch(string username, string matchCode)
         {
             throw new NotImplementedException();
         }
 
-        public void inviteToMatch(string inviterUsername, string invitedUsername, string matchId)
+        public void InviteToMatch(string inviterUsername, string invitedUsername, string matchId)
         {
             throw new NotImplementedException();
         }
