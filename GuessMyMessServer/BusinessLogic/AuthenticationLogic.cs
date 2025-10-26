@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data.Entity;
+using System.Data.Entity; // <-- Asegúrate de que este 'using' esté presente
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,12 +12,16 @@ namespace GuessMyMessServer.BusinessLogic
 {
     public class AuthenticationLogic
     {
+        // --- CAMBIO 1: Añadimos _context como un campo ---
+        private readonly GuessMyMessDBEntities _context;
         private readonly IEmailService _emailService;
         private static readonly Random _random = new Random();
 
-        public AuthenticationLogic(IEmailService emailService)
+        // --- CAMBIO 2: El constructor ahora recibe AMBAS dependencias ---
+        public AuthenticationLogic(IEmailService emailService, GuessMyMessDBEntities context)
         {
             _emailService = emailService;
+            _context = context; // <-- Asignamos el contexto
         }
 
         public async Task<OperationResultDto> LoginAsync(string emailOrUsername, string password)
@@ -29,31 +33,31 @@ namespace GuessMyMessServer.BusinessLogic
 
             const int StatusOnline = 2;
 
-            using (var context = new GuessMyMessDBEntities())
+            // --- CAMBIO 3: Eliminamos el 'using (var context = ...)' ---
+            // Ahora usamos el campo _context que recibimos en el constructor
+            var player = await _context.Player.FirstOrDefaultAsync(p =>
+                p.username == emailOrUsername || p.email == emailOrUsername);
+
+            if (player == null)
             {
-                var player = await context.Player.FirstOrDefaultAsync(p =>
-                    p.username == emailOrUsername || p.email == emailOrUsername);
-
-                if (player == null)
-                {
-                    throw new Exception("Credenciales incorrectas.");
-                }
-
-                if (player.is_verified == (byte)0)
-                {
-                    throw new Exception("La cuenta no ha sido verificada. Por favor, revisa tu correo.");
-                }
-
-                if (!PasswordHasher.VerifyPassword(password, player.password))
-                {
-                    throw new Exception("Credenciales incorrectas.");
-                }
-
-                player.UserStatus_idUserStatus = StatusOnline;
-                await context.SaveChangesAsync();
-
-                return new OperationResultDto { Success = true, Message = player.username };
+                throw new Exception("Credenciales incorrectas.");
             }
+
+            if (player.is_verified == (byte)0)
+            {
+                throw new Exception("La cuenta no ha sido verificada. Por favor, revisa tu correo.");
+            }
+
+            // (Asumiendo que tu clase PasswordHasher tiene métodos estáticos)
+            if (!PasswordHasher.VerifyPassword(password, player.password))
+            {
+                throw new Exception("Credenciales incorrectas.");
+            }
+
+            player.UserStatus_idUserStatus = StatusOnline;
+            await _context.SaveChangesAsync(); // <-- Usamos _context
+
+            return new OperationResultDto { Success = true, Message = player.username };
         }
 
         public async Task<OperationResultDto> RegisterPlayerAsync(UserProfileDto userProfile, string password)
@@ -84,56 +88,54 @@ namespace GuessMyMessServer.BusinessLogic
             const int StatusOffline = 1;
             string verificationCode = _random.Next(100000, 999999).ToString("D6");
 
-            using (var context = new GuessMyMessDBEntities())
+            // --- CAMBIO 3: Eliminamos el 'using (var context = ...)' ---
+            if (await _context.Player.AnyAsync(p => p.username == userProfile.Username)) // <-- Usamos _context
             {
-                if (await context.Player.AnyAsync(p => p.username == userProfile.Username))
-                {
-                    throw new Exception("El nombre de usuario ya está en uso.");
-                }
-                if (await context.Player.AnyAsync(p => p.email == userProfile.Email))
-                {
-                    throw new Exception("El correo electrónico ya está registrado.");
-                }
-
-                try
-                {
-                    var emailTemplate = new VerificationEmailTemplate(userProfile.Username, verificationCode);
-                    await _emailService.SendEmailAsync(userProfile.Email, userProfile.Username, emailTemplate);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"\n¡ERROR DE ENVÍO DE CORREO!: {ex.Message}");
-                    throw new Exception("No se pudo enviar el correo de verificación. Revisa que el correo sea correcto.");
-                }
-
-                var newPlayer = new Player
-                {
-                    username = userProfile.Username,
-                    email = userProfile.Email,
-                    password = PasswordHasher.HashPassword(password),
-                    name = userProfile.FirstName,
-                    lastName = userProfile.LastName,
-                    Gender_idGender = userProfile.GenderId,
-                    Avatar_idAvatar = userProfile.AvatarId > 0 ? userProfile.AvatarId : 1,
-                    UserStatus_idUserStatus = StatusOffline,
-                    is_verified = (byte)0,
-                    verification_code = verificationCode,
-                    code_expiry_date = DateTime.UtcNow.AddMinutes(15)
-                };
-
-                context.Player.Add(newPlayer);
-                try
-                {
-                    await context.SaveChangesAsync();
-                }
-                catch (DbUpdateException dbEx)
-                {
-                    Console.WriteLine($"ERROR DE BASE DE DATOS: {dbEx.InnerException?.Message ?? dbEx.Message}");
-                    throw new Exception("Error al guardar el usuario. Verifica los datos proporcionados.");
-                }
-
-                return new OperationResultDto { Success = true, Message = "Registro exitoso. Se ha enviado un código de verificación a tu correo." };
+                throw new Exception("El nombre de usuario ya está en uso.");
             }
+            if (await _context.Player.AnyAsync(p => p.email == userProfile.Email)) // <-- Usamos _context
+            {
+                throw new Exception("El correo electrónico ya está registrado.");
+            }
+
+            try
+            {
+                var emailTemplate = new VerificationEmailTemplate(userProfile.Username, verificationCode);
+                await _emailService.SendEmailAsync(userProfile.Email, userProfile.Username, emailTemplate);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"\n¡ERROR DE ENVÍO DE CORREO!: {ex.Message}");
+                throw new Exception("No se pudo enviar el correo de verificación. Revisa que el correo sea correcto.");
+            }
+
+            var newPlayer = new Player
+            {
+                username = userProfile.Username,
+                email = userProfile.Email,
+                password = PasswordHasher.HashPassword(password), // (Asumiendo HashPassword)
+                name = userProfile.FirstName,
+                lastName = userProfile.LastName,
+                Gender_idGender = userProfile.GenderId,
+                Avatar_idAvatar = userProfile.AvatarId > 0 ? userProfile.AvatarId : 1,
+                UserStatus_idUserStatus = StatusOffline,
+                is_verified = (byte)0,
+                verification_code = verificationCode,
+                code_expiry_date = DateTime.UtcNow.AddMinutes(15)
+            };
+
+            _context.Player.Add(newPlayer); // <-- Usamos _context
+            try
+            {
+                await _context.SaveChangesAsync(); // <-- Usamos _context
+            }
+            catch (DbUpdateException dbEx)
+            {
+                Console.WriteLine($"ERROR DE BASE DE DATOS: {dbEx.InnerException?.Message ?? dbEx.Message}");
+                throw new Exception("Error al guardar el usuario. Verifica los datos proporcionados.");
+            }
+
+            return new OperationResultDto { Success = true, Message = "Registro exitoso. Se ha enviado un código de verificación a tu correo." };
         }
 
         public async Task<OperationResultDto> VerifyAccountAsync(string email, string code)
@@ -143,48 +145,44 @@ namespace GuessMyMessServer.BusinessLogic
                 throw new Exception("El correo y el código son obligatorios.");
             }
 
-            using (var context = new GuessMyMessDBEntities())
+            // --- CAMBIO 3: Eliminamos el 'using (var context = ...)' ---
+            var playerToVerify = await _context.Player.FirstOrDefaultAsync(p => p.email == email); // <-- Usamos _context
+
+            if (playerToVerify == null)
             {
-                var playerToVerify = await context.Player.FirstOrDefaultAsync(p => p.email == email);
-
-                if (playerToVerify == null)
-                {
-                    throw new Exception("No se encontró una cuenta para este correo.");
-                }
-
-                if (playerToVerify.is_verified == (byte)1)
-                {
-                    throw new Exception("Esta cuenta ya está verificada.");
-                }
-
-                if (playerToVerify.verification_code != code || playerToVerify.code_expiry_date < DateTime.UtcNow)
-                {
-                    throw new Exception("Código de verificación inválido o expirado.");
-                }
-
-                playerToVerify.is_verified = (byte)1;
-                playerToVerify.verification_code = null;
-                playerToVerify.code_expiry_date = null;
-                playerToVerify.UserStatus_idUserStatus = 2;
-
-                await context.SaveChangesAsync();
-
-                return new OperationResultDto { Success = true, Message = "Cuenta verificada con éxito. ¡Bienvenido!" };
+                throw new Exception("No se encontró una cuenta para este correo.");
             }
+
+            if (playerToVerify.is_verified == (byte)1)
+            {
+                throw new Exception("Esta cuenta ya está verificada.");
+            }
+
+            if (playerToVerify.verification_code != code || playerToVerify.code_expiry_date < DateTime.UtcNow)
+            {
+                throw new Exception("Código de verificación inválido o expirado.");
+            }
+
+            playerToVerify.is_verified = (byte)1;
+            playerToVerify.verification_code = null;
+            playerToVerify.code_expiry_date = null;
+            playerToVerify.UserStatus_idUserStatus = 2; // (Asumo 2 = Online)
+
+            await _context.SaveChangesAsync(); // <-- Usamos _context
+
+            return new OperationResultDto { Success = true, Message = "Cuenta verificada con éxito. ¡Bienvenido!" };
         }
 
         public void LogOut(string username)
         {
             const int StatusOffline = 1;
 
-            using (var context = new GuessMyMessDBEntities())
+            // --- CAMBIO 3: Eliminamos el 'using (var context = ...)' ---
+            var player = _context.Player.FirstOrDefault(p => p.username == username); // <-- Usamos _context
+            if (player != null)
             {
-                var player = context.Player.FirstOrDefault(p => p.username == username);
-                if (player != null)
-                {
-                    player.UserStatus_idUserStatus = StatusOffline;
-                    context.SaveChanges();
-                }
+                player.UserStatus_idUserStatus = StatusOffline;
+                _context.SaveChanges(); // <-- Usamos _context
             }
         }
     }

@@ -7,29 +7,33 @@ using GuessMyMessServer.BusinessLogic;
 using GuessMyMessServer.Contracts.DataContracts;
 using GuessMyMessServer.Contracts.ServiceContracts;
 using GuessMyMessServer.Utilities.Email;
-
+using GuessMyMessServer.DataAccess; // <-- 1. Añadir using de DataAccess
 
 namespace GuessMyMessServer.Services
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
     public class UserProfileService : IUserProfileService
     {
-        private readonly UserProfileLogic _profileLogic;
-
+        // --- CAMBIO 2: Constructor vacío y sin campos ---
         public UserProfileService()
         {
-            _profileLogic = new UserProfileLogic(new SmtpEmailService());
         }
 
         public async Task<UserProfileDto> GetUserProfileAsync(string username)
         {
             try
             {
-                return await _profileLogic.GetUserProfileAsync(username);
+                // --- CAMBIO 3: Crear dependencias en el método ---
+                using (var context = new GuessMyMessDBEntities())
+                {
+                    var emailService = new SmtpEmailService();
+                    var logic = new UserProfileLogic(emailService, context);
+                    return await logic.GetUserProfileAsync(username);
+                }
             }
             catch (Exception ex)
             {
-                throw new FaultException($"Error al obtener el perfil de usuario: {ex.Message}");
+                throw new FaultException(ex.Message); // <-- Mensaje de excepción directo
             }
         }
 
@@ -37,11 +41,17 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                return await _profileLogic.UpdateProfileAsync(username, profileData);
+                // --- CAMBIO 3: Crear dependencias en el método ---
+                using (var context = new GuessMyMessDBEntities())
+                {
+                    var emailService = new SmtpEmailService();
+                    var logic = new UserProfileLogic(emailService, context);
+                    return await logic.UpdateProfileAsync(username, profileData);
+                }
             }
             catch (Exception ex)
             {
-                throw new FaultException($"Error al actualizar el perfil: {ex.Message}");
+                throw new FaultException(ex.Message);
             }
         }
 
@@ -49,11 +59,17 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                return await _profileLogic.RequestChangeEmailAsync(username, newEmail);
+                // --- CAMBIO 3: Crear dependencias en el método ---
+                using (var context = new GuessMyMessDBEntities())
+                {
+                    var emailService = new SmtpEmailService();
+                    var logic = new UserProfileLogic(emailService, context);
+                    return await logic.RequestChangeEmailAsync(username, newEmail);
+                }
             }
             catch (Exception ex)
             {
-                throw new FaultException($"Error al solicitar cambio de correo: {ex.Message}");
+                throw new FaultException(ex.Message);
             }
         }
 
@@ -61,11 +77,17 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                return await _profileLogic.ConfirmChangeEmailAsync(username, verificationCode);
+                // --- CAMBIO 3: Crear dependencias en el método ---
+                using (var context = new GuessMyMessDBEntities())
+                {
+                    var emailService = new SmtpEmailService();
+                    var logic = new UserProfileLogic(emailService, context);
+                    return await logic.ConfirmChangeEmailAsync(username, verificationCode);
+                }
             }
             catch (Exception ex)
             {
-                throw new FaultException($"Error al confirmar cambio de correo: {ex.Message}");
+                throw new FaultException(ex.Message);
             }
         }
 
@@ -73,11 +95,17 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                return await _profileLogic.RequestChangePasswordAsync(username);
+                // --- CAMBIO 3: Crear dependencias en el método ---
+                using (var context = new GuessMyMessDBEntities())
+                {
+                    var emailService = new SmtpEmailService();
+                    var logic = new UserProfileLogic(emailService, context);
+                    return await logic.RequestChangePasswordAsync(username);
+                }
             }
             catch (Exception ex)
             {
-                throw new FaultException($"Error al solicitar cambio de contraseña: {ex.Message}");
+                throw new FaultException(ex.Message);
             }
         }
 
@@ -85,11 +113,17 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                return await _profileLogic.ConfirmChangePasswordAsync(username, newPassword, verificationCode);
+                // --- CAMBIO 3: Crear dependencias en el método ---
+                using (var context = new GuessMyMessDBEntities())
+                {
+                    var emailService = new SmtpEmailService();
+                    var logic = new UserProfileLogic(emailService, context);
+                    return await logic.ConfirmChangePasswordAsync(username, newPassword, verificationCode);
+                }
             }
             catch (Exception ex)
             {
-                throw new FaultException($"Error al confirmar cambio de contraseña: {ex.Message}");
+                throw new FaultException(ex.Message);
             }
         }
 
@@ -97,11 +131,17 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                return await _profileLogic.GetAvailableAvatarsAsync();
+                // --- CAMBIO 3: Crear dependencias en el método ---
+                using (var context = new GuessMyMessDBEntities())
+                {
+                    var emailService = new SmtpEmailService();
+                    var logic = new UserProfileLogic(emailService, context);
+                    return await logic.GetAvailableAvatarsAsync();
+                }
             }
             catch (Exception ex)
             {
-                throw new FaultException($"Error al obtener avatares disponibles: {ex.Message}");
+                throw new FaultException(ex.Message);
             }
         }
     }

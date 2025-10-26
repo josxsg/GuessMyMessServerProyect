@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using GuessMyMessServer.BusinessLogic;
 using GuessMyMessServer.Contracts.DataContracts;
 using GuessMyMessServer.Contracts.ServiceContracts;
-using GuessMyMessServer.DataAccess;
+using GuessMyMessServer.DataAccess; // <-- CAMBIO 1: Añadimos 'using' de DataAccess
 using GuessMyMessServer.Utilities.Email;
 
 namespace GuessMyMessServer.Services
@@ -16,18 +16,23 @@ namespace GuessMyMessServer.Services
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
     public class AuthenticationService : IAuthenticationService
     {
-        private readonly AuthenticationLogic _authenticationLogic;
-
-        public AuthenticationService()
-        {
-            _authenticationLogic = new AuthenticationLogic(new SmtpEmailService());
-        }
+        // --- CAMBIO 2: Eliminamos el campo _authenticationLogic y el constructor ---
 
         public async Task<OperationResultDto> LoginAsync(string emailOrUsername, string password)
         {
             try
             {
-                return await _authenticationLogic.LoginAsync(emailOrUsername, password);
+                // --- CAMBIO 3: Creamos las dependencias AQUÍ ---
+                using (var context = new GuessMyMessDBEntities())
+                {
+                    var emailService = new SmtpEmailService();
+
+                    // "Inyectamos" las dependencias en la lógica
+                    var logic = new AuthenticationLogic(emailService, context);
+
+                    // Llamamos a la lógica local
+                    return await logic.LoginAsync(emailOrUsername, password);
+                }
             }
             catch (Exception ex)
             {
@@ -39,7 +44,13 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                return await _authenticationLogic.RegisterPlayerAsync(userProfile, password);
+                // --- CAMBIO 3: Creamos las dependencias AQUÍ ---
+                using (var context = new GuessMyMessDBEntities())
+                {
+                    var emailService = new SmtpEmailService();
+                    var logic = new AuthenticationLogic(emailService, context);
+                    return await logic.RegisterPlayerAsync(userProfile, password);
+                }
             }
             catch (Exception ex)
             {
@@ -51,7 +62,13 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                return await _authenticationLogic.VerifyAccountAsync(email, code);
+                // --- CAMBIO 3: Creamos las dependencias AQUÍ ---
+                using (var context = new GuessMyMessDBEntities())
+                {
+                    var emailService = new SmtpEmailService();
+                    var logic = new AuthenticationLogic(emailService, context);
+                    return await logic.VerifyAccountAsync(email, code);
+                }
             }
             catch (Exception ex)
             {
@@ -63,7 +80,13 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                _authenticationLogic.LogOut(username);
+                // --- CAMBIO 3: Creamos las dependencias AQUÍ ---
+                using (var context = new GuessMyMessDBEntities())
+                {
+                    var emailService = new SmtpEmailService();
+                    var logic = new AuthenticationLogic(emailService, context);
+                    logic.LogOut(username);
+                }
             }
             catch (Exception ex)
             {
@@ -71,6 +94,7 @@ namespace GuessMyMessServer.Services
             }
         }
 
+        // --- MÉTODOS NO IMPLEMENTADOS ---
         public Task<OperationResultDto> LoginAsGuestAsync(string username, string avatarPath) { throw new NotImplementedException(); }
         public Task<OperationResultDto> SendPasswordRecoveryCodeAsync(string email) { throw new NotImplementedException(); }
         public Task<OperationResultDto> ResetPasswordWithCodeAsync(string email, string code, string newPassword) { throw new NotImplementedException(); }
