@@ -23,14 +23,16 @@ namespace GuessMyMessServer.DataAccess
         }
     
         public int idMatch { get; set; }
-        public Nullable<int> maxPlayers { get; set; }
-        public Nullable<int> currentPlayers { get; set; }
-        public Nullable<int> totalRounds { get; set; }
+        public int maxPlayers { get; set; }
+        public int currentPlayers { get; set; }
+        public int totalRounds { get; set; }
         public Nullable<System.DateTime> startTime { get; set; }
-        public Nullable<byte> isPrivate { get; set; }
+        public byte isPrivate { get; set; }
         public string matchCode { get; set; }
         public Nullable<int> Player_idHost { get; set; }
         public Nullable<int> MatchDifficulty_idMatchDifficulty { get; set; }
+        public string matchStatus { get; set; }
+        public string matchName { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Drawing> Drawing { get; set; }

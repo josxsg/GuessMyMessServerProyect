@@ -72,14 +72,16 @@
             <PropertyRef Name="idMatch" />
           </Key>
           <Property Name="idMatch" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="maxPlayers" Type="int" />
-          <Property Name="currentPlayers" Type="int" />
-          <Property Name="totalRounds" Type="int" />
+          <Property Name="maxPlayers" Type="int" Nullable="false" />
+          <Property Name="currentPlayers" Type="int" Nullable="false" />
+          <Property Name="totalRounds" Type="int" Nullable="false" />
           <Property Name="startTime" Type="datetime" />
-          <Property Name="isPrivate" Type="tinyint" />
+          <Property Name="isPrivate" Type="tinyint" Nullable="false" />
           <Property Name="matchCode" Type="varchar" MaxLength="12" />
           <Property Name="Player_idHost" Type="int" />
           <Property Name="MatchDifficulty_idMatchDifficulty" Type="int" />
+          <Property Name="matchStatus" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="matchName" Type="nvarchar" MaxLength="100" Nullable="false" />
         </EntityType>
         <EntityType Name="MatchDifficulty">
           <Key>
@@ -156,7 +158,7 @@
           <Property Name="idWordDifficulty" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="difficulty" Type="varchar" MaxLength="45" />
         </EntityType>
-        <Association Name="FK__Drawing__Match_i__534D60F1">
+        <Association Name="FK__Drawing__Match_i__5812160E">
           <End Role="Match" Type="Self.Match" Multiplicity="0..1" />
           <End Role="Drawing" Type="Self.Drawing" Multiplicity="*" />
           <ReferentialConstraint>
@@ -180,7 +182,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Drawing__Word_id__5535A963">
+        <Association Name="FK__Drawing__Word_id__59FA5E80">
           <End Role="Word" Type="Self.Word" Multiplicity="0..1" />
           <End Role="Drawing" Type="Self.Drawing" Multiplicity="*" />
           <ReferentialConstraint>
@@ -192,7 +194,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Friendshi__Frien__5629CD9C">
+        <Association Name="FK__Friendshi__Frien__5AEE82B9">
           <End Role="FriendShipStatus" Type="Self.FriendShipStatus" Multiplicity="0..1" />
           <End Role="Friendship" Type="Self.Friendship" Multiplicity="*" />
           <ReferentialConstraint>
@@ -228,7 +230,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__KickVote__Match___59063A47">
+        <Association Name="FK__KickVote__Match___5DCAEF64">
           <End Role="Match" Type="Self.Match" Multiplicity="0..1" />
           <End Role="KickVote" Type="Self.KickVote" Multiplicity="*" />
           <ReferentialConstraint>
@@ -264,7 +266,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Match__MatchDiff__5BE2A6F2">
+        <Association Name="FK__Match__MatchDiff__60A75C0F">
           <End Role="MatchDifficulty" Type="Self.MatchDifficulty" Multiplicity="0..1" />
           <End Role="Match" Type="Self.Match" Multiplicity="*" />
           <ReferentialConstraint>
@@ -288,7 +290,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__MatchHist__Match__5DCAEF64">
+        <Association Name="FK__MatchHist__Match__628FA481">
           <End Role="Match" Type="Self.Match" Multiplicity="0..1" />
           <End Role="MatchHistory" Type="Self.MatchHistory" Multiplicity="*" />
           <ReferentialConstraint>
@@ -372,7 +374,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Word__WordDiffic__6477ECF3">
+        <Association Name="FK__Word__WordDiffic__693CA210">
           <End Role="WordDifficulty" Type="Self.WordDifficulty" Multiplicity="0..1" />
           <End Role="Word" Type="Self.Word" Multiplicity="*" />
           <ReferentialConstraint>
@@ -425,7 +427,7 @@
           <EntitySet Name="UserStatus" EntityType="Self.UserStatus" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Word" EntityType="Self.Word" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="WordDifficulty" EntityType="Self.WordDifficulty" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK__Drawing__Match_i__534D60F1" Association="Self.FK__Drawing__Match_i__534D60F1">
+          <AssociationSet Name="FK__Drawing__Match_i__5812160E" Association="Self.FK__Drawing__Match_i__5812160E">
             <End Role="Match" EntitySet="Match" />
             <End Role="Drawing" EntitySet="Drawing" />
           </AssociationSet>
@@ -433,11 +435,11 @@
             <End Role="Player" EntitySet="Player" />
             <End Role="Drawing" EntitySet="Drawing" />
           </AssociationSet>
-          <AssociationSet Name="FK__Drawing__Word_id__5535A963" Association="Self.FK__Drawing__Word_id__5535A963">
+          <AssociationSet Name="FK__Drawing__Word_id__59FA5E80" Association="Self.FK__Drawing__Word_id__59FA5E80">
             <End Role="Word" EntitySet="Word" />
             <End Role="Drawing" EntitySet="Drawing" />
           </AssociationSet>
-          <AssociationSet Name="FK__Friendshi__Frien__5629CD9C" Association="Self.FK__Friendshi__Frien__5629CD9C">
+          <AssociationSet Name="FK__Friendshi__Frien__5AEE82B9" Association="Self.FK__Friendshi__Frien__5AEE82B9">
             <End Role="FriendShipStatus" EntitySet="FriendShipStatus" />
             <End Role="Friendship" EntitySet="Friendship" />
           </AssociationSet>
@@ -449,7 +451,7 @@
             <End Role="Player" EntitySet="Player" />
             <End Role="Friendship" EntitySet="Friendship" />
           </AssociationSet>
-          <AssociationSet Name="FK__KickVote__Match___59063A47" Association="Self.FK__KickVote__Match___59063A47">
+          <AssociationSet Name="FK__KickVote__Match___5DCAEF64" Association="Self.FK__KickVote__Match___5DCAEF64">
             <End Role="Match" EntitySet="Match" />
             <End Role="KickVote" EntitySet="KickVote" />
           </AssociationSet>
@@ -461,7 +463,7 @@
             <End Role="Player" EntitySet="Player" />
             <End Role="KickVote" EntitySet="KickVote" />
           </AssociationSet>
-          <AssociationSet Name="FK__Match__MatchDiff__5BE2A6F2" Association="Self.FK__Match__MatchDiff__5BE2A6F2">
+          <AssociationSet Name="FK__Match__MatchDiff__60A75C0F" Association="Self.FK__Match__MatchDiff__60A75C0F">
             <End Role="MatchDifficulty" EntitySet="MatchDifficulty" />
             <End Role="Match" EntitySet="Match" />
           </AssociationSet>
@@ -469,7 +471,7 @@
             <End Role="Player" EntitySet="Player" />
             <End Role="Match" EntitySet="Match" />
           </AssociationSet>
-          <AssociationSet Name="FK__MatchHist__Match__5DCAEF64" Association="Self.FK__MatchHist__Match__5DCAEF64">
+          <AssociationSet Name="FK__MatchHist__Match__628FA481" Association="Self.FK__MatchHist__Match__628FA481">
             <End Role="Match" EntitySet="Match" />
             <End Role="MatchHistory" EntitySet="MatchHistory" />
           </AssociationSet>
@@ -497,7 +499,7 @@
             <End Role="TypeSocialNetwork" EntitySet="TypeSocialNetwork" />
             <End Role="SocialNetwork" EntitySet="SocialNetwork" />
           </AssociationSet>
-          <AssociationSet Name="FK__Word__WordDiffic__6477ECF3" Association="Self.FK__Word__WordDiffic__6477ECF3">
+          <AssociationSet Name="FK__Word__WordDiffic__693CA210" Association="Self.FK__Word__WordDiffic__693CA210">
             <End Role="WordDifficulty" EntitySet="WordDifficulty" />
             <End Role="Word" EntitySet="Word" />
           </AssociationSet>
@@ -583,11 +585,11 @@
             <PropertyRef Name="idMatch" />
           </Key>
           <Property Name="idMatch" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="maxPlayers" Type="Int32" />
-          <Property Name="currentPlayers" Type="Int32" />
-          <Property Name="totalRounds" Type="Int32" />
+          <Property Name="maxPlayers" Type="Int32" Nullable="false" />
+          <Property Name="currentPlayers" Type="Int32" Nullable="false" />
+          <Property Name="totalRounds" Type="Int32" Nullable="false" />
           <Property Name="startTime" Type="DateTime" Precision="3" />
-          <Property Name="isPrivate" Type="Byte" />
+          <Property Name="isPrivate" Type="Byte" Nullable="false" />
           <Property Name="matchCode" Type="String" MaxLength="12" FixedLength="false" Unicode="false" />
           <Property Name="Player_idHost" Type="Int32" />
           <Property Name="MatchDifficulty_idMatchDifficulty" Type="Int32" />
@@ -596,6 +598,8 @@
           <NavigationProperty Name="MatchDifficulty" Relationship="Self.FK__Match__MatchDiff__5165187F" FromRole="Match" ToRole="MatchDifficulty" />
           <NavigationProperty Name="Player" Relationship="Self.FK__Match__Player_id__5070F446" FromRole="Match" ToRole="Player" />
           <NavigationProperty Name="MatchHistory" Relationship="Self.FK__MatchHist__Match__5DCAEF64" FromRole="Match" ToRole="MatchHistory" />
+          <Property Name="matchStatus" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="matchName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="MatchDifficulty">
           <Key>
@@ -1128,6 +1132,8 @@
           <EntitySetMapping Name="Match">
             <EntityTypeMapping TypeName="GuessMyMessDBModel.Match">
               <MappingFragment StoreEntitySet="Match">
+                <ScalarProperty Name="matchName" ColumnName="matchName" />
+                <ScalarProperty Name="matchStatus" ColumnName="matchStatus" />
                 <ScalarProperty Name="idMatch" ColumnName="idMatch" />
                 <ScalarProperty Name="maxPlayers" ColumnName="maxPlayers" />
                 <ScalarProperty Name="currentPlayers" ColumnName="currentPlayers" />

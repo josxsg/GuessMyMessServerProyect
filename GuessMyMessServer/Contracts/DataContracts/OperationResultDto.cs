@@ -15,5 +15,8 @@ namespace GuessMyMessServer.Contracts.DataContracts
 
         [DataMember]
         public string Message { get; set; }
+
+        [DataMember]
+        public Dictionary<string, string> Data { get; set; }
     }
 }

@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BusinessLogic\AuthenticationLogic.cs" />
+    <Compile Include="BusinessLogic\MatchmakingLogic.cs" />
     <Compile Include="BusinessLogic\SocialLogic.cs" />
     <Compile Include="BusinessLogic\UserProfileLogic.cs" />
     <Compile Include="Contracts\DataContracts\AvatarDto.cs" />

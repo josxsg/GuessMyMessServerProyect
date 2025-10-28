@@ -8,19 +8,25 @@ using GuessMyMessServer.Contracts.DataContracts;
 
 namespace GuessMyMessServer.Contracts.ServiceContracts
 {
-    [ServiceContract(CallbackContract = typeof(IMatchmakingServiceCallback))] 
+    [ServiceContract(CallbackContract = typeof(IMatchmakingServiceCallback))]
     public interface IMatchmakingService
     {
-        [OperationContract] 
+        [OperationContract(IsOneWay = true)]
+        void Connect(string username);
+
+        [OperationContract(IsOneWay = true)]
+        void Disconnect(string username);
+
+        [OperationContract]
         List<MatchInfoDto> GetPublicMatches();
 
         [OperationContract]
         OperationResultDto CreateMatch(string hostUsername, LobbySettingsDto settings);
 
-        [OperationContract(IsOneWay = true)] 
+        [OperationContract(IsOneWay = true)]
         void JoinPublicMatch(string username, string matchId);
 
-        [OperationContract] 
+        [OperationContract]
         OperationResultDto JoinPrivateMatch(string username, string matchCode);
 
         [OperationContract(IsOneWay = true)]
@@ -34,12 +40,15 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
         void ReceiveMatchInvite(string fromUsername, string matchId);
 
         [OperationContract(IsOneWay = true)]
-        void MatchUpdate(MatchInfoDto matchInfo); 
+        void MatchUpdate(MatchInfoDto matchInfo);
 
         [OperationContract(IsOneWay = true)]
-        void MatchJoined(string matchId); 
+        void MatchJoined(string matchId, OperationResultDto result); 
 
         [OperationContract(IsOneWay = true)]
         void MatchmakingFailed(string reason);
+
+        [OperationContract(IsOneWay = true)]
+        void PublicMatchesListUpdated(List<MatchInfoDto> publicMatches);
     }
 }

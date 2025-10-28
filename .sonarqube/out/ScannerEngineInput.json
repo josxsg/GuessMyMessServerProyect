@@ -1,0 +1,136 @@
+{
+  "scannerProperties": [
+    {
+      "key": "sonar.scanner.app",
+      "value": "ScannerMSBuild"
+    },
+    {
+      "key": "sonar.scanner.appVersion",
+      "value": "11.0"
+    },
+    {
+      "key": "sonar.scanner.bootstrapStartTime",
+      "value": "1761609366000"
+    },
+    {
+      "key": "sonar.projectKey",
+      "value": "guessmymess-servidor"
+    },
+    {
+      "key": "sonar.working.directory",
+      "value": "C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\.sonarqube\\out\\.sonar"
+    },
+    {
+      "key": "sonar.projectBaseDir",
+      "value": "C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer"
+    },
+    {
+      "key": "sonar.pullrequest.cache.basepath",
+      "value": "C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer"
+    },
+    {
+      "key": "sonar.sources",
+      "value": "C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\.vs\\GuessMyMessServer\\v17\\DocumentLayout.backup.json,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\.vs\\GuessMyMessServer\\v17\\DocumentLayout.json,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\packages\\EntityFramework.6.5.1\\tools\\init.ps1,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\packages\\EntityFramework.6.5.1\\tools\\install.ps1,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\.vs\\GuessMyMessServer\\v17\\ResourceExplorer\\settings.json,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\packages\\MailKit.4.14.0\\lib\\net462\\MailKit.dll.config,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\packages\\MailKit.4.14.0\\lib\\net47\\MailKit.dll.config,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\packages\\MailKit.4.14.0\\lib\\net48\\MailKit.dll.config,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\packages\\MailKit.4.14.0\\lib\\net8.0\\MailKit.dll.config,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\packages\\MailKit.4.14.0\\lib\\netstandard2.0\\MailKit.dll.config,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\packages\\MailKit.4.14.0\\lib\\netstandard2.1\\MailKit.dll.config,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\packages\\MimeKit.4.14.0\\lib\\net8.0\\MimeKit.dll.config,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\packages\\MimeKit.4.14.0\\lib\\netstandard2.0\\MimeKit.dll.config,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\packages\\MimeKit.4.14.0\\lib\\netstandard2.1\\MimeKit.dll.config,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\packages\\EntityFramework.6.5.1\\tools\\net6.0\\any\\ef6.runtimeconfig.json"
+    },
+    {
+      "key": "sonar.tests",
+      "value": ""
+    },
+    {
+      "key": "sonar.modules",
+      "value": "1F1B569A-8E29-4D63-8878-3353EC728312,04F1CCCA-A07B-4212-9718-B33F6EB18743"
+    },
+    {
+      "key": "1F1B569A-8E29-4D63-8878-3353EC728312.sonar.projectKey",
+      "value": "guessmymess-servidor:1F1B569A-8E29-4D63-8878-3353EC728312"
+    },
+    {
+      "key": "1F1B569A-8E29-4D63-8878-3353EC728312.sonar.projectName",
+      "value": "GuessMyMessServer"
+    },
+    {
+      "key": "1F1B569A-8E29-4D63-8878-3353EC728312.sonar.projectBaseDir",
+      "value": "C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer"
+    },
+    {
+      "key": "1F1B569A-8E29-4D63-8878-3353EC728312.sonar.working.directory",
+      "value": "C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\.sonarqube\\out\\.sonar\\mod0"
+    },
+    {
+      "key": "1F1B569A-8E29-4D63-8878-3353EC728312.sonar.sourceEncoding",
+      "value": "utf-8"
+    },
+    {
+      "key": "1F1B569A-8E29-4D63-8878-3353EC728312.sonar.tests",
+      "value": ""
+    },
+    {
+      "key": "1F1B569A-8E29-4D63-8878-3353EC728312.sonar.sources",
+      "value": "C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\BusinessLogic\\AuthenticationLogic.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\BusinessLogic\\SocialLogic.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\BusinessLogic\\UserProfileLogic.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Contracts\\DataContracts\\AvatarDto.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Contracts\\DataContracts\\ChatMessageDto.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Contracts\\DataContracts\\DirectMessageDto.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Contracts\\DataContracts\\FriendDto.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Contracts\\DataContracts\\FriendRequestInfoDto.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Contracts\\DataContracts\\LobbySettingsDto.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Contracts\\DataContracts\\LobbyStateDto.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Contracts\\DataContracts\\MatchInfoDto.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Contracts\\DataContracts\\OperationResultDto.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Contracts\\DataContracts\\PlayerScoreDto.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Contracts\\DataContracts\\SocialNetworkDto.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Contracts\\DataContracts\\UserProfileDto.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Contracts\\ServiceContracts\\IAuthenticationService.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Contracts\\ServiceContracts\\IGameService.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Contracts\\ServiceContracts\\ILobbyService.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Contracts\\ServiceContracts\\IMatchmakingService.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Contracts\\ServiceContracts\\ISocialService.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Contracts\\ServiceContracts\\IUserProfileService.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\DataAccess\\Avatar.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\DataAccess\\DirectMessages.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\DataAccess\\Drawing.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\DataAccess\\Friendship.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\DataAccess\\FriendShipStatus.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\DataAccess\\Gender.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\DataAccess\\KickVote.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\DataAccess\\Match.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\DataAccess\\MatchDifficulty.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\DataAccess\\MatchHistory.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\DataAccess\\Player.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\DataAccess\\SocialNetwork.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\DataAccess\\TypeSocialNetwork.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\DataAccess\\UserStatus.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\DataAccess\\Word.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\DataAccess\\WordDifficulty.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\IService1.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Properties\\AssemblyInfo.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Service1.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Services\\AuthenticationService.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Services\\GameService.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Services\\LobbyService.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Services\\MatchmakingService.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Services\\SocialService.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Services\\UserProfileService.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Utilities\\Email\\IEmailService.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Utilities\\Email\\IEmailTemplate.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Utilities\\Email\\SmtpEmailService.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Utilities\\Email\\Templates\\EmailChangeVerificationEmailTemplate.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Utilities\\Email\\Templates\\PasswordChangeVerificationEmailTemplate.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Utilities\\Email\\Templates\\VerificationEmailTemplate.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Utilities\\InputValidator.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Utilities\\PasswordHasher.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\DataAccess\\GuessMyMessDB.Context.tt,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\DataAccess\\GuessMyMessDB.tt,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Resources\\Images\\Avatars\\Bear.png,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Resources\\Images\\Avatars\\Duck.png,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Resources\\Images\\Avatars\\Flamengo.png,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Resources\\Images\\Avatars\\Raccoon.png,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Resources\\Images\\Avatars\\Rhino.png,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Resources\\Images\\Avatars\\Shark.png,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Resources\\Images\\Avatars\\Toucan.png,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\Resources\\Images\\Avatars\\Zebra.png,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\DataAccess\\GuessMyMessDB.edmx,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\App.config,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\DataAccess\\GuessMyMessDB.edmx.diagram,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\packages.config,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\bin\\Debug\\GuessMyMessServer.dll.config,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer\\bin\\Debug\\MailKit.dll.config"
+    },
+    {
+      "key": "1F1B569A-8E29-4D63-8878-3353EC728312.sonar.cs.analyzer.projectOutPaths",
+      "value": "C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\.sonarqube\\out\\0"
+    },
+    {
+      "key": "1F1B569A-8E29-4D63-8878-3353EC728312.sonar.cs.roslyn.reportFilePaths",
+      "value": "C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\.sonarqube\\out\\0\\Issues.json"
+    },
+    {
+      "key": "1F1B569A-8E29-4D63-8878-3353EC728312.sonar.cs.scanner.telemetry",
+      "value": "C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\.sonarqube\\out\\0\\Telemetry.json"
+    },
+    {
+      "key": "04F1CCCA-A07B-4212-9718-B33F6EB18743.sonar.projectKey",
+      "value": "guessmymess-servidor:04F1CCCA-A07B-4212-9718-B33F6EB18743"
+    },
+    {
+      "key": "04F1CCCA-A07B-4212-9718-B33F6EB18743.sonar.projectName",
+      "value": "GuessMyMessServer.Tests"
+    },
+    {
+      "key": "04F1CCCA-A07B-4212-9718-B33F6EB18743.sonar.projectBaseDir",
+      "value": "C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer.Tests"
+    },
+    {
+      "key": "04F1CCCA-A07B-4212-9718-B33F6EB18743.sonar.working.directory",
+      "value": "C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\.sonarqube\\out\\.sonar\\mod1"
+    },
+    {
+      "key": "04F1CCCA-A07B-4212-9718-B33F6EB18743.sonar.sourceEncoding",
+      "value": "utf-8"
+    },
+    {
+      "key": "04F1CCCA-A07B-4212-9718-B33F6EB18743.sonar.sources",
+      "value": ""
+    },
+    {
+      "key": "04F1CCCA-A07B-4212-9718-B33F6EB18743.sonar.tests",
+      "value": "C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer.Tests\\obj\\GuessMyMessServer.Tests.csproj.nuget.dgspec.json,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer.Tests\\obj\\project.assets.json,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer.Tests\\bin\\Debug\\net8.0\\GuessMyMessServer.dll.config,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer.Tests\\bin\\Debug\\net8.0\\GuessMyMessServer.Tests.deps.json,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer.Tests\\bin\\Debug\\net8.0\\GuessMyMessServer.Tests.runtimeconfig.json,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer.Tests\\obj\\Debug\\net8.0\\GuessMyMessServer.Tests.sourcelink.json,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer.Tests\\AuthenticationLogicTests.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer.Tests\\MockDbSetHelpers.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer.Tests\\PasswordHasherTests.cs,C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\GuessMyMessServer.Tests\\UserProfileLogicTests.cs"
+    },
+    {
+      "key": "04F1CCCA-A07B-4212-9718-B33F6EB18743.sonar.cs.analyzer.projectOutPaths",
+      "value": "C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\.sonarqube\\out\\1"
+    },
+    {
+      "key": "04F1CCCA-A07B-4212-9718-B33F6EB18743.sonar.cs.roslyn.reportFilePaths",
+      "value": "C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\.sonarqube\\out\\1\\Issues.json"
+    },
+    {
+      "key": "04F1CCCA-A07B-4212-9718-B33F6EB18743.sonar.cs.scanner.telemetry",
+      "value": "C:\\Users\\zenbook i5\\Tecnologias_para_la_construccion_de_sw\\ServidorProyecto\\GuessMyMessServer\\.sonarqube\\out\\1\\Telemetry.json"
+    },
+    {
+      "key": "sonar.login",
+      "value": "***"
+    },
+    {
+      "key": "sonar.host.url",
+      "value": "http://localhost:9000"
+    },
+    {
+      "key": "sonar.visualstudio.enable",
+      "value": "false"
+    }
+  ]
+}

@@ -17,7 +17,7 @@ namespace GuessMyMessServer.Contracts.DataContracts
         public int MaxPlayers { get; set; } 
 
         [DataMember]
-        public int Rounds { get; set; } 
+        public int TotalRounds { get; set; } 
 
         [DataMember]
         public int DifficultyId { get; set; }

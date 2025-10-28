@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ProjectInfo xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.sonarsource.com/msbuild/integration/2015/1">
+  <ProjectName>GuessMyMessServer.Tests</ProjectName>
+  <ProjectLanguage>C#</ProjectLanguage>
+  <ProjectType>Test</ProjectType>
+  <ProjectGuid>04f1ccca-a07b-4212-9718-b33f6eb18743</ProjectGuid>
+  <FullPath>C:\Users\zenbook i5\Tecnologias_para_la_construccion_de_sw\ServidorProyecto\GuessMyMessServer\GuessMyMessServer.Tests\GuessMyMessServer.Tests.csproj</FullPath>
+  <IsExcluded>false</IsExcluded>
+  <AnalysisResultFiles>
+    <AnalysisResultFile Id="FilesToAnalyze" Location="C:\Users\zenbook i5\Tecnologias_para_la_construccion_de_sw\ServidorProyecto\GuessMyMessServer\.sonarqube\conf\1\FilesToAnalyze.txt" />
+  </AnalysisResultFiles>
+  <AnalysisSettings>
+    <Property Name="sonar.cs.roslyn.reportFilePaths">C:\Users\zenbook i5\Tecnologias_para_la_construccion_de_sw\ServidorProyecto\GuessMyMessServer\.sonarqube\out\1\Issues.json</Property>
+    <Property Name="sonar.cs.analyzer.projectOutPaths">C:\Users\zenbook i5\Tecnologias_para_la_construccion_de_sw\ServidorProyecto\GuessMyMessServer\.sonarqube\out\1</Property>
+    <Property Name="sonar.cs.scanner.telemetry">C:\Users\zenbook i5\Tecnologias_para_la_construccion_de_sw\ServidorProyecto\GuessMyMessServer\.sonarqube\out\1\Telemetry.json</Property>
+  </AnalysisSettings>
+  <Configuration>Debug</Configuration>
+  <Platform>AnyCPU</Platform>
+  <TargetFramework>net8.0</TargetFramework>
+</ProjectInfo>
