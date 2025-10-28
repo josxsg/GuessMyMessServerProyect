@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data.Entity; // <-- Asegúrate de que este 'using' esté presente
+using System.Data.Entity; 
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,16 +12,13 @@ namespace GuessMyMessServer.BusinessLogic
 {
     public class AuthenticationLogic
     {
-        // --- CAMBIO 1: Añadimos _context como un campo ---
         private readonly GuessMyMessDBEntities _context;
         private readonly IEmailService _emailService;
         private static readonly Random _random = new Random();
-
-        // --- CAMBIO 2: El constructor ahora recibe AMBAS dependencias ---
         public AuthenticationLogic(IEmailService emailService, GuessMyMessDBEntities context)
         {
             _emailService = emailService;
-            _context = context; // <-- Asignamos el contexto
+            _context = context; 
         }
 
         public async Task<OperationResultDto> LoginAsync(string emailOrUsername, string password)
@@ -33,8 +30,6 @@ namespace GuessMyMessServer.BusinessLogic
 
             const int StatusOnline = 2;
 
-            // --- CAMBIO 3: Eliminamos el 'using (var context = ...)' ---
-            // Ahora usamos el campo _context que recibimos en el constructor
             var player = await _context.Player.FirstOrDefaultAsync(p =>
                 p.username == emailOrUsername || p.email == emailOrUsername);
 
@@ -48,14 +43,13 @@ namespace GuessMyMessServer.BusinessLogic
                 throw new Exception("La cuenta no ha sido verificada. Por favor, revisa tu correo.");
             }
 
-            // (Asumiendo que tu clase PasswordHasher tiene métodos estáticos)
             if (!PasswordHasher.VerifyPassword(password, player.password))
             {
                 throw new Exception("Credenciales incorrectas.");
             }
 
             player.UserStatus_idUserStatus = StatusOnline;
-            await _context.SaveChangesAsync(); // <-- Usamos _context
+            await _context.SaveChangesAsync(); 
 
             return new OperationResultDto { Success = true, Message = player.username };
         }
@@ -88,12 +82,11 @@ namespace GuessMyMessServer.BusinessLogic
             const int StatusOffline = 1;
             string verificationCode = _random.Next(100000, 999999).ToString("D6");
 
-            // --- CAMBIO 3: Eliminamos el 'using (var context = ...)' ---
-            if (await _context.Player.AnyAsync(p => p.username == userProfile.Username)) // <-- Usamos _context
+            if (await _context.Player.AnyAsync(p => p.username == userProfile.Username)) 
             {
                 throw new Exception("El nombre de usuario ya está en uso.");
             }
-            if (await _context.Player.AnyAsync(p => p.email == userProfile.Email)) // <-- Usamos _context
+            if (await _context.Player.AnyAsync(p => p.email == userProfile.Email)) 
             {
                 throw new Exception("El correo electrónico ya está registrado.");
             }
@@ -113,7 +106,7 @@ namespace GuessMyMessServer.BusinessLogic
             {
                 username = userProfile.Username,
                 email = userProfile.Email,
-                password = PasswordHasher.HashPassword(password), // (Asumiendo HashPassword)
+                password = PasswordHasher.HashPassword(password), 
                 name = userProfile.FirstName,
                 lastName = userProfile.LastName,
                 Gender_idGender = userProfile.GenderId,
@@ -124,10 +117,10 @@ namespace GuessMyMessServer.BusinessLogic
                 code_expiry_date = DateTime.UtcNow.AddMinutes(15)
             };
 
-            _context.Player.Add(newPlayer); // <-- Usamos _context
+            _context.Player.Add(newPlayer); 
             try
             {
-                await _context.SaveChangesAsync(); // <-- Usamos _context
+                await _context.SaveChangesAsync(); 
             }
             catch (DbUpdateException dbEx)
             {
@@ -145,8 +138,7 @@ namespace GuessMyMessServer.BusinessLogic
                 throw new Exception("El correo y el código son obligatorios.");
             }
 
-            // --- CAMBIO 3: Eliminamos el 'using (var context = ...)' ---
-            var playerToVerify = await _context.Player.FirstOrDefaultAsync(p => p.email == email); // <-- Usamos _context
+            var playerToVerify = await _context.Player.FirstOrDefaultAsync(p => p.email == email); 
 
             if (playerToVerify == null)
             {
@@ -166,9 +158,9 @@ namespace GuessMyMessServer.BusinessLogic
             playerToVerify.is_verified = (byte)1;
             playerToVerify.verification_code = null;
             playerToVerify.code_expiry_date = null;
-            playerToVerify.UserStatus_idUserStatus = 2; // (Asumo 2 = Online)
+            playerToVerify.UserStatus_idUserStatus = 2; 
 
-            await _context.SaveChangesAsync(); // <-- Usamos _context
+            await _context.SaveChangesAsync(); 
 
             return new OperationResultDto { Success = true, Message = "Cuenta verificada con éxito. ¡Bienvenido!" };
         }
@@ -177,12 +169,11 @@ namespace GuessMyMessServer.BusinessLogic
         {
             const int StatusOffline = 1;
 
-            // --- CAMBIO 3: Eliminamos el 'using (var context = ...)' ---
-            var player = _context.Player.FirstOrDefault(p => p.username == username); // <-- Usamos _context
+            var player = _context.Player.FirstOrDefault(p => p.username == username);
             if (player != null)
             {
                 player.UserStatus_idUserStatus = StatusOffline;
-                _context.SaveChanges(); // <-- Usamos _context
+                _context.SaveChanges(); 
             }
         }
     }

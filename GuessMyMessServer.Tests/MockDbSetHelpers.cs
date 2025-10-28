@@ -25,9 +25,6 @@ namespace GuessMyMessServer.Tests
             mockSet.As<IQueryable<T>>().Setup(m => m.Expression).Returns(data.Expression);
             mockSet.As<IQueryable<T>>().Setup(m => m.ElementType).Returns(data.ElementType);
             mockSet.As<IQueryable<T>>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
-
-            // --- LÍNEA CORREGIDA ---
-            // Simular Add simplemente devolviendo la entidad añadida.
             mockSet.Setup(m => m.AsNoTracking()).Returns(mockSet.Object);
             mockSet.Setup(m => m.Include(It.IsAny<string>())).Returns(mockSet.Object);
             return mockSet;
@@ -72,7 +69,6 @@ namespace GuessMyMessServer.Tests
         {
             if (expression is MethodCallExpression m)
             {
-                // Comprobar si es AnyAsync(source, predicate)
                 if (m.Method.Name == "AnyAsync" && m.Arguments.Count == 2)
                 {
                     var source = m.Arguments[0];
@@ -81,7 +77,6 @@ namespace GuessMyMessServer.Tests
                         typeof(Queryable), "Any", m.Method.GetGenericArguments(), source, predicate);
                     return Task.FromResult(_inner.Execute<TResult>(anyCall));
                 }
-                // Comprobar si es FirstOrDefaultAsync(source, predicate)
                 if (m.Method.Name == "FirstOrDefaultAsync" && m.Arguments.Count == 2)
                 {
                     var source = m.Arguments[0];
@@ -90,20 +85,17 @@ namespace GuessMyMessServer.Tests
                        typeof(Queryable), "FirstOrDefault", m.Method.GetGenericArguments(), source, predicate);
                     return Task.FromResult(_inner.Execute<TResult>(firstOrDefaultCall));
                 }
-                // Manejo para SaveChangesAsync (sin CancellationToken)
-                if (m.Method.Name == "SaveChangesAsync" && m.Arguments.Count == 0) // Verifica 0 argumentos
+                if (m.Method.Name == "SaveChangesAsync" && m.Arguments.Count == 0) 
                 {
-                    object result = 1; // Simular 1 fila afectada si no hay Setup
-                    return Task.FromResult((TResult)result); // Devuelve Task<int>
+                    object result = 1;
+                    return Task.FromResult((TResult)result); 
                 }
-                // Manejo para SaveChangesAsync (CON CancellationToken) - Opcional si no lo usas
                 if (m.Method.Name == "SaveChangesAsync" && m.Arguments.Count == 1)
                 {
                     object result = 1;
                     return Task.FromResult((TResult)result);
                 }
             }
-            // Comportamiento por defecto
             return Task.FromResult(Execute<TResult>(expression));
         }
     }

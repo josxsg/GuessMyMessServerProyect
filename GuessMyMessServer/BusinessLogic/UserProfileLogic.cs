@@ -14,23 +14,19 @@ namespace GuessMyMessServer.BusinessLogic
 {
     public class UserProfileLogic
     {
-        // --- CAMBIO 1: Añadir _context como campo ---
         private readonly IEmailService _emailService;
         private readonly GuessMyMessDBEntities _context;
         private static readonly Random _random = new Random();
-
-        // --- CAMBIO 2: Modificar constructor para inyectar ambas dependencias ---
         public UserProfileLogic(IEmailService emailService, GuessMyMessDBEntities context)
         {
             _emailService = emailService;
-            _context = context; // Asignar el contexto
+            _context = context; 
         }
 
-        private string GenerateCode() => _random.Next(100000, 999999).ToString("D6"); // Corregido " D6" a "D6"
+        private string GenerateCode() => _random.Next(100000, 999999).ToString("D6");
 
         public async Task<UserProfileDto> GetUserProfileAsync(string username)
         {
-            // --- CAMBIO 3: Eliminar 'using' y usar _context ---
             var player = await _context.Player
                 .AsNoTracking()
                 .Include(p => p.Gender)
@@ -60,7 +56,6 @@ namespace GuessMyMessServer.BusinessLogic
                 throw new ArgumentNullException(nameof(profileData), "Datos de perfil inválidos.");
             }
 
-            // --- CAMBIO 3: Eliminar 'using' y usar _context ---
             var playerToUpdate = await _context.Player.FirstOrDefaultAsync(p => p.username == username);
             if (playerToUpdate == null)
             {
@@ -78,7 +73,6 @@ namespace GuessMyMessServer.BusinessLogic
 
         public async Task<List<AvatarDto>> GetAvailableAvatarsAsync()
         {
-            // --- CAMBIO 3: Eliminar 'using' y usar _context ---
             var avatarsFromDb = await _context.Avatar.AsNoTracking().ToListAsync();
             var avatarsDtoList = new List<AvatarDto>();
             string basePath = AppDomain.CurrentDomain.BaseDirectory;
@@ -126,7 +120,6 @@ namespace GuessMyMessServer.BusinessLogic
 
         public async Task<OperationResultDto> RequestChangePasswordAsync(string username)
         {
-            // --- CAMBIO 3: Eliminar 'using' y usar _context ---
             var player = await _context.Player.FirstOrDefaultAsync(p => p.username == username);
             if (player == null)
             {
@@ -151,7 +144,6 @@ namespace GuessMyMessServer.BusinessLogic
                 throw new Exception("Formato de nuevo correo electrónico inválido.");
             }
 
-            // --- CAMBIO 3: Eliminar 'using' y usar _context ---
             var player = await _context.Player.FirstOrDefaultAsync(p => p.username == username);
             if (player == null)
             {
@@ -181,7 +173,6 @@ namespace GuessMyMessServer.BusinessLogic
                 throw new Exception("La nueva contraseña no cumple con los requisitos de seguridad.");
             }
 
-            // --- CAMBIO 3: Eliminar 'using' y usar _context ---
             var player = await _context.Player.FirstOrDefaultAsync(p => p.username == username);
             if (player == null)
             {
@@ -202,7 +193,6 @@ namespace GuessMyMessServer.BusinessLogic
 
         public async Task<OperationResultDto> ConfirmChangeEmailAsync(string username, string verificationCode)
         {
-            // --- CAMBIO 3: Eliminar 'using' y usar _context ---
             var player = await _context.Player.FirstOrDefaultAsync(p => p.username == username);
             if (player == null)
             {
