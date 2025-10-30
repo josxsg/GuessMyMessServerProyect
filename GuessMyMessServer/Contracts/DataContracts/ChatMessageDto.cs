@@ -14,14 +14,9 @@ namespace GuessMyMessServer.Contracts.DataContracts
         public string SenderUsername { get; set; }
 
         [DataMember]
-        public string RecipientUsername { get; set; }
+        public string MessageContent { get; set; } 
 
         [DataMember]
-        public string Content { get; set; }
-
-        [DataMember]
-        public DateTime Timestamp { get; set; }
-
-
+        public DateTime Timestamp { get; set; } 
     }
 }

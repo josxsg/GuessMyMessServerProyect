@@ -27,5 +27,8 @@ namespace GuessMyMessServer.Contracts.DataContracts
 
         [DataMember]
         public string DifficultyName { get; set; }
+
+        [DataMember]
+        public bool IsPrivate { get; set; }
     }
 }
