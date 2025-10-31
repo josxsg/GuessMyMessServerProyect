@@ -13,12 +13,12 @@ namespace GuessMyMessServer.Services
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Reentrant)]
     public class MatchmakingService : IMatchmakingService
     {
-        private IMatchmakingServiceCallback callback;
-        private string connectedUsername;
+        private IMatchmakingServiceCallback _callback;
+        private string _connectedUsername;
 
         public MatchmakingService()
         {
-            this.callback = OperationContext.Current.GetCallbackChannel<IMatchmakingServiceCallback>();
+            this._callback = OperationContext.Current.GetCallbackChannel<IMatchmakingServiceCallback>();
             OperationContext.Current.Channel.Closing += Channel_Closing;
             OperationContext.Current.Channel.Faulted += Channel_Faulted;
         }
@@ -35,17 +35,17 @@ namespace GuessMyMessServer.Services
 
         private void DisconnectUser()
         {
-            if (!string.IsNullOrEmpty(connectedUsername))
+            if (!string.IsNullOrEmpty(_connectedUsername))
             {
-                MatchmakingLogic.DisconnectUser(connectedUsername);
-                connectedUsername = null;
+                MatchmakingLogic.DisconnectUser(_connectedUsername);
+                _connectedUsername = null;
             }
         }
 
         public void Connect(string username)
         {
-            this.connectedUsername = username;
-            MatchmakingLogic.ConnectUser(username, callback);
+            this._connectedUsername = username;
+            MatchmakingLogic.ConnectUser(username, _callback);
         }
 
         public void Disconnect(string username)
@@ -60,7 +60,7 @@ namespace GuessMyMessServer.Services
 
         public OperationResultDto CreateMatch(string hostUsername, LobbySettingsDto settings)
         {
-            if (hostUsername != connectedUsername)
+            if (hostUsername != _connectedUsername)
             {
                 return new OperationResultDto { Success = false, Message = "Auth mismatch." };
             }
@@ -69,9 +69,9 @@ namespace GuessMyMessServer.Services
 
         public void JoinPublicMatch(string username, string matchId)
         {
-            if (username != connectedUsername)
+            if (username != _connectedUsername)
             {
-                callback.MatchmakingFailed("Auth mismatch.");
+                _callback.MatchmakingFailed("Auth mismatch.");
                 return;
             }
             MatchmakingLogic.JoinPublicMatch(username, matchId);
@@ -79,7 +79,7 @@ namespace GuessMyMessServer.Services
 
         public OperationResultDto JoinPrivateMatch(string username, string matchCode)
         {
-            if (username != connectedUsername)
+            if (username != _connectedUsername)
             {
                 return new OperationResultDto { Success = false, Message = "Auth mismatch." };
             }
@@ -88,9 +88,9 @@ namespace GuessMyMessServer.Services
 
         public void InviteToMatch(string inviterUsername, string invitedUsername, string matchId)
         {
-            if (inviterUsername != connectedUsername)
+            if (inviterUsername != _connectedUsername)
             {
-                callback.MatchmakingFailed("Auth mismatch.");
+                _callback.MatchmakingFailed("Auth mismatch.");
                 return;
             }
             MatchmakingLogic.InviteToMatch(inviterUsername, invitedUsername, matchId);

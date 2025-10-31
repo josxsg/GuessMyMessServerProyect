@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using GuessMyMessServer.BusinessLogic;
 using GuessMyMessServer.Contracts.DataContracts;
 using GuessMyMessServer.Contracts.ServiceContracts;
-using GuessMyMessServer.DataAccess; // <-- CAMBIO 1: Añadimos 'using' de DataAccess
+using GuessMyMessServer.DataAccess; 
 using GuessMyMessServer.Utilities.Email;
 
 namespace GuessMyMessServer.Services
@@ -16,21 +16,17 @@ namespace GuessMyMessServer.Services
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
     public class AuthenticationService : IAuthenticationService
     {
-        // --- CAMBIO 2: Eliminamos el campo _authenticationLogic y el constructor ---
 
         public async Task<OperationResultDto> LoginAsync(string emailOrUsername, string password)
         {
             try
             {
-                // --- CAMBIO 3: Creamos las dependencias AQUÍ ---
                 using (var context = new GuessMyMessDBEntities())
                 {
                     var emailService = new SmtpEmailService();
 
-                    // "Inyectamos" las dependencias en la lógica
                     var logic = new AuthenticationLogic(emailService, context);
 
-                    // Llamamos a la lógica local
                     return await logic.LoginAsync(emailOrUsername, password);
                 }
             }
@@ -44,7 +40,6 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                // --- CAMBIO 3: Creamos las dependencias AQUÍ ---
                 using (var context = new GuessMyMessDBEntities())
                 {
                     var emailService = new SmtpEmailService();
@@ -62,7 +57,6 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                // --- CAMBIO 3: Creamos las dependencias AQUÍ ---
                 using (var context = new GuessMyMessDBEntities())
                 {
                     var emailService = new SmtpEmailService();
@@ -80,7 +74,6 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                // --- CAMBIO 3: Creamos las dependencias AQUÍ ---
                 using (var context = new GuessMyMessDBEntities())
                 {
                     var emailService = new SmtpEmailService();
@@ -94,7 +87,6 @@ namespace GuessMyMessServer.Services
             }
         }
 
-        // --- MÉTODOS NO IMPLEMENTADOS ---
         public Task<OperationResultDto> LoginAsGuestAsync(string username, string avatarPath) { throw new NotImplementedException(); }
         public Task<OperationResultDto> SendPasswordRecoveryCodeAsync(string email) { throw new NotImplementedException(); }
         public Task<OperationResultDto> ResetPasswordWithCodeAsync(string email, string code, string newPassword) { throw new NotImplementedException(); }
