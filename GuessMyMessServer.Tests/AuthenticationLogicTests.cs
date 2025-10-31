@@ -30,7 +30,7 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task LoginAsync_ShouldThrowException_WhenUserDoesNotExist()
+        public async Task LoginAsyncShouldThrowExceptionWhenUserDoesNotExist()
         {
             var playersData = new List<Player>().AsQueryable();
             var mockDbSet = new Mock<DbSet<Player>>()
@@ -44,7 +44,7 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task LoginAsync_ShouldThrowException_WhenPasswordIsIncorrect()
+        public async Task LoginAsyncShouldThrowExceptionWhenPasswordIsIncorrect()
         {
             string username = "usuarioExiste";
             string correctPassword = "passCorrecta";
@@ -70,9 +70,9 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task LoginAsync_ShouldThrowException_WhenUserIsNotVerified()
+        public async Task LoginAsyncShouldThrowExceptionWhenUserIsNotVerified()
         {
-            string username = "usuario_no_verificado";
+            string username = "usuarioNoVerificado";
             string correctPassword = "passCorrecta";
             string correctPasswordHash = GuessMyMessServer.Utilities.PasswordHasher.HashPassword(correctPassword);
             var playersData = new List<Player> {
@@ -94,9 +94,9 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task LoginAsync_ShouldReturnSuccess_WhenCredentialsAreCorrect()
+        public async Task LoginAsyncShouldReturnSuccessWhenCredentialsAreCorrect()
         {
-            string username = "usuario_valido";
+            string username = "usuarioValido";
             string password = "passCorrecta";
             string correctPasswordHash = GuessMyMessServer.Utilities.PasswordHasher.HashPassword(password);
             var playerEntity = new Player
@@ -123,9 +123,9 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task RegisterPlayerAsync_ShouldThrowException_WhenUsernameExists()
+        public async Task RegisterPlayerAsyncShouldThrowExceptionWhenUsernameExists()
         {
-            string existingUsername = "usuario_existente";
+            string existingUsername = "usuarioExistente";
             var newUserProfile = new UserProfileDto
             {
                 Username = existingUsername,
@@ -151,12 +151,12 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task RegisterPlayerAsync_ShouldThrowException_WhenEmailExists()
+        public async Task RegisterPlayerAsyncShouldThrowExceptionWhenEmailExists()
         {
             string existingEmail = "existente@email.com";
             var newUserProfile = new UserProfileDto
             {
-                Username = "nuevo_usuario", 
+                Username = "nuevoUsuario",
                 Email = existingEmail,      
                 FirstName = "Nuevo",
                 LastName = "Usuario",
@@ -166,7 +166,7 @@ namespace GuessMyMessServer.Tests
             string newUserPassword = "PasswordSegura123!";
             var playersData = new List<Player> {
                 new Player {
-                    username = "usuario_existente", 
+                    username = "usuarioExistente",
                     email = existingEmail           
                 }
             }.AsQueryable();
@@ -182,11 +182,11 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task RegisterPlayerAsync_ShouldReturnSuccess_WhenDataIsValid()
+        public async Task RegisterPlayerAsyncShouldReturnSuccessWhenDataIsValid()
         {
             var newUserProfile = new UserProfileDto
             {
-                Username = "nuevo_usuario_valido",
+                Username = "nuevoUsuarioValido",
                 Email = "valido@email.com",
                 FirstName = "Valido",
                 LastName = "Usuario",
@@ -235,11 +235,11 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task RegisterPlayerAsync_ShouldThrowException_WhenEmailServiceFails()
+        public async Task RegisterPlayerAsyncShouldThrowExceptionWhenEmailServiceFails()
         {
             var newUserProfile = new UserProfileDto
             {
-                Username = "usuario_email_falla",
+                Username = "usuarioEmailFalla",
                 Email = "emailfalla@test.com",
                 FirstName = "Email",
                 LastName = "Falla",
@@ -266,11 +266,11 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task RegisterPlayerAsync_ShouldThrowException_WhenDatabaseSaveFails()
+        public async Task RegisterPlayerAsyncShouldThrowExceptionWhenDatabaseSaveFails()
         {
             var newUserProfile = new UserProfileDto
             {
-                Username = "usuario_db_falla",
+                Username = "usuarioDbFalla",
                 Email = "dbfalla@test.com",
                 FirstName = "DB",
                 LastName = "Falla",
@@ -303,7 +303,7 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task VerifyAccountAsync_ShouldThrowException_WhenEmailNotFound()
+        public async Task VerifyAccountAsyncShouldThrowExceptionWhenEmailNotFound()
         {
             string nonExistentEmail = "noexiste@test.com";
             string anyCode = "123456"; 
@@ -319,13 +319,13 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task VerifyAccountAsync_ShouldThrowException_WhenAccountIsAlreadyVerified()
+        public async Task VerifyAccountAsyncShouldThrowExceptionWhenAccountIsAlreadyVerified()
         {
             string existingVerifiedEmail = "verificado@test.com";
             string anyCode = "123456"; 
             var playersData = new List<Player> {
                 new Player {
-                    username = "usuario_verificado",
+                    username = "usuarioVerificado",
                     email = existingVerifiedEmail,
                     is_verified = 1 
                 }
@@ -342,14 +342,14 @@ namespace GuessMyMessServer.Tests
         }
      
         [Fact]
-        public async Task VerifyAccountAsync_ShouldThrowException_WhenCodeIsInvalid()
+        public async Task VerifyAccountAsyncShouldThrowExceptionWhenCodeIsInvalid()
         {
             string existingEmail = "porverificar@test.com";
             string correctCode = "123456"; 
             string incorrectCode = "654321"; 
             var playersData = new List<Player> {
                 new Player {
-                    username = "usuario_por_verificar",
+                    username = "usuarioPorVerificar",
                     email = existingEmail,
                     is_verified = 0, 
                     verification_code = correctCode, 
@@ -368,13 +368,13 @@ namespace GuessMyMessServer.Tests
         }
        
         [Fact]
-        public async Task VerifyAccountAsync_ShouldThrowException_WhenCodeIsExpired()
+        public async Task VerifyAccountAsyncShouldThrowExceptionWhenCodeIsExpired()
         {
             string existingEmail = "codigoexpirado@test.com";
             string correctCode = "789012"; 
             var playersData = new List<Player> {
                 new Player {
-                    username = "usuario_expirado",
+                    username = "usuarioExpirado",
                     email = existingEmail,
                     is_verified = 0, 
                     verification_code = correctCode, 
@@ -393,13 +393,13 @@ namespace GuessMyMessServer.Tests
         }
        
         [Fact]
-        public async Task VerifyAccountAsync_ShouldReturnSuccess_WhenCodeIsValidAndNotExpired()
+        public async Task VerifyAccountAsyncShouldReturnSuccessWhenCodeIsValidAndNotExpired()
         {
             string existingEmail = "verificacionexitosa@test.com";
             string correctCode = "112233";
             var playerEntity = new Player
             {
-                username = "usuario_a_verificar",
+                username = "usuarioAVerificar",
                 email = existingEmail,
                 is_verified = 0, 
                 verification_code = correctCode,
@@ -426,9 +426,9 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public void LogOut_ShouldSetUserStatusToOffline_WhenUserExists()
+        public void LogOutShouldSetUserStatusToOfflineWhenUserExists()
         {
-            string existingUsername = "usuario_online";
+            string existingUsername = "usuarioOnline";
             const int StatusOnline = 2;
             const int StatusOffline = 1;
             var playerEntity = new Player
@@ -449,9 +449,9 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public void LogOut_ShouldDoNothing_WhenUserDoesNotExist()
+        public void LogOutShouldDoNothingWhenUserDoesNotExist()
         {
-            string nonExistentUsername = "usuario_no_existe";
+            string nonExistentUsername = "usuarioNoExiste";
             var playersData = new List<Player>().AsQueryable();
             var mockDbSet = new Mock<DbSet<Player>>().SetupData(playersData);
             _mockContext.Setup(c => c.Player).Returns(mockDbSet.Object);

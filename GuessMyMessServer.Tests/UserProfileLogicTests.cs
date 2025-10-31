@@ -32,9 +32,9 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task GetUserProfileAsync_ShouldThrowException_WhenUserNotFound()
+        public async Task GetUserProfileAsyncShouldThrowExceptionWhenUserNotFound()
         {
-            string nonExistentUsername = "usuario_no_existe";
+            string nonExistentUsername = "usuarioNoExiste";
             var playersData = new List<Player>().AsQueryable(); 
             var mockDbSet = new Mock<DbSet<Player>>().SetupData(playersData);
             _mockContext.Setup(c => c.Player).Returns(mockDbSet.Object);
@@ -46,9 +46,9 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task GetUserProfileAsync_ShouldReturnProfile_WhenUserFound()
+        public async Task GetUserProfileAsyncShouldReturnProfileWhenUserFound()
         {
-            string existingUsername = "usuario_existe";
+            string existingUsername = "usuarioExiste";
             var playerEntity = new Player
             {
                 username = existingUsername,
@@ -79,9 +79,9 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task UpdateProfileAsync_ShouldThrowException_WhenUserNotFound()
+        public async Task UpdateProfileAsyncShouldThrowExceptionWhenUserNotFound()
         {
-            string nonExistentUsername = "usuario_no_existe";
+            string nonExistentUsername = "usuarioNoExiste";
             var profileData = new UserProfileDto { };
             var playersData = new List<Player>().AsQueryable(); 
             var mockDbSet = new Mock<DbSet<Player>>().SetupData(playersData);
@@ -94,9 +94,9 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task UpdateProfileAsync_ShouldUpdateProfileAndReturnSuccess_WhenUserFound()
+        public async Task UpdateProfileAsyncShouldUpdateProfileAndReturnSuccessWhenUserFound()
         {
-            string existingUsername = "usuario_a_actualizar";
+            string existingUsername = "usuarioAActualizar";
             var playerEntity = new Player
             {
                 username = existingUsername,
@@ -133,9 +133,9 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task RequestChangePasswordAsync_ShouldThrowException_WhenUserNotFound()
+        public async Task RequestChangePasswordAsyncShouldThrowExceptionWhenUserNotFound()
         {
-            string nonExistentUsername = "no_existe";
+            string nonExistentUsername = "noExiste";
             var playersData = new List<Player>().AsQueryable();
             var mockDbSet = new Mock<DbSet<Player>>().SetupData(playersData);
             _mockContext.Setup(c => c.Player).Returns(mockDbSet.Object);
@@ -145,9 +145,9 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task RequestChangePasswordAsync_ShouldSetTempCodeAndSendEmail_WhenUserFound()
+        public async Task RequestChangePasswordAsyncShouldSetTempCodeAndSendEmailWhenUserFound()
         {
-            string existingUsername = "user_pass_change";
+            string existingUsername = "userPassChange";
             string userEmail = "passchange@test.com";
             var playerEntity = new Player { username = existingUsername, email = userEmail, temp_code = null, temp_code_expiry = null };
             var playersData = new List<Player> { playerEntity }.AsQueryable();
@@ -172,9 +172,9 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task RequestChangeEmailAsync_ShouldThrowException_WhenUserNotFound()
+        public async Task RequestChangeEmailAsyncShouldThrowExceptionWhenUserNotFound()
         {
-            string nonExistentUsername = "no_existe";
+            string nonExistentUsername = "noExiste";
             string newEmail = "nuevo@valido.com";
             var playersData = new List<Player>().AsQueryable();
             var mockDbSet = new Mock<DbSet<Player>>().SetupData(playersData);
@@ -185,11 +185,11 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task RequestChangeEmailAsync_ShouldThrowException_WhenNewEmailExists()
+        public async Task RequestChangeEmailAsyncShouldThrowExceptionWhenNewEmailExists()
         {
-            string existingUsername = "user_email_change";
+            string existingUsername = "userEmailChange";
             string currentEmail = "actual@test.com";
-            string existingNewEmail = "nuevo_ya_existe@test.com"; 
+            string existingNewEmail = "nuevoYaExiste@test.com";
             var playerRequesting = new Player { username = existingUsername, email = currentEmail };
             var playerWithNewEmail = new Player { username = "otro_user", email = existingNewEmail };
             var playersData = new List<Player> { playerRequesting, playerWithNewEmail }.AsQueryable();
@@ -202,11 +202,11 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task RequestChangeEmailAsync_ShouldSetPendingEmailAndSendVerification_WhenValid()
+        public async Task RequestChangeEmailAsyncShouldSetPendingEmailAndSendVerificationWhenValid()
         {
-            string existingUsername = "user_email_change_valid";
-            string currentEmail = "actual_valido@test.com";
-            string newValidEmail = "nuevo_valido@test.com";
+            string existingUsername = "userEmailChangeValid";
+            string currentEmail = "actualValido@test.com";
+            string newValidEmail = "nuevoValido@test.com";
             var playerEntity = new Player { username = existingUsername, email = currentEmail, temp_code = null, temp_code_expiry = null, new_email_pending = null };
             var playersData = new List<Player> { playerEntity }.AsQueryable(); 
 
@@ -231,9 +231,9 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task ConfirmChangePasswordAsync_ShouldThrowException_WhenUserNotFound()
+        public async Task ConfirmChangePasswordAsyncShouldThrowExceptionWhenUserNotFound()
         {
-            string nonExistentUsername = "no_existe";
+            string nonExistentUsername = "noExiste";
             string newPassword = "NewSecurePassword123!";
             string code = "123456";
             var playersData = new List<Player>().AsQueryable();
@@ -246,9 +246,9 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task ConfirmChangePasswordAsync_ShouldThrowException_WhenCodeIsInvalid()
+        public async Task ConfirmChangePasswordAsyncShouldThrowExceptionWhenCodeIsInvalid()
         {
-            string existingUsername = "user_confirm_pass";
+            string existingUsername = "userConfirmPass";
             string correctCode = "123456";
             string incorrectCode = "654321";
             string newPassword = "NewSecurePassword123!";
@@ -268,9 +268,9 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task ConfirmChangePasswordAsync_ShouldThrowException_WhenCodeIsExpired()
+        public async Task ConfirmChangePasswordAsyncShouldThrowExceptionWhenCodeIsExpired()
         {
-            string existingUsername = "user_confirm_pass_exp";
+            string existingUsername = "userConfirmPassExp";
             string correctCode = "123456";
             string newPassword = "NewSecurePassword123!";
             var playerEntity = new Player
@@ -289,9 +289,9 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task ConfirmChangePasswordAsync_ShouldUpdatePasswordAndReturnSuccess_WhenValid()
+        public async Task ConfirmChangePasswordAsyncShouldUpdatePasswordAndReturnSuccessWhenValid()
         {
-            string existingUsername = "user_confirm_pass_valid";
+            string existingUsername = "userConfirmPassValid";
             string oldPasswordHash = PasswordHasher.HashPassword("OldPassword123!");
             string newPassword = "NewSecurePassword123!";
             string correctCode = "123456";
@@ -319,9 +319,9 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task ConfirmChangeEmailAsync_ShouldThrowException_WhenUserNotFound()
+        public async Task ConfirmChangeEmailAsyncShouldThrowExceptionWhenUserNotFound()
         {
-            string nonExistentUsername = "no_existe";
+            string nonExistentUsername = "noExiste";
             string code = "123456";
             var playersData = new List<Player>().AsQueryable();
             var mockDbSet = new Mock<DbSet<Player>>().SetupData(playersData);
@@ -334,9 +334,9 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task ConfirmChangeEmailAsync_ShouldThrowException_WhenNoPendingEmail()
+        public async Task ConfirmChangeEmailAsyncShouldThrowExceptionWhenNoPendingEmail()
         {
-            string existingUsername = "user_no_pending";
+            string existingUsername = "userNoPending";
             string code = "123456";
             var playerEntity = new Player { username = existingUsername, new_email_pending = null }; 
             var playersData = new List<Player> { playerEntity }.AsQueryable();
@@ -350,9 +350,9 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task ConfirmChangeEmailAsync_ShouldThrowException_WhenCodeIsInvalid()
+        public async Task ConfirmChangeEmailAsyncShouldThrowExceptionWhenCodeIsInvalid()
         {
-            string existingUsername = "user_confirm_email_invalid";
+            string existingUsername = "userConfirmEmailInvalid";
             string correctCode = "123456";
             string incorrectCode = "654321";
             var playerEntity = new Player
@@ -373,9 +373,9 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task ConfirmChangeEmailAsync_ShouldThrowException_WhenCodeIsExpired()
+        public async Task ConfirmChangeEmailAsyncShouldThrowExceptionWhenCodeIsExpired()
         {
-            string existingUsername = "user_confirm_email_expired";
+            string existingUsername = "userConfirmEmailExpired";
             string correctCode = "123456";
             var playerEntity = new Player
             {
@@ -395,11 +395,11 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task ConfirmChangeEmailAsync_ShouldThrowAndCleanup_WhenNewEmailIsTakenByAnotherUser()
+        public async Task ConfirmChangeEmailAsyncShouldThrowAndCleanupWhenNewEmailIsTakenByAnotherUser()
         {
-            string user1Username = "user1_confirm_email";
-            string user2Username = "user2_has_email";
-            string pendingEmail = "nuevo_tomado@test.com";
+            string user1Username = "user1ConfirmEmail";
+            string user2Username = "user2HasEmail";
+            string pendingEmail = "nuevoTomado@test.com";
             string correctCode = "123456";
 
             var user1Entity = new Player
@@ -434,11 +434,11 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task ConfirmChangeEmailAsync_ShouldUpdateEmailAndReturnSuccess_WhenValid()
+        public async Task ConfirmChangeEmailAsyncShouldUpdateEmailAndReturnSuccessWhenValid()
         {
-            string existingUsername = "user_confirm_email_valid";
-            string oldEmail = "viejo_valido@test.com";
-            string newEmail = "nuevo_confirmado@test.com";
+            string existingUsername = "userConfirmEmailValid";
+            string oldEmail = "viejoValido@test.com";
+            string newEmail = "nuevoConfirmado@test.com";
             string correctCode = "123456";
             var playerEntity = new Player
             {
@@ -466,7 +466,7 @@ namespace GuessMyMessServer.Tests
         }
 
         [Fact]
-        public async Task GetAvailableAvatarsAsync_ShouldReturnAvatarsFromDb()
+        public async Task GetAvailableAvatarsAsyncShouldReturnAvatarsFromDb()
         {
             var avatarsData = new List<Avatar> {
                 new Avatar { idAvatar = 1, avatarName = "Avatar1", avatarUrl = "path/to/avatar1.png" },

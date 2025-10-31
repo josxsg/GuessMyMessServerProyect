@@ -7,14 +7,13 @@ using GuessMyMessServer.BusinessLogic;
 using GuessMyMessServer.Contracts.DataContracts;
 using GuessMyMessServer.Contracts.ServiceContracts;
 using GuessMyMessServer.Utilities.Email;
-using GuessMyMessServer.DataAccess; // <-- 1. Añadir using de DataAccess
+using GuessMyMessServer.DataAccess; 
 
 namespace GuessMyMessServer.Services
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
     public class UserProfileService : IUserProfileService
     {
-        // --- CAMBIO 2: Constructor vacío y sin campos ---
         public UserProfileService()
         {
         }
@@ -23,7 +22,6 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                // --- CAMBIO 3: Crear dependencias en el método ---
                 using (var context = new GuessMyMessDBEntities())
                 {
                     var emailService = new SmtpEmailService();
@@ -33,7 +31,7 @@ namespace GuessMyMessServer.Services
             }
             catch (Exception ex)
             {
-                throw new FaultException(ex.Message); // <-- Mensaje de excepción directo
+                throw new FaultException(ex.Message);
             }
         }
 
@@ -41,7 +39,6 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                // --- CAMBIO 3: Crear dependencias en el método ---
                 using (var context = new GuessMyMessDBEntities())
                 {
                     var emailService = new SmtpEmailService();
@@ -59,7 +56,6 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                // --- CAMBIO 3: Crear dependencias en el método ---
                 using (var context = new GuessMyMessDBEntities())
                 {
                     var emailService = new SmtpEmailService();
@@ -77,7 +73,6 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                // --- CAMBIO 3: Crear dependencias en el método ---
                 using (var context = new GuessMyMessDBEntities())
                 {
                     var emailService = new SmtpEmailService();
@@ -95,7 +90,6 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                // --- CAMBIO 3: Crear dependencias en el método ---
                 using (var context = new GuessMyMessDBEntities())
                 {
                     var emailService = new SmtpEmailService();
@@ -113,7 +107,6 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                // --- CAMBIO 3: Crear dependencias en el método ---
                 using (var context = new GuessMyMessDBEntities())
                 {
                     var emailService = new SmtpEmailService();
@@ -131,7 +124,6 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                // --- CAMBIO 3: Crear dependencias en el método ---
                 using (var context = new GuessMyMessDBEntities())
                 {
                     var emailService = new SmtpEmailService();
