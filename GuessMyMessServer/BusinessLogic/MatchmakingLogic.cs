@@ -14,6 +14,8 @@ namespace GuessMyMessServer.BusinessLogic
 {
     public static class MatchmakingLogic
     {
+        private const string MatchStatusWaiting = "Waiting";
+
         private static readonly ConcurrentDictionary<string, IMatchmakingServiceCallback> _connectedUsers =
             new ConcurrentDictionary<string, IMatchmakingServiceCallback>();
 
@@ -54,7 +56,7 @@ namespace GuessMyMessServer.BusinessLogic
                     if (settings.IsPrivate)
                     {
                         newMatchCode = GenerateMatchCode(8);
-                        while (context.Match.Any(m => m.matchCode == newMatchCode && m.matchStatus == "Waiting"))
+                        while (context.Match.Any(m => m.matchCode == newMatchCode && m.matchStatus == MatchStatusWaiting))
                         {
                             newMatchCode = GenerateMatchCode(8);
                         }
@@ -68,7 +70,7 @@ namespace GuessMyMessServer.BusinessLogic
                         totalRounds = settings.TotalRounds,
                         isPrivate = isPrivateValue,
                         matchCode = newMatchCode,
-                        matchStatus = "Waiting",
+                        matchStatus = MatchStatusWaiting,
                         Player_idHost = hostPlayer.idPlayer,
                         MatchDifficulty_idMatchDifficulty = settings.DifficultyId
                     };
@@ -246,7 +248,10 @@ namespace GuessMyMessServer.BusinessLogic
                         }
                     }
                 }
-                catch (Exception) { }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error updating player count in DB for MatchId {matchId}: {ex.Message}");
+                }
             });
         }
 
@@ -269,7 +274,10 @@ namespace GuessMyMessServer.BusinessLogic
                         }
                     }
                 }
-                catch (Exception) { }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error updating match status in DB for MatchId {matchId}: {ex.Message}");
+                }
             });
         }
 
@@ -282,7 +290,10 @@ namespace GuessMyMessServer.BusinessLogic
                 {
                     userCallback.PublicMatchesListUpdated(publicMatches);
                 }
-                catch (Exception) { }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error broadcasting public match list to a user: {ex.Message}");
+                }
             }
         }
 
@@ -297,7 +308,10 @@ namespace GuessMyMessServer.BusinessLogic
                     {
                         callback.MatchUpdate(matchInfo);
                     }
-                    catch (Exception) { }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error broadcasting lobby update to {playerName}: {ex.Message}");
+                    }
                 }
             }
         }
@@ -353,8 +367,10 @@ namespace GuessMyMessServer.BusinessLogic
                                         .FirstOrDefault() ?? "Unknown";
                 }
             }
-            catch (Exception) { }
-
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching difficulty name for MatchId {this.MatchId}: {ex.Message}");
+            }
             return new MatchInfoDto
             {
                 MatchId = this.MatchId,

@@ -53,7 +53,7 @@ namespace GuessMyMessServer.Services
             }
         }
 
-        public async Task<OperationResultDto> VerifyAccountAsync(string email, string code)
+        public async Task<OperationResultDto> VerifyAccountAsync(string email, string verificationCode)
         {
             try
             {
@@ -61,7 +61,7 @@ namespace GuessMyMessServer.Services
                 {
                     var emailService = new SmtpEmailService();
                     var logic = new AuthenticationLogic(emailService, context);
-                    return await logic.VerifyAccountAsync(email, code);
+                    return await logic.VerifyAccountAsync(email, verificationCode);
                 }
             }
             catch (Exception ex)

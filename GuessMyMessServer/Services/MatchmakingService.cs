@@ -13,8 +13,9 @@ namespace GuessMyMessServer.Services
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Reentrant)]
     public class MatchmakingService : IMatchmakingService
     {
-        private IMatchmakingServiceCallback _callback;
+        private readonly IMatchmakingServiceCallback _callback;
         private string _connectedUsername;
+        private const string AuthMismatchMessage = "Auth mismatch.";
 
         public MatchmakingService()
         {
@@ -62,7 +63,7 @@ namespace GuessMyMessServer.Services
         {
             if (hostUsername != _connectedUsername)
             {
-                return new OperationResultDto { Success = false, Message = "Auth mismatch." };
+                return new OperationResultDto { Success = false, Message = AuthMismatchMessage };
             }
             return MatchmakingLogic.CreateMatch(hostUsername, settings);
         }
@@ -71,7 +72,7 @@ namespace GuessMyMessServer.Services
         {
             if (username != _connectedUsername)
             {
-                _callback.MatchmakingFailed("Auth mismatch.");
+                _callback.MatchmakingFailed(AuthMismatchMessage);
                 return;
             }
             MatchmakingLogic.JoinPublicMatch(username, matchId);
@@ -81,7 +82,7 @@ namespace GuessMyMessServer.Services
         {
             if (username != _connectedUsername)
             {
-                return new OperationResultDto { Success = false, Message = "Auth mismatch." };
+                return new OperationResultDto { Success = false, Message = AuthMismatchMessage };
             }
             return MatchmakingLogic.JoinPrivateMatch(username, matchCode);
         }
@@ -90,7 +91,7 @@ namespace GuessMyMessServer.Services
         {
             if (inviterUsername != _connectedUsername)
             {
-                _callback.MatchmakingFailed("Auth mismatch.");
+                _callback.MatchmakingFailed(AuthMismatchMessage);
                 return;
             }
             MatchmakingLogic.InviteToMatch(inviterUsername, invitedUsername, matchId);
