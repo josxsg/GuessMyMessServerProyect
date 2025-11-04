@@ -94,7 +94,6 @@ namespace GuessMyMessServer.Services
             {
                 Console.WriteLine($"Error GENÉRICO al notificar a {friendUsername}: {ex.GetType().Name} - {ex.Message}. Marcado para remover.");
             }
-
             return false;
         }
         public void Connect(string username)

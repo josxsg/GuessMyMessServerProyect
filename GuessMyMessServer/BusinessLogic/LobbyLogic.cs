@@ -16,7 +16,7 @@ namespace GuessMyMessServer.BusinessLogic
         private static readonly ConcurrentDictionary<string, Lobby> _lobbies = new ConcurrentDictionary<string, Lobby>();
         private static readonly object _lock = new object();
 
-        private class PlayerConnection
+        private sealed class PlayerConnection
         {
             public string Username { get; }
             public ILobbyServiceCallback Callback { get; }
@@ -28,7 +28,7 @@ namespace GuessMyMessServer.BusinessLogic
             }
         }
 
-        private class Lobby
+        private sealed class Lobby
         {
             public string MatchId { get; }
             public string HostUsername { get; }
@@ -98,55 +98,84 @@ namespace GuessMyMessServer.BusinessLogic
 
         public void Connect(string username, string matchId, ILobbyServiceCallback callback)
         {
+            Lobby lobby = GetOrCreateLobby(matchId, username, callback);
+
+            if (lobby == null)
+            {
+                return;
+            }
+
+            AddPlayerToLobby(lobby, username, callback);
+        }
+
+        private Lobby GetOrCreateLobby(string matchId, string hostUsername, ILobbyServiceCallback callback)
+        {
             Lobby lobby;
-            bool isNewLobby = false;
 
             lock (_lock)
             {
-                if (!_lobbies.TryGetValue(matchId, out lobby))
+                if (_lobbies.TryGetValue(matchId, out lobby))
                 {
-                    var matchInfo = GetMatchInfo(matchId);
-                    if (matchInfo == null)
-                    {
-                        try { callback.KickedFromLobby("Match not found."); } catch { }
-                        return;
-                    }
+                    return lobby; 
+                }
 
-                    lobby = new Lobby(matchId, username, matchInfo);
-                    if (!_lobbies.TryAdd(matchId, lobby))
-                    {
-                        _lobbies.TryGetValue(matchId, out lobby);
-                    }
-                    else
-                    {
-                        isNewLobby = true;
-                    }
+                var matchInfo = GetMatchInfo(matchId);
+                if (matchInfo == null)
+                {
+                    SafeCallback(callback, () => callback.KickedFromLobby("Match not found."));
+                    return null;
+                }
+
+                lobby = new Lobby(matchId, hostUsername, matchInfo);
+
+                if (!_lobbies.TryAdd(matchId, lobby))
+                {
+                    _lobbies.TryGetValue(matchId, out lobby);
                 }
             }
 
-            if (lobby != null)
-            {
-                if (lobby.Players.Count >= lobby.MatchInfo.MaxPlayers && !lobby.Players.ContainsKey(username))
-                {
-                    try { callback.KickedFromLobby("Lobby is full."); } catch { }
-                    return;
-                }
+            return lobby;
+        }
 
-                var connection = new PlayerConnection(username, callback);
-                if (lobby.Players.TryAdd(username, connection))
+        private void AddPlayerToLobby(Lobby lobby, string username, ILobbyServiceCallback callback)
+        {
+            if (lobby.Players.Count >= lobby.MatchInfo.MaxPlayers && !lobby.Players.ContainsKey(username))
+            {
+                SafeCallback(callback, () => callback.KickedFromLobby("Lobby is full."));
+                return;
+            }
+
+            var connection = new PlayerConnection(username, callback);
+
+            if (lobby.Players.TryAdd(username, connection))
+            {
+                Console.WriteLine($"Player {username} connected to lobby {lobby.MatchId}");
+                BroadcastLobbyState(lobby);
+            }
+            else
+            {
+                if (lobby.Players.TryGetValue(username, out var existingConnection))
                 {
-                    Console.WriteLine($"Player {username} connected to lobby {matchId}");
-                    BroadcastLobbyState(lobby);
+                    lobby.Players.TryUpdate(username, connection, existingConnection);
+                    Console.WriteLine($"Player {username} reconnected to lobby {lobby.MatchId}");
+
+                    SafeCallback(callback, () => callback.UpdateLobbyState(lobby.GetCurrentState()));
                 }
-                else
+            }
+        }
+
+        private static void SafeCallback(ILobbyServiceCallback callback, Action action)
+        {
+            try
+            {
+                if (callback != null)
                 {
-                    if (lobby.Players.TryGetValue(username, out var existingConnection))
-                    {
-                        lobby.Players.TryUpdate(username, connection, existingConnection);
-                        Console.WriteLine($"Player {username} reconnected to lobby {matchId}");
-                        try { callback.UpdateLobbyState(lobby.GetCurrentState()); } catch { }
-                    }
+                    action();
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Callback failed: {ex.Message}");
             }
         }
 
@@ -163,7 +192,7 @@ namespace GuessMyMessServer.BusinessLogic
                         Console.WriteLine($"Host {username} left lobby {matchId}. Kicking all players.");
                         lobby.Broadcast(conn =>
                         {
-                            try { conn.Callback.KickedFromLobby("Host cancelled the match."); } catch { }
+                            SafeCallback(conn.Callback, () => conn.Callback.KickedFromLobby("Host cancelled the match."));
                         });
                         RemoveLobby(matchId);
                     }
@@ -194,7 +223,7 @@ namespace GuessMyMessServer.BusinessLogic
 
                 lobby.Broadcast(conn =>
                 {
-                    try { conn.Callback.ReceiveLobbyMessage(messageDto); } catch { }
+                    SafeCallback(conn.Callback, () => conn.Callback.ReceiveLobbyMessage(messageDto));
                 });
             }
         }
@@ -244,11 +273,6 @@ namespace GuessMyMessServer.BusinessLogic
                 if (lobby.Players.Count < 2)
                 {
                     Console.WriteLine($"Start game attempt failed: Not enough players in lobby {matchId}.");
-                    if (lobby.Players.TryGetValue(hostUsername, out var hostConn))
-                    {
-                        try { } catch { }
-                    }
-                    return;
                 }
 
                 Console.WriteLine($"Host {hostUsername} starting game for lobby {matchId}.");
@@ -261,13 +285,13 @@ namespace GuessMyMessServer.BusinessLogic
             var state = lobby.GetCurrentState();
             lobby.Broadcast(conn =>
             {
-                try { conn.Callback.UpdateLobbyState(state); } catch { }
+                SafeCallback(conn.Callback, () => conn.Callback.UpdateLobbyState(state));
             });
         }
 
         private static void RemoveLobby(string matchId)
         {
-            if (_lobbies.TryRemove(matchId, out Lobby removedLobby))
+            if (_lobbies.TryRemove(matchId, out _))
             {
                 Console.WriteLine($"Lobby {matchId} removed.");
             }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GuessMyMessServer.Utilities
 {
-    public class PasswordHasher
+    public static class PasswordHasher
     {
         public static string HashPassword(string password)
         {

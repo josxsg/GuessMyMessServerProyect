@@ -35,7 +35,7 @@ namespace GuessMyMessServer.BusinessLogic
 
             if (player == null)
             {
-                throw new Exception("Usuario no encontrado.");
+                throw new InvalidOperationException("Usuario no encontrado.");
             }
 
             return new UserProfileDto
@@ -59,7 +59,7 @@ namespace GuessMyMessServer.BusinessLogic
             var playerToUpdate = await _context.Player.FirstOrDefaultAsync(p => p.username == username);
             if (playerToUpdate == null)
             {
-                throw new Exception("Usuario no encontrado.");
+                throw new InvalidOperationException("Usuario no encontrado.");
             }
 
             playerToUpdate.name = profileData.FirstName;
@@ -91,7 +91,19 @@ namespace GuessMyMessServer.BusinessLogic
                             using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 4096, useAsync: true))
                             {
                                 imageData = new byte[stream.Length];
-                                await stream.ReadAsync(imageData, 0, imageData.Length);
+                                int bytesRead = 0;
+                                int totalBytesRead = 0;
+                                while (totalBytesRead < imageData.Length &&
+                                       (bytesRead = await stream.ReadAsync(imageData, totalBytesRead, imageData.Length - totalBytesRead)) > 0)
+                                {
+                                    totalBytesRead += bytesRead;
+                                }
+
+                                if (totalBytesRead != imageData.Length)
+                                {
+                                    Array.Resize(ref imageData, totalBytesRead);
+                                    Console.WriteLine($"ADVERTENCIA: Se esperaban {imageData.Length} bytes pero se leyeron {totalBytesRead} para {filePath}");
+                                }
                             }
                         }
                         catch (IOException ioEx)
@@ -123,7 +135,7 @@ namespace GuessMyMessServer.BusinessLogic
             var player = await _context.Player.FirstOrDefaultAsync(p => p.username == username);
             if (player == null)
             {
-                throw new Exception("Usuario no encontrado.");
+                throw new InvalidOperationException("Usuario no encontrado.");
             }
 
             string code = GenerateCode();
@@ -141,17 +153,17 @@ namespace GuessMyMessServer.BusinessLogic
         {
             if (string.IsNullOrWhiteSpace(newEmail) || !InputValidator.IsValidEmail(newEmail))
             {
-                throw new Exception("Formato de nuevo correo electrónico inválido.");
+                throw new ArgumentException("Formato de nuevo correo electrónico inválido.", nameof(newEmail));
             }
 
             var player = await _context.Player.FirstOrDefaultAsync(p => p.username == username);
             if (player == null)
             {
-                throw new Exception("Usuario no encontrado.");
+                throw new InvalidOperationException("Usuario no encontrado.");
             }
             if (await _context.Player.AnyAsync(p => p.email == newEmail))
             {
-                throw new Exception("El nuevo correo ya está registrado.");
+                throw new InvalidOperationException("El nuevo correo ya está registrado.");
             }
 
             string code = GenerateCode();
@@ -170,17 +182,17 @@ namespace GuessMyMessServer.BusinessLogic
         {
             if (!InputValidator.IsPasswordSecure(newPassword))
             {
-                throw new Exception("La nueva contraseña no cumple con los requisitos de seguridad.");
+                throw new ArgumentException("La nueva contraseña no cumple con los requisitos de seguridad.", nameof(newPassword));
             }
 
             var player = await _context.Player.FirstOrDefaultAsync(p => p.username == username);
             if (player == null)
             {
-                throw new Exception("Usuario no encontrado.");
+                throw new InvalidOperationException("Usuario no encontrado.");
             }
             if (player.temp_code != verificationCode || player.temp_code_expiry < DateTime.UtcNow)
             {
-                throw new Exception("Código de verificación inválido o expirado.");
+                throw new InvalidOperationException("Código de verificación inválido o expirado.");
             }
 
             player.password = PasswordHasher.HashPassword(newPassword);
@@ -196,15 +208,15 @@ namespace GuessMyMessServer.BusinessLogic
             var player = await _context.Player.FirstOrDefaultAsync(p => p.username == username);
             if (player == null)
             {
-                throw new Exception("Usuario no encontrado.");
+                throw new InvalidOperationException("Usuario no encontrado.");
             }
             if (string.IsNullOrEmpty(player.new_email_pending))
             {
-                throw new Exception("No hay un cambio de email pendiente.");
+                throw new InvalidOperationException("No hay un cambio de email pendiente.");
             }
             if (player.temp_code != verificationCode || player.temp_code_expiry < DateTime.UtcNow)
             {
-                throw new Exception("Código de verificación inválido o expirado.");
+                throw new InvalidOperationException("Código de verificación inválido o expirado.");
             }
 
             if (await _context.Player.AnyAsync(p => p.email == player.new_email_pending && p.idPlayer != player.idPlayer))
@@ -213,7 +225,7 @@ namespace GuessMyMessServer.BusinessLogic
                 player.temp_code_expiry = null;
                 player.new_email_pending = null;
                 await _context.SaveChangesAsync();
-                throw new Exception("El nuevo correo electrónico ya fue registrado por otro usuario.");
+                throw new InvalidOperationException("El nuevo correo electrónico ya fue registrado por otro usuario.");
             }
 
             player.email = player.new_email_pending;

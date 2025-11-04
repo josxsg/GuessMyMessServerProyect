@@ -50,7 +50,7 @@ namespace GuessMyMessServer.Tests
             return new TestDbAsyncEnumerable<TElement>(expression);
         }
 
-        public object Execute(Expression expression)
+        public object? Execute(Expression expression)
         {
             return _inner.Execute(expression);
         }
@@ -60,7 +60,7 @@ namespace GuessMyMessServer.Tests
             return _inner.Execute<TResult>(expression);
         }
 
-        public Task<object> ExecuteAsync(Expression expression, CancellationToken cancellationToken)
+        public Task<object?> ExecuteAsync(Expression expression, CancellationToken cancellationToken)
         {
             return Task.FromResult(Execute(expression));
         }
@@ -144,7 +144,7 @@ namespace GuessMyMessServer.Tests
 
         public T Current => _inner.Current;
 
-        object IDbAsyncEnumerator.Current => Current;
+        object? IDbAsyncEnumerator.Current => Current;
     }
     internal class MockDbSetHelpers
     {

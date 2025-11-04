@@ -28,11 +28,11 @@ namespace GuessMyMessServer.Services
             _lobbyLogic.Connect(username, matchId, _callback);
         }
 
-        public void SendLobbyMessage(string senderUsername, string matchId, string messageKey)
+        public void SendLobbyMessage(string senderUsername, string matchId, string message)
         {
             if (_connectedUsername == senderUsername && _connectedMatchId == matchId)
             {
-                _lobbyLogic.SendMessage(senderUsername, matchId, messageKey);
+                _lobbyLogic.SendMessage(senderUsername, matchId, message);
             }
         }
 

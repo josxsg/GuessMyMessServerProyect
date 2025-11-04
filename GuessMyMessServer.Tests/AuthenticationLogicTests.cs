@@ -195,7 +195,7 @@ namespace GuessMyMessServer.Tests
             };
             string newUserPassword = "PasswordSegura123!";
             var playersData = new List<Player>().AsQueryable();
-            Player addedPlayer = null;
+            Player? addedPlayer = null;
 
             var mockDbSet = new Mock<DbSet<Player>>().SetupData(playersData);
             mockDbSet.Setup(m => m.Add(It.IsAny<Player>()))
