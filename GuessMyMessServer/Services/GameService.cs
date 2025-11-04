@@ -11,11 +11,11 @@ namespace GuessMyMessServer.Services
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession)]
     public class GameService : IGameService
     {
-        private IGameServiceCallback callback;
+        private IGameServiceCallback _callback;
 
         public GameService()
         {
-            callback = OperationContext.Current.GetCallbackChannel<IGameServiceCallback>();
+            _callback = OperationContext.Current.GetCallbackChannel<IGameServiceCallback>();
         }
 
         public void SelectWord(string username, string matchId, string selectedWord)

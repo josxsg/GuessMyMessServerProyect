@@ -44,35 +44,10 @@ namespace GuessMyMessServer.Services
                 {
                     if (connectedClients.TryGetValue(friendUsername, out var callback))
                     {
-                        try
+                        bool success = SendNotificationToClient(callback, friendUsername, username, status);
+
+                        if (!success)
                         {
-                            Console.WriteLine($"Notificando a {friendUsername} sobre {username} ({status})...");
-                            callback?.NotifyFriendStatusChanged(username, status);
-                            Console.WriteLine($"Notificación enviada a {friendUsername}.");
-                        }
-                        catch (ObjectDisposedException odEx)
-                        {
-                            Console.WriteLine($"Error al notificar a {friendUsername} (ObjectDisposed): {odEx.Message}. Marcado para remover.");
-                            clientsToRemove.Add(friendUsername);
-                        }
-                        catch (CommunicationObjectAbortedException coaEx)
-                        {
-                            Console.WriteLine($"Error al notificar a {friendUsername} (Aborted): {coaEx.Message}. Marcado para remover.");
-                            clientsToRemove.Add(friendUsername);
-                        }
-                        catch (CommunicationObjectFaultedException cofEx)
-                        {
-                            Console.WriteLine($"Error al notificar a {friendUsername} (Faulted): {cofEx.Message}. Marcado para remover.");
-                            clientsToRemove.Add(friendUsername);
-                        }
-                        catch (TimeoutException tEx)
-                        {
-                            Console.WriteLine($"Timeout al notificar a {friendUsername}: {tEx.Message}. Marcado para remover.");
-                            clientsToRemove.Add(friendUsername);
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine($"Error GENÉRICO al notificar a {friendUsername}: {ex.GetType().Name} - {ex.Message}. Marcado para remover.");
                             clientsToRemove.Add(friendUsername);
                         }
                     }
@@ -82,17 +57,46 @@ namespace GuessMyMessServer.Services
                     }
                 }
 
-                foreach (var clientToRemove in clientsToRemove)
+                foreach (var clientToRemove in clientsToRemove.Where(connectedClients.ContainsKey))
                 {
-                    if (connectedClients.ContainsKey(clientToRemove))
-                    {
-                        Console.WriteLine($"Removiendo cliente fallido: {clientToRemove}");
-                        connectedClients.Remove(clientToRemove);
-                    }
+                    Console.WriteLine($"Removiendo cliente fallido: {clientToRemove}");
+                    connectedClients.Remove(clientToRemove);
                 }
             }
         }
 
+        private bool SendNotificationToClient(ISocialServiceCallback callback, string friendUsername, string targetUsername, string status)
+        {
+            try
+            {
+                Console.WriteLine($"Notificando a {friendUsername} sobre {targetUsername} ({status})...");
+                callback?.NotifyFriendStatusChanged(targetUsername, status);
+                Console.WriteLine($"Notificación enviada a {friendUsername}.");
+                return true;
+            }
+            catch (ObjectDisposedException odEx)
+            {
+                Console.WriteLine($"Error al notificar a {friendUsername} (ObjectDisposed): {odEx.Message}. Marcado para remover.");
+            }
+            catch (CommunicationObjectAbortedException coaEx)
+            {
+                Console.WriteLine($"Error al notificar a {friendUsername} (Aborted): {coaEx.Message}. Marcado para remover.");
+            }
+            catch (CommunicationObjectFaultedException cofEx)
+            {
+                Console.WriteLine($"Error al notificar a {friendUsername} (Faulted): {cofEx.Message}. Marcado para remover.");
+            }
+            catch (TimeoutException tEx)
+            {
+                Console.WriteLine($"Timeout al notificar a {friendUsername}: {tEx.Message}. Marcado para remover.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error GENÉRICO al notificar a {friendUsername}: {ex.GetType().Name} - {ex.Message}. Marcado para remover.");
+            }
+
+            return false;
+        }
         public void Connect(string username)
         {
             if (string.IsNullOrEmpty(username))
