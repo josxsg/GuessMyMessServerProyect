@@ -1,26 +1,69 @@
-﻿using System;
+﻿using GuessMyMessServer.BusinessLogic;
+using GuessMyMessServer.Contracts.DataContracts;
+using GuessMyMessServer.Contracts.ServiceContracts;
+using GuessMyMessServer.DataAccess;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
-using System.Text;
 using System.Threading.Tasks;
-using GuessMyMessServer.Contracts.ServiceContracts;
 
 namespace GuessMyMessServer.Services
 {
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession)]
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Reentrant)]
     public class GameService : IGameService
     {
-        private IGameServiceCallback _callback;
+        private static readonly Dictionary<string, IGameServiceCallback> connectedPlayers = new Dictionary<string, IGameServiceCallback>();
 
-        public GameService()
+        public void Connect(string username)
         {
-            _callback = OperationContext.Current.GetCallbackChannel<IGameServiceCallback>();
+            if (string.IsNullOrEmpty(username))
+            {
+                return;
+            }
+
+            var callback = OperationContext.Current.GetCallbackChannel<IGameServiceCallback>();
+            lock (connectedPlayers)
+            {
+                connectedPlayers[username] = callback;
+            }
+            Console.WriteLine($"GameService: Jugador conectado: {username}");
         }
+
+        public void Disconnect(string username)
+        {
+            if (string.IsNullOrEmpty(username))
+            {
+                return;
+            }
+
+            lock (connectedPlayers)
+            {
+                connectedPlayers.Remove(username);
+            }
+            Console.WriteLine($"GameService: Jugador desconectado: {username}");
+        }
+
 
         public void SelectWord(string username, string matchId, string selectedWord)
         {
-            throw new NotImplementedException();
+            Console.WriteLine($"GameService: Jugador {username} ha seleccionado la palabra '{selectedWord}' para la partida {matchId}");
+        }
+
+        public async Task<List<WordDto>> GetRandomWordsAsync()
+        {
+            try
+            {
+                using (var context = new GuessMyMessDBEntities())
+                {
+                    var logic = new GameLogic(context);
+                    return await logic.GetRandomWordsAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new FaultException(ex.Message);
+            }
         }
 
         public void SubmitDrawing(string username, string matchId, byte[] drawingData)
