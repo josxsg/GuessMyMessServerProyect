@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data.Entity; 
+using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,14 +18,14 @@ namespace GuessMyMessServer.BusinessLogic
         public AuthenticationLogic(IEmailService emailService, GuessMyMessDBEntities context)
         {
             _emailService = emailService;
-            _context = context; 
+            _context = context;
         }
 
         public async Task<OperationResultDto> LoginAsync(string emailOrUsername, string password)
         {
             if (string.IsNullOrWhiteSpace(emailOrUsername) || string.IsNullOrWhiteSpace(password))
             {
-                throw new ArgumentException("Usuario/Correo y contraseña son obligatorios.");
+                throw new ArgumentException("Username/Email and password are required.");
             }
 
             const int StatusOnline = 2;
@@ -35,21 +35,21 @@ namespace GuessMyMessServer.BusinessLogic
 
             if (player == null)
             {
-                throw new InvalidOperationException("Credenciales incorrectas.");
+                throw new InvalidOperationException("Incorrect credentials.");
             }
 
             if (player.is_verified == (byte)0)
             {
-                throw new InvalidOperationException("La cuenta no ha sido verificada. Por favor, revisa tu correo.");
+                throw new InvalidOperationException("The account has not been verified. Please, check your email.");
             }
 
             if (!PasswordHasher.VerifyPassword(password, player.password))
             {
-                throw new InvalidOperationException("Credenciales incorrectas.");
+                throw new InvalidOperationException("Incorrect credentials.");
             }
 
             player.UserStatus_idUserStatus = StatusOnline;
-            await _context.SaveChangesAsync(); 
+            await _context.SaveChangesAsync();
 
             return new OperationResultDto { Success = true, Message = player.username };
         }
@@ -58,7 +58,7 @@ namespace GuessMyMessServer.BusinessLogic
         {
             if (userProfile == null || string.IsNullOrWhiteSpace(password))
             {
-                throw new ArgumentNullException(nameof(userProfile), "El perfil de usuario y la contraseña son obligatorios.");
+                throw new ArgumentNullException(nameof(userProfile), "User profile and password are required.");
             }
 
             if (string.IsNullOrWhiteSpace(userProfile.Username) ||
@@ -66,17 +66,17 @@ namespace GuessMyMessServer.BusinessLogic
                 string.IsNullOrWhiteSpace(userProfile.FirstName) ||
                 string.IsNullOrWhiteSpace(userProfile.LastName))
             {
-                throw new ArgumentException("Todos los campos (Usuario, Nombre, Apellido, Email) son obligatorios.");
+                throw new ArgumentException("All fields (Username, First Name, Last Name, Email) are required.");
             }
 
             if (!InputValidator.IsValidEmail(userProfile.Email))
             {
-                throw new ArgumentException("El formato del correo electrónico no es válido. (Ej: usuario@dominio.com)");
+                throw new ArgumentException("The email format is not valid. (Ex: user@domain.com)");
             }
 
             if (!InputValidator.IsPasswordSecure(password))
             {
-                throw new ArgumentException("La contraseña no cumple con los requisitos de seguridad.");
+                throw new ArgumentException("The password does not meet the security requirements.");
             }
 
             const int StatusOffline = 1;
@@ -84,11 +84,11 @@ namespace GuessMyMessServer.BusinessLogic
 
             if (await _context.Player.AnyAsync(p => p.username == userProfile.Username))
             {
-                throw new InvalidOperationException("El nombre de usuario ya está en uso.");
+                throw new InvalidOperationException("The username is already in use.");
             }
             if (await _context.Player.AnyAsync(p => p.email == userProfile.Email))
             {
-                throw new InvalidOperationException("El correo electrónico ya está registrado.");
+                throw new InvalidOperationException("The email is already registered.");
             }
 
             try
@@ -98,8 +98,8 @@ namespace GuessMyMessServer.BusinessLogic
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"\n¡ERROR DE ENVÍO DE CORREO!: {ex.Message}");
-                throw new InvalidOperationException("No se pudo enviar el correo de verificación. Revisa que el correo sea correcto.", ex);
+                Console.WriteLine($"\nEMAIL SENDING ERROR!: {ex.Message}");
+                throw new InvalidOperationException("Could not send verification email. Please check if the email is correct.", ex);
             }
 
             var newPlayer = new Player
@@ -124,44 +124,44 @@ namespace GuessMyMessServer.BusinessLogic
             }
             catch (DbUpdateException dbEx)
             {
-                Console.WriteLine($"ERROR DE BASE DE DATOS: {dbEx.InnerException?.Message ?? dbEx.Message}");
-                throw new InvalidOperationException("Error al guardar el usuario. Verifica los datos proporcionados.", dbEx);
+                Console.WriteLine($"DATABASE ERROR: {dbEx.InnerException?.Message ?? dbEx.Message}");
+                throw new InvalidOperationException("Error saving the user. Please verify the provided data.", dbEx);
             }
 
-            return new OperationResultDto { Success = true, Message = "Registro exitoso. Se ha enviado un código de verificación a tu correo." };
+            return new OperationResultDto { Success = true, Message = "Registration successful. A verification code has been sent to your email." };
         }
         public async Task<OperationResultDto> VerifyAccountAsync(string email, string code)
         {
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(code))
             {
-                throw new ArgumentException("El correo y el código son obligatorios.");
+                throw new ArgumentException("Email and code are required.");
             }
 
             var playerToVerify = await _context.Player.FirstOrDefaultAsync(p => p.email == email);
 
             if (playerToVerify == null)
             {
-                throw new InvalidOperationException("No se encontró una cuenta para este correo.");
+                throw new InvalidOperationException("No account was found for this email.");
             }
 
             if (playerToVerify.is_verified == (byte)1)
             {
-                throw new InvalidOperationException("Esta cuenta ya está verificada.");
+                throw new InvalidOperationException("This account is already verified.");
             }
 
             if (playerToVerify.verification_code != code || playerToVerify.code_expiry_date < DateTime.UtcNow)
             {
-                throw new InvalidOperationException("Código de verificación inválido o expirado.");
+                throw new InvalidOperationException("Invalid or expired verification code.");
             }
 
             playerToVerify.is_verified = (byte)1;
             playerToVerify.verification_code = null;
             playerToVerify.code_expiry_date = null;
-            playerToVerify.UserStatus_idUserStatus = 2; 
+            playerToVerify.UserStatus_idUserStatus = 2;
 
             await _context.SaveChangesAsync();
 
-            return new OperationResultDto { Success = true, Message = "Cuenta verificada con éxito. ¡Bienvenido!" };
+            return new OperationResultDto { Success = true, Message = "Account verified successfully. Welcome!" };
         }
         public void LogOut(string username)
         {
@@ -171,7 +171,7 @@ namespace GuessMyMessServer.BusinessLogic
             if (player != null)
             {
                 player.UserStatus_idUserStatus = StatusOffline;
-                _context.SaveChanges(); 
+                _context.SaveChanges();
             }
         }
     }

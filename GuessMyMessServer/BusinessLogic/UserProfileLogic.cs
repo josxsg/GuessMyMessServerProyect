@@ -20,7 +20,7 @@ namespace GuessMyMessServer.BusinessLogic
         public UserProfileLogic(IEmailService emailService, GuessMyMessDBEntities context)
         {
             _emailService = emailService;
-            _context = context; 
+            _context = context;
         }
 
         private string GenerateCode() => _random.Next(100000, 999999).ToString("D6");
@@ -35,7 +35,7 @@ namespace GuessMyMessServer.BusinessLogic
 
             if (player == null)
             {
-                throw new InvalidOperationException("Usuario no encontrado.");
+                throw new InvalidOperationException("User not found.");
             }
 
             return new UserProfileDto
@@ -53,13 +53,13 @@ namespace GuessMyMessServer.BusinessLogic
         {
             if (profileData == null)
             {
-                throw new ArgumentNullException(nameof(profileData), "Datos de perfil inválidos.");
+                throw new ArgumentNullException(nameof(profileData), "Invalid profile data.");
             }
 
             var playerToUpdate = await _context.Player.FirstOrDefaultAsync(p => p.username == username);
             if (playerToUpdate == null)
             {
-                throw new InvalidOperationException("Usuario no encontrado.");
+                throw new InvalidOperationException("User not found.");
             }
 
             playerToUpdate.name = profileData.FirstName;
@@ -68,7 +68,7 @@ namespace GuessMyMessServer.BusinessLogic
             playerToUpdate.Avatar_idAvatar = profileData.AvatarId > 0 ? profileData.AvatarId : playerToUpdate.Avatar_idAvatar;
 
             await _context.SaveChangesAsync();
-            return new OperationResultDto { Success = true, Message = "Perfil actualizado correctamente." };
+            return new OperationResultDto { Success = true, Message = "Profile updated successfully." };
         }
 
         public async Task<List<AvatarDto>> GetAvailableAvatarsAsync()
@@ -102,22 +102,22 @@ namespace GuessMyMessServer.BusinessLogic
                                 if (totalBytesRead != imageData.Length)
                                 {
                                     Array.Resize(ref imageData, totalBytesRead);
-                                    Console.WriteLine($"ADVERTENCIA: Se esperaban {imageData.Length} bytes pero se leyeron {totalBytesRead} para {filePath}");
+                                    Console.WriteLine($"WARNING: Expected {imageData.Length} bytes but read {totalBytesRead} for {filePath}");
                                 }
                             }
                         }
                         catch (IOException ioEx)
                         {
-                            Console.WriteLine($"ERROR al leer archivo de avatar {filePath}: {ioEx.Message}");
+                            Console.WriteLine($"ERROR reading avatar file {filePath}: {ioEx.Message}");
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine($"ERROR inesperado al procesar avatar {filePath}: {ex.Message}");
+                            Console.WriteLine($"UNEXPECTED ERROR processing avatar {filePath}: {ex.Message}");
                         }
                     }
                     else
                     {
-                        Console.WriteLine($"ADVERTENCIA: No se encontró el archivo de avatar en la ruta: {filePath}");
+                        Console.WriteLine($"WARNING: Avatar file not found at path: {filePath}");
                     }
                 }
                 avatarsDtoList.Add(new AvatarDto
@@ -135,7 +135,7 @@ namespace GuessMyMessServer.BusinessLogic
             var player = await _context.Player.FirstOrDefaultAsync(p => p.username == username);
             if (player == null)
             {
-                throw new InvalidOperationException("Usuario no encontrado.");
+                throw new InvalidOperationException("User not found.");
             }
 
             string code = GenerateCode();
@@ -146,24 +146,24 @@ namespace GuessMyMessServer.BusinessLogic
             var emailTemplate = new PasswordChangeVerificationEmailTemplate(player.username, code);
             await _emailService.SendEmailAsync(player.email, player.username, emailTemplate);
 
-            return new OperationResultDto { Success = true, Message = "Se ha enviado un código de verificación a tu correo registrado." };
+            return new OperationResultDto { Success = true, Message = "A verification code has been sent to your registered email." };
         }
 
         public async Task<OperationResultDto> RequestChangeEmailAsync(string username, string newEmail)
         {
             if (string.IsNullOrWhiteSpace(newEmail) || !InputValidator.IsValidEmail(newEmail))
             {
-                throw new ArgumentException("Formato de nuevo correo electrónico inválido.", nameof(newEmail));
+                throw new ArgumentException("Invalid new email format.", nameof(newEmail));
             }
 
             var player = await _context.Player.FirstOrDefaultAsync(p => p.username == username);
             if (player == null)
             {
-                throw new InvalidOperationException("Usuario no encontrado.");
+                throw new InvalidOperationException("User not found.");
             }
             if (await _context.Player.AnyAsync(p => p.email == newEmail))
             {
-                throw new InvalidOperationException("El nuevo correo ya está registrado.");
+                throw new InvalidOperationException("The new email is already registered.");
             }
 
             string code = GenerateCode();
@@ -175,24 +175,24 @@ namespace GuessMyMessServer.BusinessLogic
             var emailTemplate = new EmailChangeVerificationEmailTemplate(player.username, code);
             await _emailService.SendEmailAsync(player.email, player.username, emailTemplate);
 
-            return new OperationResultDto { Success = true, Message = $"Se ha enviado un código a tu correo actual ({player.email}) para confirmar." };
+            return new OperationResultDto { Success = true, Message = $"A code has been sent to your current email ({player.email}) to confirm." };
         }
 
         public async Task<OperationResultDto> ConfirmChangePasswordAsync(string username, string newPassword, string verificationCode)
         {
             if (!InputValidator.IsPasswordSecure(newPassword))
             {
-                throw new ArgumentException("La nueva contraseña no cumple con los requisitos de seguridad.", nameof(newPassword));
+                throw new ArgumentException("The new password does not meet the security requirements.", nameof(newPassword));
             }
 
             var player = await _context.Player.FirstOrDefaultAsync(p => p.username == username);
             if (player == null)
             {
-                throw new InvalidOperationException("Usuario no encontrado.");
+                throw new InvalidOperationException("User not found.");
             }
             if (player.temp_code != verificationCode || player.temp_code_expiry < DateTime.UtcNow)
             {
-                throw new InvalidOperationException("Código de verificación inválido o expirado.");
+                throw new InvalidOperationException("Invalid or expired verification code.");
             }
 
             player.password = PasswordHasher.HashPassword(newPassword);
@@ -200,7 +200,7 @@ namespace GuessMyMessServer.BusinessLogic
             player.temp_code_expiry = null;
             await _context.SaveChangesAsync();
 
-            return new OperationResultDto { Success = true, Message = "Contraseña actualizada con éxito." };
+            return new OperationResultDto { Success = true, Message = "Password updated successfully." };
         }
 
         public async Task<OperationResultDto> ConfirmChangeEmailAsync(string username, string verificationCode)
@@ -208,15 +208,15 @@ namespace GuessMyMessServer.BusinessLogic
             var player = await _context.Player.FirstOrDefaultAsync(p => p.username == username);
             if (player == null)
             {
-                throw new InvalidOperationException("Usuario no encontrado.");
+                throw new InvalidOperationException("User not found.");
             }
             if (string.IsNullOrEmpty(player.new_email_pending))
             {
-                throw new InvalidOperationException("No hay un cambio de email pendiente.");
+                throw new InvalidOperationException("There is no pending email change.");
             }
             if (player.temp_code != verificationCode || player.temp_code_expiry < DateTime.UtcNow)
             {
-                throw new InvalidOperationException("Código de verificación inválido o expirado.");
+                throw new InvalidOperationException("Invalid or expired verification code.");
             }
 
             if (await _context.Player.AnyAsync(p => p.email == player.new_email_pending && p.idPlayer != player.idPlayer))
@@ -225,7 +225,7 @@ namespace GuessMyMessServer.BusinessLogic
                 player.temp_code_expiry = null;
                 player.new_email_pending = null;
                 await _context.SaveChangesAsync();
-                throw new InvalidOperationException("El nuevo correo electrónico ya fue registrado por otro usuario.");
+                throw new InvalidOperationException("The new email is already registered by another user.");
             }
 
             player.email = player.new_email_pending;
@@ -234,7 +234,7 @@ namespace GuessMyMessServer.BusinessLogic
             player.new_email_pending = null;
             await _context.SaveChangesAsync();
 
-            return new OperationResultDto { Success = true, Message = "Email actualizado con éxito." };
+            return new OperationResultDto { Success = true, Message = "Email updated successfully." };
         }
     }
 }

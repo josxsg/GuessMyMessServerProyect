@@ -14,6 +14,9 @@ namespace GuessMyMessServer.Contracts.DataContracts
         public string MatchId { get; set; }
 
         [DataMember]
+        public string MatchCode { get; set; }
+
+        [DataMember]
         public string MatchName { get; set; }
 
         [DataMember]

@@ -72,7 +72,7 @@ namespace GuessMyMessServer.Services
                 Console.WriteLine($"Notificando a {friendUsername} sobre {targetUsername} ({status})...");
                 callback?.NotifyFriendStatusChanged(targetUsername, status);
                 Console.WriteLine($"Notificación enviada a {friendUsername}.");
-                return true;
+                return true; 
             }
             catch (ObjectDisposedException odEx)
             {
@@ -94,7 +94,8 @@ namespace GuessMyMessServer.Services
             {
                 Console.WriteLine($"Error GENÉRICO al notificar a {friendUsername}: {ex.GetType().Name} - {ex.Message}. Marcado para remover.");
             }
-            return false;
+
+            return false; 
         }
         public void Connect(string username)
         {

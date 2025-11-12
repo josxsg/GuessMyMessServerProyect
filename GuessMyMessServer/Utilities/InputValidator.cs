@@ -41,7 +41,10 @@ namespace GuessMyMessServer.Utilities
             
             if (!password.Any(char.IsDigit))
                 return false;
-            
+
+            if (!password.Contains(","))
+                return false;
+
             if (password.All(char.IsLetterOrDigit))
                 return false;
 

@@ -34,7 +34,7 @@ namespace GuessMyMessServer.BusinessLogic
             var lobby = _activeLobbies.Values.FirstOrDefault(l => l.Players.Contains(username));
             if (lobby != null)
             {
-                LeaveLobby(username, lobby.MatchId);
+                HandlePlayerLeave(username, lobby.MatchId);
             }
         }
 
@@ -199,27 +199,33 @@ namespace GuessMyMessServer.BusinessLogic
             }
         }
 
-        private static void LeaveLobby(string username, string matchId)
+        public static void HandlePlayerLeave(string username, string matchId)
         {
             if (_activeLobbies.TryGetValue(matchId, out var lobby))
             {
-                lobby.Players.Remove(username);
-                lobby.CurrentPlayers--;
-                UpdatePlayerCountInDb(matchId, -1);
+                bool playerRemoved = lobby.Players.Remove(username);
+
+                if (playerRemoved)
+                {
+                    lobby.CurrentPlayers--;
+                    UpdatePlayerCountInDb(matchId, -1);
+                    Console.WriteLine($"[MatchmakingLogic] Player {username} removed from lobby {matchId}. New count: {lobby.CurrentPlayers}");
+                }
 
                 if (lobby.Players.Count == 0 || lobby.HostUsername == username)
                 {
+                    Console.WriteLine($"[MatchmakingLogic] Lobby {matchId} is being removed (Host left or lobby empty).");
                     _activeLobbies.TryRemove(matchId, out _);
-                    UpdateMatchStatusInDb(matchId, "Aborted");
+                    UpdateMatchStatusInDb(matchId, "Aborted"); 
 
                     if (!lobby.Settings.IsPrivate)
                     {
                         BroadcastPublicMatchList();
                     }
                 }
-                else
+                else if (playerRemoved)
                 {
-                    BroadcastLobbyUpdate(lobby);
+                    BroadcastLobbyUpdate(lobby); 
                     if (!lobby.Settings.IsPrivate)
                     {
                         BroadcastPublicMatchList();

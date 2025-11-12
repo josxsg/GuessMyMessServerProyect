@@ -53,7 +53,7 @@ namespace GuessMyMessServer.BusinessLogic
                     Difficulty = MatchInfo.DifficultyName,
                     CurrentPlayers = Players.Count,
                     MaxPlayers = MatchInfo.MaxPlayers,
-                    MatchCode = MatchInfo.IsPrivate ? MatchId : null,
+                    MatchCode = MatchInfo.IsPrivate ? MatchInfo.MatchCode : null,
                     PlayerUsernames = Players.Keys.ToList()
                 };
             }
@@ -181,6 +181,7 @@ namespace GuessMyMessServer.BusinessLogic
 
         public void Disconnect(string username, string matchId)
         {
+            MatchmakingLogic.HandlePlayerLeave(username, matchId);
             if (_lobbies.TryGetValue(matchId, out Lobby lobby))
             {
                 if (lobby.Players.TryRemove(username, out _))
@@ -245,6 +246,7 @@ namespace GuessMyMessServer.BusinessLogic
 
                 if (lobby.Players.TryRemove(playerToKickUsername, out PlayerConnection kickedPlayerConnection))
                 {
+                    MatchmakingLogic.HandlePlayerLeave(playerToKickUsername, matchId);
                     Console.WriteLine($"Player {playerToKickUsername} kicked from lobby {matchId} by host {hostUsername}.");
                     try
                     {
@@ -317,7 +319,8 @@ namespace GuessMyMessServer.BusinessLogic
                     {
                         return new MatchInfoDto
                         {
-                            MatchId = match.matchCode,
+                            MatchId = matchId,
+                            MatchCode = match.matchCode,
                             MatchName = match.matchName,
                             HostUsername = match.Player?.username,
                             DifficultyName = match.MatchDifficulty?.difficulty,

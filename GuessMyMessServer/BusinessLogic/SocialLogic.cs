@@ -25,7 +25,7 @@ namespace GuessMyMessServer.BusinessLogic
                 var player = await context.Player.FirstOrDefaultAsync(p => p.username == username);
                 if (player == null)
                 {
-                    throw new InvalidOperationException("Usuario no encontrado.");
+                    throw new InvalidOperationException("User not found.");
                 }
 
                 const string AcceptedStatus = "Accepted";
@@ -78,7 +78,7 @@ namespace GuessMyMessServer.BusinessLogic
                 var requester = await context.Player.FirstOrDefaultAsync(p => p.username == requesterUsername);
                 if (requester == null)
                 {
-                    throw new InvalidOperationException("Usuario no encontrado.");
+                    throw new InvalidOperationException("User not found.");
                 }
 
                 var requesterId = requester.idPlayer;
@@ -110,12 +110,12 @@ namespace GuessMyMessServer.BusinessLogic
 
                 if (requester == null || target == null)
                 {
-                    throw new InvalidOperationException("Usuario solicitante o destinatario no válido.");
+                    throw new InvalidOperationException("Requester or target user is invalid.");
                 }
 
                 if (requester.idPlayer == target.idPlayer)
                 {
-                    throw new ArgumentException("No puedes enviarte una solicitud a ti mismo.");
+                    throw new ArgumentException("You cannot send a friend request to yourself.");
                 }
 
                 var existing = await context.Friendship.FirstOrDefaultAsync(f =>
@@ -124,14 +124,14 @@ namespace GuessMyMessServer.BusinessLogic
 
                 if (existing != null)
                 {
-                    throw new InvalidOperationException("Ya existe una relación o solicitud pendiente entre estos usuarios.");
+                    throw new InvalidOperationException("A relationship or pending request already exists between these users.");
                 }
 
                 const string PendingStatus = "Pending";
                 var pendingStatusEntity = await context.FriendShipStatus.FirstOrDefaultAsync(fs => fs.status == PendingStatus);
                 if (pendingStatusEntity == null)
                 {
-                    throw new InvalidOperationException("Error interno: Estado de amistad 'Pending' no configurado.");
+                    throw new InvalidOperationException("Internal error: 'Pending' friendship status is not configured.");
                 }
 
                 var friendship = new Friendship
@@ -154,7 +154,7 @@ namespace GuessMyMessServer.BusinessLogic
 
                 if (target == null || requester == null)
                 {
-                    Console.WriteLine("Error al responder solicitud: Usuario no encontrado.");
+                    Console.WriteLine("Error responding to request: User not found.");
                     return;
                 }
 
@@ -162,12 +162,12 @@ namespace GuessMyMessServer.BusinessLogic
                 var friendship = await context.Friendship
                     .Include(f => f.FriendShipStatus)
                     .FirstOrDefaultAsync(f => f.Player_idPlayer1 == requester.idPlayer &&
-                                              f.Player_idPlayer2 == target.idPlayer &&
-                                              f.FriendShipStatus.status == PendingStatus);
+                                                f.Player_idPlayer2 == target.idPlayer &&
+                                                f.FriendShipStatus.status == PendingStatus);
 
                 if (friendship == null)
                 {
-                    throw new InvalidOperationException("No se encontró una solicitud de amistad pendiente válida.");
+                    throw new InvalidOperationException("A valid pending friend request was not found.");
                 }
 
                 if (accepted)
@@ -176,7 +176,7 @@ namespace GuessMyMessServer.BusinessLogic
                     var acceptedStatusEntity = await context.FriendShipStatus.FirstOrDefaultAsync(fs => fs.status == AcceptedStatus);
                     if (acceptedStatusEntity == null)
                     {
-                        throw new InvalidOperationException("Error interno: Estado de amistad 'Accepted' no configurado.");
+                        throw new InvalidOperationException("Internal error: 'Accepted' friendship status is not configured.");
                     }
                     friendship.FriendShipStatus_idFriendShipStatus = acceptedStatusEntity.idFriendShipStatus;
                 }
@@ -197,7 +197,7 @@ namespace GuessMyMessServer.BusinessLogic
 
                 if (player == null || friend == null)
                 {
-                    Console.WriteLine("Error al eliminar amigo: Usuario no encontrado.");
+                    Console.WriteLine("Error removing friend: User not found.");
                     return;
                 }
 
@@ -212,7 +212,7 @@ namespace GuessMyMessServer.BusinessLogic
                 }
                 else
                 {
-                    Console.WriteLine($"Intento de eliminar amistad inexistente entre {username} y {friendToRemove}.");
+                    Console.WriteLine($"Attempt to remove non-existent friendship between {username} and {friendToRemove}.");
                 }
             }
         }
@@ -224,13 +224,13 @@ namespace GuessMyMessServer.BusinessLogic
                 var player = await context.Player.FirstOrDefaultAsync(p => p.username == username);
                 if (player == null)
                 {
-                    throw new InvalidOperationException($"Usuario '{username}' no encontrado para actualizar estado.");
+                    throw new InvalidOperationException($"User '{username}' not found to update status.");
                 }
 
                 var userStatus = await context.UserStatus.FirstOrDefaultAsync(s => s.status == status);
                 if (userStatus == null)
                 {
-                    throw new InvalidOperationException($"Estado de usuario '{status}' no es válido.");
+                    throw new InvalidOperationException($"User status '{status}' is not valid.");
                 }
 
                 if (player.UserStatus_idUserStatus != userStatus.idUserStatus)
@@ -246,7 +246,7 @@ namespace GuessMyMessServer.BusinessLogic
             if (message == null || string.IsNullOrWhiteSpace(message.SenderUsername) ||
                 string.IsNullOrWhiteSpace(message.RecipientUsername) || string.IsNullOrWhiteSpace(message.Content))
             {
-                throw new ArgumentException("El mensaje directo contiene datos inválidos.");
+                throw new ArgumentException("The direct message contains invalid data.");
             }
 
             using (var dbContext = new GuessMyMessDBEntities())
@@ -256,7 +256,7 @@ namespace GuessMyMessServer.BusinessLogic
 
                 if (sender == null || recipient == null)
                 {
-                    throw new InvalidOperationException("El remitente o el destinatario del mensaje no existen.");
+                    throw new InvalidOperationException("The sender or recipient of the message does not exist.");
                 }
 
                 var dbMessage = new DirectMessages
