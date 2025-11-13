@@ -36,6 +36,7 @@ namespace GuessMyMessServer.BusinessLogic
             public ConcurrentDictionary<string, PlayerConnection> Players { get; } = new ConcurrentDictionary<string, PlayerConnection>();
             private Timer _countdownTimer;
             private int _countdownSeconds = 5;
+            private volatile bool _gameHasStarted = false;
 
             public Lobby(string matchId, string hostUsername, MatchInfoDto matchInfo)
             {
@@ -61,22 +62,35 @@ namespace GuessMyMessServer.BusinessLogic
             public void StartCountdown()
             {
                 _countdownSeconds = 5;
-                _countdownTimer = new Timer(CountdownTick, null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
                 Broadcast(conn => conn.Callback.OnGameStarting(_countdownSeconds));
+                _countdownTimer = new Timer(CountdownTick, null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
             }
 
             private void CountdownTick(object state)
             {
+                _countdownTimer?.Change(Timeout.Infinite, Timeout.Infinite);
                 _countdownSeconds--;
                 if (_countdownSeconds > 0)
                 {
                     Broadcast(conn => conn.Callback.OnGameStarting(_countdownSeconds));
+                    _countdownTimer?.Change(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
                 }
                 else
                 {
-                    _countdownTimer?.Dispose();
-                    Broadcast(conn => conn.Callback.OnGameStarted());
-                    LobbyLogic.RemoveLobby(MatchId);
+                    if (!_gameHasStarted)
+                    {
+                        _gameHasStarted = true;
+                        _countdownTimer?.Dispose();
+                        _countdownTimer = null;
+
+                        Broadcast(conn => conn.Callback.OnGameStarted());
+                        LobbyLogic.RemoveLobby(MatchId);
+                    }
+                    else
+                    {
+                        _countdownTimer?.Dispose();
+                        _countdownTimer = null;
+                    }
                 }
             }
 
