@@ -11,11 +11,12 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
     [ServiceContract(CallbackContract = typeof(IGameServiceCallback))] 
     public interface IGameService
     {
+        // En IGameService.cs
         [OperationContract(IsOneWay = true)]
-        void Connect(string username);
+        void Connect(string username, string matchId);
 
         [OperationContract(IsOneWay = true)]
-        void Disconnect(string username);
+        void Disconnect(string username, string matchId);
 
         [OperationContract(IsOneWay = true)] 
         void SelectWord(string username, string matchId, string selectedWord);

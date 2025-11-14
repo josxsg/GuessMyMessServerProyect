@@ -116,6 +116,7 @@
     <Compile Include="Contracts\DataContracts\AvatarDto.cs" />
     <Compile Include="Contracts\DataContracts\ChatMessageDto.cs" />
     <Compile Include="Contracts\DataContracts\DirectMessageDto.cs" />
+    <Compile Include="Contracts\DataContracts\DrawingDto.cs" />
     <Compile Include="Contracts\DataContracts\FriendDto.cs" />
     <Compile Include="Contracts\DataContracts\FriendRequestInfoDto.cs" />
     <Compile Include="Contracts\DataContracts\LobbySettingsDto.cs" />
