@@ -174,8 +174,6 @@ namespace GuessMyMessServer.BusinessLogic
                 lobby.Players.Add(username);
                 lobby.CurrentPlayers++;
                 UpdatePlayerCountInDb(lobby.MatchId, 1);
-
-                callback.MatchJoined(lobby.MatchId, new OperationResultDto { Success = true });
                 BroadcastLobbyUpdate(lobby);
 
                 return new OperationResultDto
