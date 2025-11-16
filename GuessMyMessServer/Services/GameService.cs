@@ -252,10 +252,10 @@ namespace GuessMyMessServer.Services
 
 
             // --- Comprobar si todos han adivinado ---
-            CheckIfAllGuessesAreIn(matchId, currentDrawing);
+            CheckIfAllGuessesForCurrentDrawingAreIn(matchId, currentDrawing);
         }
 
-        private void CheckIfAllGuessesAreIn(string matchId, DrawingDto currentDrawing)
+        private void CheckIfAllGuessesForCurrentDrawingAreIn(string matchId, DrawingDto currentDrawing)
         {
             int totalPlayers = 0;
             List<string> playersInMatch;
@@ -275,56 +275,20 @@ namespace GuessMyMessServer.Services
                 }
             }
 
-            // Todos han adivinado (N-1 jugadores, ya que el artista no adivina)
+            // Todos han adivinado (N-1 jugadores)
             if (guessesForThisDrawing >= (totalPlayers - 1))
             {
-                Console.WriteLine($"Partida {matchId}: Todos adivinaron el dibujo {currentDrawing.DrawingId}. Mostrando respuestas...");
+                Console.WriteLine($"Partida {matchId}: Todos adivinaron el dibujo {currentDrawing.DrawingId}. Pasando al siguiente...");
 
-                // 1. Obtenemos los datos para enviar
-                List<GuessDto> finalGuesses;
-                List<PlayerScoreDto> currentScores;
-
-                lock (_matchGuesses)
-                {
-                    finalGuesses = _matchGuesses[matchId]
-                        .Where(g => g.DrawingId == currentDrawing.DrawingId)
-                        .ToList();
-                }
-                lock (_matchScores)
-                {
-                    currentScores = new List<PlayerScoreDto>(_matchScores[matchId]); // Clonar
-                }
-
-                // 2. Notificamos a todos los jugadores que muestren la pantalla de respuestas
-                foreach (var playerUsername in playersInMatch)
-                {
-                    lock (connectedPlayers)
-                    {
-                        if (connectedPlayers.ContainsKey(playerUsername))
-                        {
-                            try
-                            {
-                                // ¡NUEVO CALLBACK! Añadir a IGameServiceCallback
-                                connectedPlayers[playerUsername].OnShowAnswers(currentDrawing, finalGuesses, currentScores);
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine($"Error en OnShowAnswers para {playerUsername}: {ex.Message}");
-                            }
-                        }
-                    }
-                }
-
-                // 3. Programamos la siguiente fase después de un retraso
-                int delaySeconds = finalGuesses.Count * SecondsPerGuess + 5; // (3 seg por respuesta + 5 extra)
-                Task.Delay(TimeSpan.FromSeconds(delaySeconds)).ContinueWith(t =>
-                {
-                    GoToNextDrawingOrEndGame(matchId);
-                });
+                // --- LÓGICA CAMBIADA ---
+                // ¡Ya no enviamos OnShowAnswers!
+                // ¡Ya no hay Task.Delay!
+                // Simplemente llamamos al método que decide qué hacer a continuación.
+                GoToNextDrawingOrAnswersPhase(matchId);
             }
         }
 
-        private void GoToNextDrawingOrEndGame(string matchId)
+        private void GoToNextDrawingOrAnswersPhase(string matchId)
         {
             int nextDrawingIndex = 0;
             lock (_matchCurrentDrawingIndex)
@@ -347,10 +311,11 @@ namespace GuessMyMessServer.Services
 
             if (nextDrawingIndex < drawings.Count)
             {
-                // --- A. Siguiente Dibujo ---
+                // --- A. AÚN HAY DIBUJOS POR ADIVINAR ---
                 DrawingDto nextDrawing = drawings[nextDrawingIndex];
                 Console.WriteLine($"Partida {matchId}: Pasando al siguiente dibujo {nextDrawing.DrawingId} ({nextDrawing.OwnerUsername})");
 
+                // Enviamos el siguiente dibujo a todos
                 foreach (var playerUsername in playersInMatch)
                 {
                     lock (connectedPlayers)
@@ -359,7 +324,6 @@ namespace GuessMyMessServer.Services
                         {
                             try
                             {
-                                // ¡NUEVO CALLBACK! Añadir a IGameServiceCallback
                                 connectedPlayers[playerUsername].OnShowNextDrawing(nextDrawing);
                             }
                             catch (Exception ex) { Console.WriteLine($"Error en OnShowNextDrawing para {playerUsername}: {ex.Message}"); }
@@ -369,16 +333,24 @@ namespace GuessMyMessServer.Services
             }
             else
             {
-                // --- B. Fin de la Partida ---
-                Console.WriteLine($"Partida {matchId}: Fin de la partida.");
-                List<PlayerScoreDto> finalScores;
+                // --- B. SE ACABARON LOS DIBUJOS POR ADIVINAR ---
+                Console.WriteLine($"Partida {matchId}: Fase de adivinanza terminada. Pasando a mostrar respuestas...");
+
+                // 1. Recopilamos TODOS los datos de la partida
+                List<DrawingDto> allDrawings = drawings; // Ya la tenemos
+                List<GuessDto> allGuesses;
+                List<PlayerScoreDto> currentScores;
+
+                lock (_matchGuesses)
+                {
+                    allGuesses = _matchGuesses.ContainsKey(matchId) ? new List<GuessDto>(_matchGuesses[matchId]) : new List<GuessDto>();
+                }
                 lock (_matchScores)
                 {
-                    finalScores = _matchScores[matchId]
-                        .OrderByDescending(s => s.Score)
-                        .ToList();
+                    currentScores = new List<PlayerScoreDto>(_matchScores[matchId]);
                 }
 
+                // 2. Enviamos el NUEVO callback a todos
                 foreach (var playerUsername in playersInMatch)
                 {
                     lock (connectedPlayers)
@@ -387,17 +359,73 @@ namespace GuessMyMessServer.Services
                         {
                             try
                             {
-                                // CALLBACK EXISTENTE (según tu PDF)
-                                connectedPlayers[playerUsername].OnGameEnd(finalScores);
+                                // ¡NUEVO CALLBACK! (Recuerda actualizar tu referencia de servicio)
+                                connectedPlayers[playerUsername].OnAnswersPhaseStart(
+                                    allDrawings.ToArray(),
+                                    allGuesses.ToArray(),
+                                    currentScores.ToArray());
                             }
-                            catch (Exception ex) { Console.WriteLine($"Error en OnGameEnd para {playerUsername}: {ex.Message}"); }
+                            catch (Exception ex) { Console.WriteLine($"Error en OnAnswersPhaseStart para {playerUsername}: {ex.Message}"); }
                         }
                     }
                 }
 
-                // Limpiamos la memoria de esta partida
-                ClearMatchData(matchId);
+                // 3. Programamos el FIN DE JUEGO (OnGameEnd)
+                // El servidor esperará a que el cliente termine de mostrar todas las respuestas.
+                int totalItemsToShow = allDrawings.Count + allGuesses.Count;
+                int delaySeconds = (totalItemsToShow * SecondsPerGuess) + 5; // +5s de colchón
+
+                Console.WriteLine($"Partida {matchId}: Programando fin de juego en {delaySeconds} segundos.");
+                Task.Delay(TimeSpan.FromSeconds(delaySeconds)).ContinueWith(t =>
+                {
+                    NotifyGameEnd(matchId);
+                });
             }
+        }
+
+        private void NotifyGameEnd(string matchId)
+        {
+            Console.WriteLine($"Partida {matchId}: Fin de la partida.");
+            List<PlayerScoreDto> finalScores;
+
+            // Es posible que los datos ya se hayan limpiado si los jugadores se fueron.
+            // Verificamos si aún existen.
+            lock (_matchScores)
+            {
+                if (!_matchScores.ContainsKey(matchId))
+                {
+                    Console.WriteLine($"Partida {matchId}: No se pueden enviar puntajes, ya fue limpiada.");
+                    return;
+                }
+                finalScores = _matchScores[matchId]
+                    .OrderByDescending(s => s.Score)
+                    .ToList();
+            }
+
+            List<string> playersInMatch;
+            lock (_matchPlayers)
+            {
+                if (!_matchPlayers.ContainsKey(matchId)) return;
+                playersInMatch = new List<string>(_matchPlayers[matchId]);
+            }
+
+            foreach (var playerUsername in playersInMatch)
+            {
+                lock (connectedPlayers)
+                {
+                    if (connectedPlayers.ContainsKey(playerUsername))
+                    {
+                        try
+                        {
+                            connectedPlayers[playerUsername].OnGameEnd(finalScores);
+                        }
+                        catch (Exception ex) { Console.WriteLine($"Error en OnGameEnd para {playerUsername}: {ex.Message}"); }
+                    }
+                }
+            }
+
+            // Limpiamos la memoria de esta partida DESPUÉS de enviar el fin.
+            ClearMatchData(matchId);
         }
 
         // --- MÉTODO DE LIMPIEZA AÑADIDO ---

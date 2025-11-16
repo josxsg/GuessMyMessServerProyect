@@ -50,7 +50,7 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
         void OnInGameMessageReceived(string sender, string message);
 
         [OperationContract(IsOneWay = true)]
-        void OnShowAnswers(DrawingDto drawing, List<GuessDto> guesses, List<PlayerScoreDto> scores);
+        void OnAnswersPhaseStart(DrawingDto[] allDrawings, GuessDto[] allGuesses, PlayerScoreDto[] currentScores);
 
         [OperationContract(IsOneWay = true)]
         void OnShowNextDrawing(DrawingDto nextDrawing);
