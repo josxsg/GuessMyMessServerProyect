@@ -20,6 +20,15 @@ namespace GuessMyMessServer.Services
         // --- MODIFICACIÓN NECESARIA ---
         // Necesitamos saber qué jugadores hay en cada partida para poder limpiarla.
         private static readonly Dictionary<string, List<string>> _matchPlayers = new Dictionary<string, List<string>>();
+        // Almacena las adivinanzas de cada jugador por partida
+        private static readonly Dictionary<string, List<GuessDto>> _matchGuesses = new Dictionary<string, List<GuessDto>>();
+
+        // Almacena el índice del dibujo que se está adivinando actualmente en la partida
+        private static readonly Dictionary<string, int> _matchCurrentDrawingIndex = new Dictionary<string, int>();
+
+        // Almacena los puntajes actuales de la partida
+        private static readonly Dictionary<string, List<PlayerScoreDto>> _matchScores = new Dictionary<string, List<PlayerScoreDto>>();
+        private const int SecondsPerGuess = 30;
 
         // --- MODIFICACIÓN NECESARIA ---
         // Connect debe saber a qué partida (matchId) se une el jugador.
@@ -149,39 +158,260 @@ namespace GuessMyMessServer.Services
             } // <-- LLAVE CORREGIDA: Cierre del 'catch'
         } // <-- LLAVE CORREGIDA: Cierre del método 'SubmitDrawing'
 
-        public void SubmitGuess(string username, string matchId, string guess)
-        {
-            throw new NotImplementedException();
-        }
-
         public void SendInGameChatMessage(string username, string matchId, string message)
         {
-            throw new NotImplementedException();
+            List<string> playersInMatch;
+            lock (_matchPlayers)
+            {
+                if (!_matchPlayers.ContainsKey(matchId)) return;
+                playersInMatch = new List<string>(_matchPlayers[matchId]); // Copia para iterar
+            }
+
+            // Notificamos a cada jugador en la partida
+            foreach (var playerUsername in playersInMatch)
+            {
+                lock (connectedPlayers)
+                {
+                    if (connectedPlayers.ContainsKey(playerUsername))
+                    {
+                        var callback = connectedPlayers[playerUsername];
+                        try
+                        {
+                            // ¡NUEVO CALLBACK! Debes añadir OnInGameMessageReceived a IGameServiceCallback
+                            callback.OnInGameMessageReceived(username, message);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error al enviar chat a {playerUsername}: {ex.Message}");
+                            // Podrías remover al jugador si la conexión falla
+                        }
+                    }
+                }
+            }
+        }
+
+        // --- IMPLEMENTACIÓN DE ADIVINANZA ---
+        public void SubmitGuess(string username, string matchId, int drawingId, string guess)
+        {
+            DrawingDto currentDrawing = null;
+            lock (_matchDrawings)
+            {
+                if (_matchDrawings.ContainsKey(matchId))
+                {
+                    currentDrawing = _matchDrawings[matchId].FirstOrDefault(d => d.DrawingId == drawingId);
+                }
+            }
+
+            if (currentDrawing == null)
+            {
+                Console.WriteLine($"Error en SubmitGuess: No se encontró el dibujo {drawingId} en la partida {matchId}");
+                return;
+            }
+
+            // Comprobar si la respuesta es correcta
+            bool isCorrect = string.Equals(guess, currentDrawing.WordKey, StringComparison.OrdinalIgnoreCase);
+
+            // Guardar la adivinanza
+            var newGuess = new GuessDto
+            {
+                GuesserUsername = username,
+                DrawingId = drawingId,
+                GuessText = guess,
+                IsCorrect = isCorrect,
+                WordKey = currentDrawing.WordKey // Incluimos la palabra correcta para mostrarla después
+            };
+
+            lock (_matchGuesses)
+            {
+                if (!_matchGuesses.ContainsKey(matchId))
+                {
+                    _matchGuesses[matchId] = new List<GuessDto>();
+                }
+                // Evitar duplicados si el jugador envía varias veces
+                _matchGuesses[matchId].RemoveAll(g => g.GuesserUsername == username && g.DrawingId == drawingId);
+                _matchGuesses[matchId].Add(newGuess);
+            }
+
+            // Actualizar puntaje
+            lock (_matchScores)
+            {
+                var playerToScore = _matchScores[matchId].FirstOrDefault(p => p.Username == username);
+                if (playerToScore != null && isCorrect)
+                {
+                    // (Lógica de puntos simple, puedes hacerla basada en tiempo)
+                    playerToScore.Score += 50;
+                }
+
+                // TODO: Dar puntos al dibujante (p.ej. 10 puntos por cada acierto)
+                var artist = _matchScores[matchId].FirstOrDefault(p => p.Username == currentDrawing.OwnerUsername);
+                if (artist != null && isCorrect)
+                {
+                    artist.Score += 10;
+                }
+            }
+
+
+            // --- Comprobar si todos han adivinado ---
+            CheckIfAllGuessesAreIn(matchId, currentDrawing);
+        }
+
+        private void CheckIfAllGuessesAreIn(string matchId, DrawingDto currentDrawing)
+        {
+            int totalPlayers = 0;
+            List<string> playersInMatch;
+            lock (_matchPlayers)
+            {
+                if (!_matchPlayers.ContainsKey(matchId)) return;
+                playersInMatch = _matchPlayers[matchId];
+                totalPlayers = playersInMatch.Count;
+            }
+
+            int guessesForThisDrawing = 0;
+            lock (_matchGuesses)
+            {
+                if (_matchGuesses.ContainsKey(matchId))
+                {
+                    guessesForThisDrawing = _matchGuesses[matchId].Count(g => g.DrawingId == currentDrawing.DrawingId);
+                }
+            }
+
+            // Todos han adivinado (N-1 jugadores, ya que el artista no adivina)
+            if (guessesForThisDrawing >= (totalPlayers - 1))
+            {
+                Console.WriteLine($"Partida {matchId}: Todos adivinaron el dibujo {currentDrawing.DrawingId}. Mostrando respuestas...");
+
+                // 1. Obtenemos los datos para enviar
+                List<GuessDto> finalGuesses;
+                List<PlayerScoreDto> currentScores;
+
+                lock (_matchGuesses)
+                {
+                    finalGuesses = _matchGuesses[matchId]
+                        .Where(g => g.DrawingId == currentDrawing.DrawingId)
+                        .ToList();
+                }
+                lock (_matchScores)
+                {
+                    currentScores = new List<PlayerScoreDto>(_matchScores[matchId]); // Clonar
+                }
+
+                // 2. Notificamos a todos los jugadores que muestren la pantalla de respuestas
+                foreach (var playerUsername in playersInMatch)
+                {
+                    lock (connectedPlayers)
+                    {
+                        if (connectedPlayers.ContainsKey(playerUsername))
+                        {
+                            try
+                            {
+                                // ¡NUEVO CALLBACK! Añadir a IGameServiceCallback
+                                connectedPlayers[playerUsername].OnShowAnswers(currentDrawing, finalGuesses, currentScores);
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Error en OnShowAnswers para {playerUsername}: {ex.Message}");
+                            }
+                        }
+                    }
+                }
+
+                // 3. Programamos la siguiente fase después de un retraso
+                int delaySeconds = finalGuesses.Count * SecondsPerGuess + 5; // (3 seg por respuesta + 5 extra)
+                Task.Delay(TimeSpan.FromSeconds(delaySeconds)).ContinueWith(t =>
+                {
+                    GoToNextDrawingOrEndGame(matchId);
+                });
+            }
+        }
+
+        private void GoToNextDrawingOrEndGame(string matchId)
+        {
+            int nextDrawingIndex = 0;
+            lock (_matchCurrentDrawingIndex)
+            {
+                _matchCurrentDrawingIndex[matchId]++;
+                nextDrawingIndex = _matchCurrentDrawingIndex[matchId];
+            }
+
+            List<DrawingDto> drawings;
+            lock (_matchDrawings)
+            {
+                drawings = _matchDrawings[matchId];
+            }
+
+            List<string> playersInMatch;
+            lock (_matchPlayers)
+            {
+                playersInMatch = new List<string>(_matchPlayers[matchId]);
+            }
+
+            if (nextDrawingIndex < drawings.Count)
+            {
+                // --- A. Siguiente Dibujo ---
+                DrawingDto nextDrawing = drawings[nextDrawingIndex];
+                Console.WriteLine($"Partida {matchId}: Pasando al siguiente dibujo {nextDrawing.DrawingId} ({nextDrawing.OwnerUsername})");
+
+                foreach (var playerUsername in playersInMatch)
+                {
+                    lock (connectedPlayers)
+                    {
+                        if (connectedPlayers.ContainsKey(playerUsername))
+                        {
+                            try
+                            {
+                                // ¡NUEVO CALLBACK! Añadir a IGameServiceCallback
+                                connectedPlayers[playerUsername].OnShowNextDrawing(nextDrawing);
+                            }
+                            catch (Exception ex) { Console.WriteLine($"Error en OnShowNextDrawing para {playerUsername}: {ex.Message}"); }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // --- B. Fin de la Partida ---
+                Console.WriteLine($"Partida {matchId}: Fin de la partida.");
+                List<PlayerScoreDto> finalScores;
+                lock (_matchScores)
+                {
+                    finalScores = _matchScores[matchId]
+                        .OrderByDescending(s => s.Score)
+                        .ToList();
+                }
+
+                foreach (var playerUsername in playersInMatch)
+                {
+                    lock (connectedPlayers)
+                    {
+                        if (connectedPlayers.ContainsKey(playerUsername))
+                        {
+                            try
+                            {
+                                // CALLBACK EXISTENTE (según tu PDF)
+                                connectedPlayers[playerUsername].OnGameEnd(finalScores);
+                            }
+                            catch (Exception ex) { Console.WriteLine($"Error en OnGameEnd para {playerUsername}: {ex.Message}"); }
+                        }
+                    }
+                }
+
+                // Limpiamos la memoria de esta partida
+                ClearMatchData(matchId);
+            }
         }
 
         // --- MÉTODO DE LIMPIEZA AÑADIDO ---
         private void ClearMatchData(string matchId)
         {
-            lock (_matchDrawings)
-            {
-                if (_matchDrawings.ContainsKey(matchId))
-                {
-                    _matchDrawings.Remove(matchId);
-                    Console.WriteLine($"Dibujos en memoria de partida {matchId} eliminados.");
-                }
-            }
+            lock (_matchDrawings) { _matchDrawings.Remove(matchId); }
+            lock (_matchPlayers) { _matchPlayers.Remove(matchId); }
+            lock (_matchGuesses) { _matchGuesses.Remove(matchId); }
+            lock (_matchCurrentDrawingIndex) { _matchCurrentDrawingIndex.Remove(matchId); }
+            lock (_matchScores) { _matchScores.Remove(matchId); }
 
-            lock (_matchPlayers)
-            {
-                if (_matchPlayers.ContainsKey(matchId))
-                {
-                    _matchPlayers.Remove(matchId);
-                    Console.WriteLine($"Lista de jugadores de partida {matchId} eliminada.");
-                }
-            }
+            // _playerSelectedWords se limpia cuando cada jugador se desconecta
 
-            // Las palabras en _playerSelectedWords se limpian individualmente
-            // cuando cada jugador se desconecta (en el método Disconnect).
+            Console.WriteLine($"Datos en memoria de partida {matchId} eliminados.");
         }
 
         private void CheckIfAllPlayersFinished(string matchId)
@@ -221,7 +451,6 @@ namespace GuessMyMessServer.Services
             lock (_matchPlayers)
             {
                 if (!_matchPlayers.ContainsKey(matchId)) return;
-                // Hacemos una copia para evitar problemas de concurrencia al iterar
                 playersInMatch = new List<string>(_matchPlayers[matchId]);
             }
 
@@ -231,8 +460,25 @@ namespace GuessMyMessServer.Services
                 drawings = _matchDrawings[matchId];
             }
 
-            // Lógica para decidir qué dibujo mostrar.
-            // Por ahora, enviamos el primer dibujo de la lista a todos.
+            // --- INICIALIZACIÓN DE PARTIDA ---
+            lock (_matchCurrentDrawingIndex)
+            {
+                _matchCurrentDrawingIndex[matchId] = 0; // Empezamos en el primer dibujo
+            }
+            lock (_matchScores)
+            {
+                // Inicializa los puntajes
+                _matchScores[matchId] = playersInMatch
+                    .Select(username => new PlayerScoreDto { Username = username, Score = 0 })
+                    .ToList();
+            }
+            lock (_matchGuesses)
+            {
+                _matchGuesses.Remove(matchId); // Limpia adivinanzas anteriores si las hubo
+            }
+            // --- FIN INICIALIZACIÓN ---
+
+
             DrawingDto firstDrawing = drawings.FirstOrDefault();
             if (firstDrawing == null)
             {
@@ -250,8 +496,9 @@ namespace GuessMyMessServer.Services
                         var callback = connectedPlayers[username];
                         try
                         {
-                            // ¡ESTA ES LA LLAMADA AL CLIENTE QUE INICIA LA NAVEGACIÓN!
-                            callback.OnGuessingPhaseStart(firstDrawing.DrawingData, firstDrawing.OwnerUsername);
+                            // MODIFICACIÓN: Enviamos el DTO completo
+                            // ¡DEBES CAMBIAR ESTO EN IGameServiceCallback!
+                            callback.OnGuessingPhaseStart(firstDrawing);
                         }
                         catch (Exception ex)
                         {

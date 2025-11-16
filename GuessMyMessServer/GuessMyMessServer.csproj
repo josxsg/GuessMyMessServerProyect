@@ -119,6 +119,7 @@
     <Compile Include="Contracts\DataContracts\DrawingDto.cs" />
     <Compile Include="Contracts\DataContracts\FriendDto.cs" />
     <Compile Include="Contracts\DataContracts\FriendRequestInfoDto.cs" />
+    <Compile Include="Contracts\DataContracts\GuessDto.cs" />
     <Compile Include="Contracts\DataContracts\LobbySettingsDto.cs" />
     <Compile Include="Contracts\DataContracts\LobbyStateDto.cs" />
     <Compile Include="Contracts\DataContracts\MatchInfoDto.cs" />

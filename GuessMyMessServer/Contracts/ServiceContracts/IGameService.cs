@@ -28,7 +28,7 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
         void SubmitDrawing(string username, string matchId, byte[] drawingData);
 
         [OperationContract(IsOneWay = true)] 
-        void SubmitGuess(string username, string matchId, string guess);
+        void SubmitGuess(string username, string matchId, int drawingId, string guess);
 
         [OperationContract(IsOneWay = true)] 
         void SendInGameChatMessage(string username, string matchId, string message);
@@ -43,19 +43,19 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
         [OperationContract(IsOneWay = true)]
         void OnDrawingPhaseStart(int durationSeconds);
 
-        [OperationContract(IsOneWay = true)] 
-        void OnGuessingPhaseStart(byte[] drawingData, string artistUsername);
+        [OperationContract(IsOneWay = true)]
+        void OnGuessingPhaseStart(DrawingDto drawing);
 
-        [OperationContract(IsOneWay = true)] 
-        void OnPlayerGuessedCorrectly(string username);
+        [OperationContract(IsOneWay = true)]
+        void OnInGameMessageReceived(string sender, string message);
 
-        [OperationContract(IsOneWay = true)] 
-        void OnTimeUpdate(int remainingSeconds);
+        [OperationContract(IsOneWay = true)]
+        void OnShowAnswers(DrawingDto drawing, List<GuessDto> guesses, List<PlayerScoreDto> scores);
 
-        [OperationContract(IsOneWay = true)] 
-        void OnRoundEnd(List<PlayerScoreDto> roundScores, string correctWord);
+        [OperationContract(IsOneWay = true)]
+        void OnShowNextDrawing(DrawingDto nextDrawing);
 
-        [OperationContract(IsOneWay = true)] 
+        [OperationContract(IsOneWay = true)]
         void OnGameEnd(List<PlayerScoreDto> finalScores);
     }
 }
