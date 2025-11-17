@@ -32,7 +32,7 @@ namespace GuessMyMessServer.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al obtener lista de amigos para notificación de estado: {ex.Message}");
+                Console.WriteLine($"Error retrieving friends list for status notification: {ex.Message}");
                 return;
             }
 
@@ -53,13 +53,13 @@ namespace GuessMyMessServer.Services
                     }
                     else
                     {
-                        Console.WriteLine($"{friendUsername} es amigo de {username} pero no está en connectedClients.");
+                        Console.WriteLine($"{friendUsername} is a friend of {username} but is not in connectedClients.");
                     }
                 }
 
                 foreach (var clientToRemove in clientsToRemove.Where(connectedClients.ContainsKey))
                 {
-                    Console.WriteLine($"Removiendo cliente fallido: {clientToRemove}");
+                    Console.WriteLine($"Removing failed client: {clientToRemove}");
                     connectedClients.Remove(clientToRemove);
                 }
             }
@@ -69,34 +69,35 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                Console.WriteLine($"Notificando a {friendUsername} sobre {targetUsername} ({status})...");
+                Console.WriteLine($"Notifying {friendUsername} about {targetUsername} ({status})...");
                 callback?.NotifyFriendStatusChanged(targetUsername, status);
-                Console.WriteLine($"Notificación enviada a {friendUsername}.");
-                return true; 
+                Console.WriteLine($"Notification sent to {friendUsername}.");
+                return true;
             }
             catch (ObjectDisposedException odEx)
             {
-                Console.WriteLine($"Error al notificar a {friendUsername} (ObjectDisposed): {odEx.Message}. Marcado para remover.");
+                Console.WriteLine($"Error notifying {friendUsername} (ObjectDisposed): {odEx.Message}. Marked for removal.");
             }
             catch (CommunicationObjectAbortedException coaEx)
             {
-                Console.WriteLine($"Error al notificar a {friendUsername} (Aborted): {coaEx.Message}. Marcado para remover.");
+                Console.WriteLine($"Error notifying {friendUsername} (Aborted): {coaEx.Message}. Marked for removal.");
             }
             catch (CommunicationObjectFaultedException cofEx)
             {
-                Console.WriteLine($"Error al notificar a {friendUsername} (Faulted): {cofEx.Message}. Marcado para remover.");
+                Console.WriteLine($"Error notifying {friendUsername} (Faulted): {cofEx.Message}. Marked for removal.");
             }
             catch (TimeoutException tEx)
             {
-                Console.WriteLine($"Timeout al notificar a {friendUsername}: {tEx.Message}. Marcado para remover.");
+                Console.WriteLine($"Timeout notifying {friendUsername}: {tEx.Message}. Marked for removal.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error GENÉRICO al notificar a {friendUsername}: {ex.GetType().Name} - {ex.Message}. Marcado para remover.");
+                Console.WriteLine($"GENERIC error notifying {friendUsername}: {ex.GetType().Name} - {ex.Message}. Marked for removal.");
             }
 
-            return false; 
+            return false;
         }
+
         public void Connect(string username)
         {
             if (string.IsNullOrEmpty(username))
@@ -126,7 +127,7 @@ namespace GuessMyMessServer.Services
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error al actualizar estado en Connect: {ex.Message}");
+                    Console.WriteLine($"Error updating status in Connect: {ex.Message}");
                 }
             });
         }
@@ -152,7 +153,7 @@ namespace GuessMyMessServer.Services
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error al actualizar estado en Disconnect: {ex.Message}");
+                    Console.WriteLine($"Error updating status in Disconnect: {ex.Message}");
                 }
             });
         }
@@ -165,7 +166,7 @@ namespace GuessMyMessServer.Services
             }
             catch (Exception ex)
             {
-                throw new FaultException($"Error al obtener lista de amigos: {ex.Message}");
+                throw new FaultException($"Error retrieving friends list: {ex.Message}");
             }
         }
 
@@ -177,7 +178,7 @@ namespace GuessMyMessServer.Services
             }
             catch (Exception ex)
             {
-                throw new FaultException($"Error al obtener solicitudes de amistad: {ex.Message}");
+                throw new FaultException($"Error retrieving friend requests: {ex.Message}");
             }
         }
 
@@ -189,7 +190,7 @@ namespace GuessMyMessServer.Services
             }
             catch (Exception ex)
             {
-                throw new FaultException($"Error al buscar usuarios: {ex.Message}");
+                throw new FaultException($"Error searching users: {ex.Message}");
             }
         }
 
@@ -208,7 +209,7 @@ namespace GuessMyMessServer.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error en SendFriendRequest: {ex.Message}");
+                Console.WriteLine($"Error in SendFriendRequest: {ex.Message}");
             }
         }
 
@@ -243,7 +244,7 @@ namespace GuessMyMessServer.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error en RespondToFriendRequest: {ex.Message}");
+                Console.WriteLine($"Error in RespondToFriendRequest: {ex.Message}");
             }
         }
 
@@ -255,7 +256,7 @@ namespace GuessMyMessServer.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error en RemoveFriend: {ex.Message}");
+                Console.WriteLine($"Error in RemoveFriend: {ex.Message}");
             }
         }
 
@@ -263,7 +264,7 @@ namespace GuessMyMessServer.Services
         {
             if (message == null || string.IsNullOrEmpty(message.RecipientUsername))
             {
-                Console.WriteLine("Error: Mensaje directo inválido.");
+                Console.WriteLine("Error: Invalid direct message.");
                 return;
             }
 
@@ -280,7 +281,7 @@ namespace GuessMyMessServer.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error en SendDirectMessage: {ex.Message}");
+                Console.WriteLine($"Error in SendDirectMessage: {ex.Message}");
             }
         }
 
@@ -292,7 +293,7 @@ namespace GuessMyMessServer.Services
             }
             catch (Exception ex)
             {
-                throw new FaultException($"Error al obtener conversaciones: {ex.Message}");
+                throw new FaultException($"Error retrieving conversations: {ex.Message}");
             }
         }
 
@@ -304,14 +305,14 @@ namespace GuessMyMessServer.Services
             }
             catch (Exception ex)
             {
-                throw new FaultException($"Error al obtener historial de conversación: {ex.Message}");
+                throw new FaultException($"Error retrieving conversation history: {ex.Message}");
             }
         }
 
         public Task<OperationResultDto> InviteFriendToGameByEmailAsync(string fromUsername, string friendEmail, string matchCode)
         {
-            Console.WriteLine("Advertencia: InviteFriendToGameByEmailAsync no está implementado.");
-            throw new NotImplementedException("La función de invitar por correo electrónico aún no está implementada.");
+            Console.WriteLine("Warning: InviteFriendToGameByEmailAsync is not implemented.");
+            throw new NotImplementedException("The email invitation feature has not been implemented yet.");
         }
     }
 }

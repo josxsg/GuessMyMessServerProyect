@@ -11,7 +11,6 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
     [ServiceContract(CallbackContract = typeof(IGameServiceCallback))] 
     public interface IGameService
     {
-        // En IGameService.cs
         [OperationContract(IsOneWay = true)]
         void Connect(string username, string matchId);
 

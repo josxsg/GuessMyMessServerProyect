@@ -11,7 +11,6 @@ namespace GuessMyMessServer.BusinessLogic
     public class GameLogic
     {
         private readonly GuessMyMessDBEntities _context;
-        // ¡Usaremos esta clase Random que ya tenías!
         private static readonly Random _random = new Random();
 
         public GameLogic(GuessMyMessDBEntities context)
@@ -23,30 +22,25 @@ namespace GuessMyMessServer.BusinessLogic
         {
             const int WordsToSelect = 3;
 
-            // 1. Traemos TODAS las palabras de la BD a la memoria del servidor
             var allWords = await _context.Word
                 .Select(w => new WordDto
                 {
                     WordId = w.idWord,
                     WordKey = w.word1
                 })
-                .ToListAsync(); // <-- Primero las obtenemos todas
+                .ToListAsync();
 
-            // 2. Si hay menos de 3, lanzamos el error
             if (allWords.Count < WordsToSelect)
             {
-                throw new InvalidOperationException("No hay suficientes palabras en la base de datos para iniciar la partida.");
+                throw new InvalidOperationException("Not enough words in the database to start the game.");
             }
 
-            // 3. ¡Aquí está la magia!
-            //    Las "barajamos" en la memoria de C# y tomamos 3
             var randomWords = allWords
-                .OrderBy(w => _random.Next()) // <-- Aleatorización en C#
-                .Take(WordsToSelect)           // <-- Tomamos 3
+                .OrderBy(w => _random.Next())
+                .Take(WordsToSelect)
                 .ToList();
 
             return randomWords;
         }
-       
     }
 }

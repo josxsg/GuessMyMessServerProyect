@@ -6,18 +6,18 @@ namespace GuessMyMessServer.Contracts.DataContracts
     public class DrawingDto
     {
         [DataMember]
-        public int DrawingId { get; set; } // ID temporal solo para la partida
+        public int DrawingId { get; set; } 
 
         [DataMember]
         public byte[] DrawingData { get; set; }
 
         [DataMember]
-        public string OwnerUsername { get; set; } // Funciona para registrados e invitados
+        public string OwnerUsername { get; set; } 
 
         [DataMember]
         public bool IsGuessed { get; set; }
 
         [DataMember]
-        public string WordKey { get; set; } // La palabra que dibujaron
+        public string WordKey { get; set; } 
     }
 }
