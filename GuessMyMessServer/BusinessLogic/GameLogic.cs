@@ -27,6 +27,8 @@ namespace GuessMyMessServer.BusinessLogic
         private readonly Dictionary<string, List<PlayerScoreDto>> _matchScores = new Dictionary<string, List<PlayerScoreDto>>();
 
         private const int SecondsPerGuess = 10;
+        private const int CorrectGuessScore = 50;
+        private const int DrawingGuessedCorrectlyScore = 10;
         private static readonly Random _random = new Random();
 
         private GameLogic() { }
@@ -61,7 +63,8 @@ namespace GuessMyMessServer.BusinessLogic
                     return randomWords;
                 }
             }
-            catch (Exception ex) // Capturamos Exception general aquí porque EF puede lanzar varias en lectura (EntityException, SqlException)
+            // We catch the general Exception here because EF can throw multiple on read (EntityException, SqlException)
+            catch (Exception ex) 
             {
                 _log.Warn("Database error retrieving random words.", ex);
                 throw;
@@ -245,7 +248,7 @@ namespace GuessMyMessServer.BusinessLogic
                     playerToScore = new PlayerScoreDto { Username = guesser, Score = 0 };
                     _matchScores[matchId].Add(playerToScore);
                 }
-                playerToScore.Score += 50;
+                playerToScore.Score += CorrectGuessScore;
 
                 var artist = _matchScores[matchId].FirstOrDefault(p => p.Username == artistUsername);
                 if (artist == null)
@@ -253,7 +256,7 @@ namespace GuessMyMessServer.BusinessLogic
                     artist = new PlayerScoreDto { Username = artistUsername, Score = 0 };
                     _matchScores[matchId].Add(artist);
                 }
-                artist.Score += 10;
+                artist.Score += DrawingGuessedCorrectlyScore;
             }
         }
 
@@ -404,7 +407,7 @@ namespace GuessMyMessServer.BusinessLogic
             BroadcastToMatch(matchId, callback =>
                 callback.OnAnswersPhaseStart(allDrawings.ToArray(), allGuesses.ToArray(), currentScores.ToArray()));
 
-            int delaySeconds = ((allDrawings.Count + allGuesses.Count) * SecondsPerGuess) + 5;
+            int delaySeconds = ((allDrawings.Count + allGuesses.Count) * SecondsPerGuess);
 
             Task.Delay(TimeSpan.FromSeconds(delaySeconds)).ContinueWith(t => NotifyGameEnd(matchId));
         }

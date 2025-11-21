@@ -76,6 +76,7 @@ namespace GuessMyMessServer.BusinessLogic
 
         public async Task<OperationResultDto> RegisterPlayerAsync(UserProfileDto userProfile, string password)
         {
+            const int EmailCodeTimeExpiration = 15;
             if (userProfile == null || string.IsNullOrWhiteSpace(password))
             {
                 _log.Info("Registration failed: Null data provided.");
@@ -135,8 +136,8 @@ namespace GuessMyMessServer.BusinessLogic
             }
             catch (Exception ex)
             {
-                // JUSTIFICACIÓN: Errores de red impredecibles o fallos internos de la librería de correo
-                // que no derivan de SmtpException (ej. SocketException encapsulada).
+                // JUSTIFICATION: Unpredictable network errors or internal mail library failures
+                // that do not result from SmtpException.
                 _log.Error($"Unexpected error sending email to '{userProfile.Email}'", ex);
                 throw new InvalidOperationException("Could not send verification email. Please try again later.", ex);
             }
@@ -153,7 +154,7 @@ namespace GuessMyMessServer.BusinessLogic
                 UserStatus_idUserStatus = StatusOffline,
                 is_verified = (byte)0,
                 verification_code = verificationCode,
-                code_expiry_date = DateTime.UtcNow.AddMinutes(15)
+                code_expiry_date = DateTime.UtcNow.AddMinutes(EmailCodeTimeExpiration)
             };
 
             _context.Player.Add(newPlayer);
