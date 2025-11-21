@@ -12,15 +12,15 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
         void Connect(string username);
 
         [OperationContract]
-        [FaultContract(typeof(string))]
+        [FaultContract(typeof(ServiceFaultDto))]
         Task<List<FriendDto>> GetFriendsListAsync(string username);
 
         [OperationContract]
-        [FaultContract(typeof(string))]
+        [FaultContract(typeof(ServiceFaultDto))]
         Task<List<FriendRequestInfoDto>> GetFriendRequestsAsync(string username);
 
         [OperationContract]
-        [FaultContract(typeof(string))]
+        [FaultContract(typeof(ServiceFaultDto))]
         Task<List<UserProfileDto>> SearchUsersAsync(string searchUsername, string requesterUsername);
 
         [OperationContract(IsOneWay = true)]
@@ -33,18 +33,18 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
         void RemoveFriend(string username, string friendToRemove);
 
         [OperationContract]
-        [FaultContract(typeof(string))]
+        [FaultContract(typeof(ServiceFaultDto))]
         Task<OperationResultDto> InviteFriendToGameByEmailAsync(string fromUsername, string friendEmail, string matchCode);
 
         [OperationContract(IsOneWay = true)]
         void SendDirectMessage(DirectMessageDto message);
 
         [OperationContract]
-        [FaultContract(typeof(string))]
+        [FaultContract(typeof(ServiceFaultDto))]
         Task<List<FriendDto>> GetConversationsAsync(string username);
 
         [OperationContract]
-        [FaultContract(typeof(string))]
+        [FaultContract(typeof(ServiceFaultDto))] 
         Task<List<DirectMessageDto>> GetConversationHistoryAsync(string user1, string user2);
 
         [OperationContract(IsOneWay = true)]

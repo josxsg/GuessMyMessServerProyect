@@ -1,18 +1,23 @@
 ﻿using GuessMyMessServer.Contracts.DataContracts;
 using GuessMyMessServer.Contracts.ServiceContracts;
 using GuessMyMessServer.DataAccess;
+using log4net;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Data.Entity.Core;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace GuessMyMessServer.BusinessLogic
 {
     public class LobbyLogic
     {
+        private static readonly ILog _log = LogManager.GetLogger(typeof(LobbyLogic));
+
         private static readonly ConcurrentDictionary<string, Lobby> _lobbies = new ConcurrentDictionary<string, Lobby>();
         private static readonly object _lock = new object();
 
@@ -62,35 +67,50 @@ namespace GuessMyMessServer.BusinessLogic
             public void StartCountdown()
             {
                 _countdownSeconds = 5;
+                _log.Info($"Lobby {MatchId}: Countdown started.");
                 Broadcast(conn => conn.Callback.OnGameStarting(_countdownSeconds));
                 _countdownTimer = new Timer(CountdownTick, null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
             }
 
             private void CountdownTick(object state)
             {
-                _countdownTimer?.Change(Timeout.Infinite, Timeout.Infinite);
-                _countdownSeconds--;
-                if (_countdownSeconds > 0)
+                try
                 {
-                    Broadcast(conn => conn.Callback.OnGameStarting(_countdownSeconds));
-                    _countdownTimer?.Change(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
-                }
-                else
-                {
-                    if (!_gameHasStarted)
-                    {
-                        _gameHasStarted = true;
-                        _countdownTimer?.Dispose();
-                        _countdownTimer = null;
+                    _countdownTimer?.Change(Timeout.Infinite, Timeout.Infinite);
+                    _countdownSeconds--;
 
-                        Broadcast(conn => conn.Callback.OnGameStarted());
-                        LobbyLogic.RemoveLobby(MatchId);
+                    if (_countdownSeconds > 0)
+                    {
+                        Broadcast(conn => conn.Callback.OnGameStarting(_countdownSeconds));
+                        _countdownTimer?.Change(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
                     }
                     else
                     {
-                        _countdownTimer?.Dispose();
-                        _countdownTimer = null;
+                        if (!_gameHasStarted)
+                        {
+                            _gameHasStarted = true;
+                            _countdownTimer?.Dispose();
+                            _countdownTimer = null;
+
+                            _log.Info($"Lobby {MatchId}: Game started. Disbanding lobby instance.");
+                            Broadcast(conn => conn.Callback.OnGameStarted());
+
+                            LobbyLogic.RemoveLobby(MatchId);
+                        }
+                        else
+                        {
+                            _countdownTimer?.Dispose();
+                            _countdownTimer = null;
+                        }
                     }
+                }
+                catch (ObjectDisposedException objEx)
+                {
+                    _log.Info($"Lobby {MatchId}: Timer accessed after disposal (Game likely started or lobby closed).", objEx);
+                }
+                catch (Exception ex)
+                {
+                    _log.Error($"Lobby {MatchId}: Critical error in countdown timer.", ex);
                 }
             }
 
@@ -102,9 +122,21 @@ namespace GuessMyMessServer.BusinessLogic
                     {
                         action(playerConn);
                     }
+                    catch (CommunicationException comEx)
+                    {
+                        _log.Warn($"Failed to broadcast to '{playerConn.Username}' in lobby {MatchId}. Connection issue.", comEx);
+                    }
+                    catch (TimeoutException timeEx)
+                    {
+                        _log.Warn($"Timeout broadcasting to '{playerConn.Username}' in lobby {MatchId}.", timeEx);
+                    }
+                    catch (ObjectDisposedException dispEx)
+                    {
+                        _log.Warn($"Broadcast failed: Channel disposed for '{playerConn.Username}'.", dispEx);
+                    }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Error broadcasting to {playerConn.Username}: {ex.Message}");
+                        _log.Error($"Unexpected error broadcasting to '{playerConn.Username}'", ex);
                     }
                 }
             }
@@ -130,12 +162,13 @@ namespace GuessMyMessServer.BusinessLogic
             {
                 if (_lobbies.TryGetValue(matchId, out lobby))
                 {
-                    return lobby; 
+                    return lobby;
                 }
 
                 var matchInfo = GetMatchInfo(matchId);
                 if (matchInfo == null)
                 {
+                    _log.Warn($"Connection failed: Match {matchId} not found in database.");
                     SafeCallback(callback, () => callback.KickedFromLobby("Match not found."));
                     return null;
                 }
@@ -146,6 +179,10 @@ namespace GuessMyMessServer.BusinessLogic
                 {
                     _lobbies.TryGetValue(matchId, out lobby);
                 }
+                else
+                {
+                    _log.Info($"Lobby created in memory for match {matchId}. Host candidate: {hostUsername}");
+                }
             }
 
             return lobby;
@@ -155,6 +192,7 @@ namespace GuessMyMessServer.BusinessLogic
         {
             if (lobby.Players.Count >= lobby.MatchInfo.MaxPlayers && !lobby.Players.ContainsKey(username))
             {
+                _log.Info($"Connection denied: Lobby {lobby.MatchId} is full. Rejecting {username}.");
                 SafeCallback(callback, () => callback.KickedFromLobby("Lobby is full."));
                 return;
             }
@@ -163,7 +201,7 @@ namespace GuessMyMessServer.BusinessLogic
 
             if (lobby.Players.TryAdd(username, connection))
             {
-                Console.WriteLine($"Player {username} connected to lobby {lobby.MatchId}");
+                _log.Info($"Player '{username}' joined lobby {lobby.MatchId}.");
                 BroadcastLobbyState(lobby);
             }
             else
@@ -171,7 +209,7 @@ namespace GuessMyMessServer.BusinessLogic
                 if (lobby.Players.TryGetValue(username, out var existingConnection))
                 {
                     lobby.Players.TryUpdate(username, connection, existingConnection);
-                    Console.WriteLine($"Player {username} reconnected to lobby {lobby.MatchId}");
+                    _log.Info($"Player '{username}' reconnected to lobby {lobby.MatchId}.");
 
                     SafeCallback(callback, () => callback.UpdateLobbyState(lobby.GetCurrentState()));
                 }
@@ -180,34 +218,63 @@ namespace GuessMyMessServer.BusinessLogic
 
         private static void SafeCallback(ILobbyServiceCallback callback, Action action)
         {
+            if (callback == null)
+            {
+                return;
+            }
             try
             {
-                if (callback != null)
-                {
-                    action();
-                }
+                action();
+            }
+            catch (CommunicationException comEx)
+            {
+                _log.Warn($"SafeCallback: Client disconnected or unreachable.", comEx);
+            }
+            catch (TimeoutException timeEx)
+            {
+                _log.Warn($"SafeCallback: Operation timed out.", timeEx);
+            }
+            catch (ObjectDisposedException objEx)
+            {
+                _log.Info($"SafeCallback: Channel was closed/disposed before call.", objEx);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Callback failed: {ex.Message}");
+                _log.Error($"SafeCallback: Unexpected error.", ex);
             }
         }
 
         public void Disconnect(string username, string matchId)
         {
             MatchmakingLogic.HandlePlayerLeave(username, matchId);
+
             if (_lobbies.TryGetValue(matchId, out Lobby lobby))
             {
                 if (lobby.Players.TryRemove(username, out _))
                 {
-                    Console.WriteLine($"Player {username} disconnected from lobby {matchId}");
+                    _log.Info($"Player '{username}' left lobby {matchId}.");
 
                     if (username.Equals(lobby.HostUsername, StringComparison.OrdinalIgnoreCase))
                     {
-                        Console.WriteLine($"Host {username} left lobby {matchId}. Kicking all players.");
+                        _log.Info($"Host '{username}' left. Disbanding lobby {matchId}.");
                         lobby.Broadcast(conn =>
                         {
-                            SafeCallback(conn.Callback, () => conn.Callback.KickedFromLobby("Host cancelled the match."));
+                            try
+                            {
+                                conn.Callback.KickedFromLobby("Host cancelled the match.");
+                            }
+                            catch (CommunicationException cmEx)
+                            {
+                                _log.Warn($"Could not notify kick to {conn.Username} (Connection lost).", cmEx);
+                            }
+                            catch (TimeoutException tmEx)
+                            {
+                                _log.Warn($"Timeout notifying kick to {conn.Username}.", tmEx);
+                            }
+                            catch (Exception ex)
+                            {
+                                _log.Error($"Error notifying kick to {conn.Username}", ex);
+                            }
                         });
                         RemoveLobby(matchId);
                     }
@@ -219,7 +286,7 @@ namespace GuessMyMessServer.BusinessLogic
 
                 if (!username.Equals(lobby.HostUsername, StringComparison.OrdinalIgnoreCase) && lobby.Players.IsEmpty)
                 {
-                    Console.WriteLine($"Lobby {matchId} is empty. Removing.");
+                    _log.Info($"Lobby {matchId} is empty. Removing.");
                     RemoveLobby(matchId);
                 }
             }
@@ -236,10 +303,7 @@ namespace GuessMyMessServer.BusinessLogic
                     Timestamp = DateTime.UtcNow
                 };
 
-                lobby.Broadcast(conn =>
-                {
-                    SafeCallback(conn.Callback, () => conn.Callback.ReceiveLobbyMessage(messageDto));
-                });
+                lobby.Broadcast(conn => conn.Callback.ReceiveLobbyMessage(messageDto));
             }
         }
 
@@ -249,27 +313,22 @@ namespace GuessMyMessServer.BusinessLogic
             {
                 if (!hostUsername.Equals(lobby.HostUsername, StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine($"Kick attempt failed: {hostUsername} is not the host of lobby {matchId}.");
+                    _log.Warn($"Kick failed: '{hostUsername}' attempted to kick '{playerToKickUsername}' but is not the host of {matchId}.");
                     return;
                 }
 
                 if (hostUsername.Equals(playerToKickUsername, StringComparison.OrdinalIgnoreCase))
                 {
+                    _log.Warn($"Kick ignored: Host '{hostUsername}' tried to kick themselves.");
                     return;
                 }
 
                 if (lobby.Players.TryRemove(playerToKickUsername, out PlayerConnection kickedPlayerConnection))
                 {
                     MatchmakingLogic.HandlePlayerLeave(playerToKickUsername, matchId);
-                    Console.WriteLine($"Player {playerToKickUsername} kicked from lobby {matchId} by host {hostUsername}.");
-                    try
-                    {
-                        kickedPlayerConnection.Callback.KickedFromLobby("Kicked by the host.");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Failed to notify kicked player {playerToKickUsername}: {ex.Message}");
-                    }
+                    _log.Info($"Player '{playerToKickUsername}' was kicked from lobby {matchId} by '{hostUsername}'.");
+
+                    SafeCallback(kickedPlayerConnection.Callback, () => kickedPlayerConnection.Callback.KickedFromLobby("Kicked by the host."));
 
                     BroadcastLobbyState(lobby);
                 }
@@ -282,16 +341,16 @@ namespace GuessMyMessServer.BusinessLogic
             {
                 if (!hostUsername.Equals(lobby.HostUsername, StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine($"Start game attempt failed: {hostUsername} is not the host of lobby {matchId}.");
+                    _log.Warn($"StartGame denied: '{hostUsername}' is not the host of {matchId}.");
                     return;
                 }
 
                 if (lobby.Players.Count < 2)
                 {
-                    Console.WriteLine($"Start game attempt failed: Not enough players in lobby {matchId}.");
+                    _log.Info($"StartGame failed: Not enough players in lobby {matchId} (Count: {lobby.Players.Count}).");
                 }
 
-                Console.WriteLine($"Host {hostUsername} starting game for lobby {matchId}.");
+                _log.Info($"Host '{hostUsername}' initiated game start for {matchId}.");
                 lobby.StartCountdown();
             }
         }
@@ -299,17 +358,14 @@ namespace GuessMyMessServer.BusinessLogic
         private static void BroadcastLobbyState(Lobby lobby)
         {
             var state = lobby.GetCurrentState();
-            lobby.Broadcast(conn =>
-            {
-                SafeCallback(conn.Callback, () => conn.Callback.UpdateLobbyState(state));
-            });
+            lobby.Broadcast(conn => conn.Callback.UpdateLobbyState(state));
         }
 
-        private static void RemoveLobby(string matchId)
+        public static void RemoveLobby(string matchId)
         {
             if (_lobbies.TryRemove(matchId, out _))
             {
-                Console.WriteLine($"Lobby {matchId} removed.");
+                _log.Info($"Lobby {matchId} removed from memory.");
             }
         }
 
@@ -317,7 +373,7 @@ namespace GuessMyMessServer.BusinessLogic
         {
             if (!int.TryParse(matchId, out int matchIdNumeric))
             {
-                Console.WriteLine($"Error: MatchId '{matchId}' no es un ID numérico válido.");
+                _log.Warn($"GetMatchInfo: Invalid MatchId format '{matchId}'. Expected integer.");
                 return null;
             }
             try
@@ -325,8 +381,8 @@ namespace GuessMyMessServer.BusinessLogic
                 using (var context = new GuessMyMessDBEntities())
                 {
                     var match = context.Match
-                        .Include("Player") 
-                        .Include("MatchDifficulty") 
+                        .Include("Player")
+                        .Include("MatchDifficulty")
                         .FirstOrDefault(m => m.idMatch == matchIdNumeric);
 
                     if (match != null)
@@ -345,10 +401,15 @@ namespace GuessMyMessServer.BusinessLogic
                     }
                 }
             }
-            catch (Exception ex)
+            catch (EntityException entityEx)
             {
-                Console.WriteLine($"Error fetching match info for {matchId}: {ex.Message}");
+                _log.Error($"Database entity error fetching match info for {matchId}", entityEx);
             }
+            catch (DataException dataEx)
+            {
+                _log.Error($"Database data error fetching match info for {matchId}", dataEx);
+            }
+
             return null;
         }
 
@@ -368,23 +429,28 @@ namespace GuessMyMessServer.BusinessLogic
                         break;
                     }
                 }
-                if (userToRemove != null) break;
+
+                if (userToRemove != null)
+                {
+                    break;
+                }
             }
 
             if (userToRemove != null && matchIdToRemove != null)
             {
+                _log.Info($"CleanUpClient: Found stale connection for '{userToRemove}' in lobby {matchIdToRemove}. Disconnecting.");
                 Disconnect(userToRemove, matchIdToRemove);
             }
         }
 
         public void StartKickVote(string voterUsername, string targetUsername, string matchId)
         {
-            Console.WriteLine($"Player {voterUsername} started a kick vote for {targetUsername} in lobby {matchId}.");
+            _log.Info($"Vote kick started: '{voterUsername}' wants to kick '{targetUsername}' in lobby {matchId}.");
         }
 
         public void SubmitKickVote(string voterUsername, string targetUsername, string matchId, bool vote)
         {
-            Console.WriteLine($"Player {voterUsername} voted {vote} to kick {targetUsername} in lobby {matchId}.");
+            _log.Info($"Vote cast: '{voterUsername}' voted {(vote ? "YES" : "NO")} to kick '{targetUsername}' in lobby {matchId}.");
         }
     }
 }

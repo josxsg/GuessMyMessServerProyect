@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.ServiceModel;
-using System.Text;
 using System.Threading.Tasks;
 using GuessMyMessServer.Contracts.DataContracts;
 
 namespace GuessMyMessServer.Contracts.ServiceContracts
 {
-    [ServiceContract(CallbackContract = typeof(IGameServiceCallback))] 
+    [ServiceContract(CallbackContract = typeof(IGameServiceCallback))]
     public interface IGameService
     {
         [OperationContract(IsOneWay = true)]
@@ -17,26 +14,27 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
         [OperationContract(IsOneWay = true)]
         void Disconnect(string username, string matchId);
 
-        [OperationContract(IsOneWay = true)] 
+        [OperationContract(IsOneWay = true)]
         void SelectWord(string username, string matchId, string selectedWord);
 
         [OperationContract]
+        [FaultContract(typeof(ServiceFaultDto))]
         Task<List<WordDto>> GetRandomWordsAsync();
 
-        [OperationContract(IsOneWay = true)] 
+        [OperationContract(IsOneWay = true)]
         void SubmitDrawing(string username, string matchId, byte[] drawingData);
 
-        [OperationContract(IsOneWay = true)] 
+        [OperationContract(IsOneWay = true)]
         void SubmitGuess(string username, string matchId, int drawingId, string guess);
 
-        [OperationContract(IsOneWay = true)] 
+        [OperationContract(IsOneWay = true)]
         void SendInGameChatMessage(string username, string matchId, string message);
     }
 
     [ServiceContract]
     public interface IGameServiceCallback
     {
-        [OperationContract(IsOneWay = true)] 
+        [OperationContract(IsOneWay = true)]
         void OnRoundStart(int roundNumber, List<string> wordOptions);
 
         [OperationContract(IsOneWay = true)]

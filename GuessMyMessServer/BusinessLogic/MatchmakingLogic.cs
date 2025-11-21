@@ -1,12 +1,17 @@
 ﻿using GuessMyMessServer.Contracts.DataContracts;
 using GuessMyMessServer.Contracts.ServiceContracts;
 using GuessMyMessServer.DataAccess;
+using log4net;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Core; 
+using System.Data.Entity.Infrastructure; 
 using System.Linq;
 using System.Security.Cryptography;
+using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,6 +19,7 @@ namespace GuessMyMessServer.BusinessLogic
 {
     public static class MatchmakingLogic
     {
+        private static readonly ILog _log = LogManager.GetLogger(typeof(MatchmakingLogic));
         private const string MatchStatusWaiting = "Waiting";
 
         private static readonly ConcurrentDictionary<string, IMatchmakingServiceCallback> _connectedUsers =
@@ -25,11 +31,13 @@ namespace GuessMyMessServer.BusinessLogic
         public static void ConnectUser(string username, IMatchmakingServiceCallback callback)
         {
             _connectedUsers.TryAdd(username, callback);
+            _log.Info($"User '{username}' connected to Matchmaking.");
         }
 
         public static void DisconnectUser(string username)
         {
             _connectedUsers.TryRemove(username, out _);
+            _log.Info($"User '{username}' disconnected from Matchmaking.");
 
             var lobby = _activeLobbies.Values.FirstOrDefault(l => l.Players.Contains(username));
             if (lobby != null)
@@ -47,6 +55,7 @@ namespace GuessMyMessServer.BusinessLogic
                     var hostPlayer = context.Player.FirstOrDefault(p => p.username == hostUsername);
                     if (hostPlayer == null)
                     {
+                        _log.Warn($"CreateMatch failed: Host user '{hostUsername}' not found.");
                         return new OperationResultDto { Success = false, Message = "Host user not found." };
                     }
 
@@ -86,6 +95,8 @@ namespace GuessMyMessServer.BusinessLogic
                     lobby.Players.Add(hostUsername);
                     _activeLobbies.TryAdd(matchId, lobby);
 
+                    _log.Info($"Match created successfully. ID: {matchId}, Host: {hostUsername}, Private: {settings.IsPrivate}");
+
                     if (!settings.IsPrivate)
                     {
                         BroadcastPublicMatchList();
@@ -103,9 +114,20 @@ namespace GuessMyMessServer.BusinessLogic
                     };
                 }
             }
+            catch (DbUpdateException dbEx)
+            {
+                _log.Error($"Database error creating match for host '{hostUsername}'.", dbEx);
+                return new OperationResultDto { Success = false, Message = "Database error occurred while creating the match." };
+            }
+            catch (EntityException entityEx)
+            {
+                _log.Error($"Database connection error creating match for host '{hostUsername}'.", entityEx);
+                return new OperationResultDto { Success = false, Message = "Connection to database failed." };
+            }
             catch (Exception ex)
             {
-                return new OperationResultDto { Success = false, Message = "Server error creating match: " + ex.Message };
+                _log.Error($"Unexpected error creating match for host '{hostUsername}'.", ex);
+                return new OperationResultDto { Success = false, Message = "An unexpected server error occurred." };
             }
         }
 
@@ -120,18 +142,23 @@ namespace GuessMyMessServer.BusinessLogic
         public static void JoinPublicMatch(string username, string matchId)
         {
             _connectedUsers.TryGetValue(username, out var callback);
-            if (callback == null) return;
+            if (callback == null)
+            {
+                return;
+            }
 
             if (_activeLobbies.TryGetValue(matchId, out var lobby))
             {
                 if (lobby.CurrentPlayers >= lobby.Settings.MaxPlayers)
                 {
-                    callback.MatchJoined(null, new OperationResultDto { Success = false, Message = "Match is full." });
+                    _log.Info($"Join denied: Match {matchId} is full. User: {username}");
+                    SafeCallback(callback, c => c.MatchJoined(null, new OperationResultDto { Success = false, Message = "Match is full." }));
                     return;
                 }
                 if (lobby.Status != "Waiting")
                 {
-                    callback.MatchJoined(null, new OperationResultDto { Success = false, Message = "Match has already started." });
+                    _log.Info($"Join denied: Match {matchId} already started. User: {username}");
+                    SafeCallback(callback, c => c.MatchJoined(null, new OperationResultDto { Success = false, Message = "Match has already started." }));
                     return;
                 }
 
@@ -139,13 +166,16 @@ namespace GuessMyMessServer.BusinessLogic
                 lobby.CurrentPlayers++;
                 UpdatePlayerCountInDb(lobby.MatchId, 1);
 
-                callback.MatchJoined(matchId, new OperationResultDto { Success = true });
+                _log.Info($"User '{username}' joined public match {matchId}.");
+
+                SafeCallback(callback, c => c.MatchJoined(matchId, new OperationResultDto { Success = true }));
                 BroadcastLobbyUpdate(lobby);
                 BroadcastPublicMatchList();
             }
             else
             {
-                callback.MatchJoined(null, new OperationResultDto { Success = false, Message = "Match not found." });
+                _log.Warn($"Join failed: Match {matchId} not found in active lobbies. User: {username}");
+                SafeCallback(callback, c => c.MatchJoined(null, new OperationResultDto { Success = false, Message = "Match not found." }));
             }
         }
 
@@ -168,12 +198,15 @@ namespace GuessMyMessServer.BusinessLogic
 
                 if (lobby.CurrentPlayers >= lobby.Settings.MaxPlayers)
                 {
+                    _log.Info($"Join private denied: Match {lobby.MatchId} is full. User: {username}");
                     return new OperationResultDto { Success = false, Message = "Match is full." };
                 }
 
                 lobby.Players.Add(username);
                 lobby.CurrentPlayers++;
                 UpdatePlayerCountInDb(lobby.MatchId, 1);
+
+                _log.Info($"User '{username}' joined private match {lobby.MatchId} via code.");
                 BroadcastLobbyUpdate(lobby);
 
                 return new OperationResultDto
@@ -185,6 +218,7 @@ namespace GuessMyMessServer.BusinessLogic
             }
             else
             {
+                _log.Info($"Join private failed: Invalid code '{matchCode}' used by '{username}'.");
                 return new OperationResultDto { Success = false, Message = "Invalid or expired match code." };
             }
         }
@@ -193,7 +227,12 @@ namespace GuessMyMessServer.BusinessLogic
         {
             if (_connectedUsers.TryGetValue(invitedUsername, out var callback))
             {
-                callback.ReceiveMatchInvite(inviterUsername, matchId);
+                SafeCallback(callback, c => c.ReceiveMatchInvite(inviterUsername, matchId));
+                _log.Info($"Invitation sent from '{inviterUsername}' to '{invitedUsername}' for match {matchId}.");
+            }
+            else
+            {
+                _log.Info($"Invitation failed: Target user '{invitedUsername}' is not connected.");
             }
         }
 
@@ -207,14 +246,14 @@ namespace GuessMyMessServer.BusinessLogic
                 {
                     lobby.CurrentPlayers--;
                     UpdatePlayerCountInDb(matchId, -1);
-                    Console.WriteLine($"[MatchmakingLogic] Player {username} removed from lobby {matchId}. New count: {lobby.CurrentPlayers}");
+                    _log.Info($"Player '{username}' left lobby {matchId}. Current count: {lobby.CurrentPlayers}");
                 }
 
                 if (lobby.Players.Count == 0 || lobby.HostUsername == username)
                 {
-                    Console.WriteLine($"[MatchmakingLogic] Lobby {matchId} is being removed (Host left or lobby empty).");
+                    _log.Info($"Lobby {matchId} closing (Host left or empty).");
                     _activeLobbies.TryRemove(matchId, out _);
-                    UpdateMatchStatusInDb(matchId, "Aborted"); 
+                    UpdateMatchStatusInDb(matchId, "Aborted");
 
                     if (!lobby.Settings.IsPrivate)
                     {
@@ -223,7 +262,7 @@ namespace GuessMyMessServer.BusinessLogic
                 }
                 else if (playerRemoved)
                 {
-                    BroadcastLobbyUpdate(lobby); 
+                    BroadcastLobbyUpdate(lobby);
                     if (!lobby.Settings.IsPrivate)
                     {
                         BroadcastPublicMatchList();
@@ -246,15 +285,26 @@ namespace GuessMyMessServer.BusinessLogic
                             if (match != null)
                             {
                                 match.currentPlayers += change;
-                                if (match.currentPlayers < 0) match.currentPlayers = 0;
+                                if (match.currentPlayers < 0)
+                                {
+                                    match.currentPlayers = 0;
+                                }
                                 context.SaveChanges();
                             }
                         }
                     }
                 }
+                catch (DbUpdateException dbEx)
+                {
+                    _log.Error($"DB Update Error (Player Count) for MatchId {matchId}", dbEx);
+                }
+                catch (EntityException entEx)
+                {
+                    _log.Error($"DB Connection Error (Player Count) for MatchId {matchId}", entEx);
+                }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error updating player count in DB for MatchId {matchId}: {ex.Message}");
+                    _log.Error($"Critical error updating player count for MatchId {matchId}", ex);
                 }
             });
         }
@@ -278,9 +328,17 @@ namespace GuessMyMessServer.BusinessLogic
                         }
                     }
                 }
+                catch (DbUpdateException dbEx)
+                {
+                    _log.Error($"DB Update Error (Match Status) for MatchId {matchId}", dbEx);
+                }
+                catch (EntityException entEx)
+                {
+                    _log.Error($"DB Connection Error (Match Status) for MatchId {matchId}", entEx);
+                }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error updating match status in DB for MatchId {matchId}: {ex.Message}");
+                    _log.Error($"Critical error updating status for MatchId {matchId}", ex);
                 }
             });
         }
@@ -290,14 +348,7 @@ namespace GuessMyMessServer.BusinessLogic
             var publicMatches = GetPublicMatches();
             foreach (var userCallback in _connectedUsers.Values)
             {
-                try
-                {
-                    userCallback.PublicMatchesListUpdated(publicMatches);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error broadcasting public match list to a user: {ex.Message}");
-                }
+                SafeCallback(userCallback, c => c.PublicMatchesListUpdated(publicMatches));
             }
         }
 
@@ -308,15 +359,28 @@ namespace GuessMyMessServer.BusinessLogic
             {
                 if (_connectedUsers.TryGetValue(playerName, out var callback))
                 {
-                    try
-                    {
-                        callback.MatchUpdate(matchInfo);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Error broadcasting lobby update to {playerName}: {ex.Message}");
-                    }
+                    SafeCallback(callback, c => c.MatchUpdate(matchInfo));
                 }
+            }
+        }
+
+        private static void SafeCallback(IMatchmakingServiceCallback callback, Action<IMatchmakingServiceCallback> action)
+        {
+            try
+            {
+                action(callback);
+            }
+            catch (CommunicationException comEx)
+            {
+                _log.Warn("Failed to notify client (CommunicationException). Client likely disconnected.", comEx);
+            }
+            catch (TimeoutException timeEx)
+            {
+                _log.Warn("Failed to notify client (Timeout).", timeEx);
+            }
+            catch (Exception ex)
+            {
+                _log.Error("Unexpected error in matchmaking callback.", ex);
             }
         }
 
@@ -339,6 +403,8 @@ namespace GuessMyMessServer.BusinessLogic
 
     public class MatchLobby
     {
+        private static readonly ILog _log = LogManager.GetLogger(typeof(MatchLobby));
+
         public string MatchId { get; set; }
         public string MatchCode { get; set; }
         public string HostUsername { get; set; }
@@ -366,15 +432,20 @@ namespace GuessMyMessServer.BusinessLogic
                 using (var context = new GuessMyMessDBEntities())
                 {
                     difficultyName = context.MatchDifficulty
-                                        .Where(d => d.idMatchDifficulty == Settings.DifficultyId)
-                                        .Select(d => d.difficulty)
-                                        .FirstOrDefault() ?? "Unknown";
+                                            .Where(d => d.idMatchDifficulty == Settings.DifficultyId)
+                                            .Select(d => d.difficulty)
+                                            .FirstOrDefault() ?? "Unknown";
                 }
+            }
+            catch (EntityException entEx)
+            {
+                _log.Error($"Database error fetching difficulty for MatchId {this.MatchId}", entEx);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error fetching difficulty name for MatchId {this.MatchId}: {ex.Message}");
+                _log.Error($"Unexpected error fetching difficulty for MatchId {this.MatchId}", ex);
             }
+
             return new MatchInfoDto
             {
                 MatchId = this.MatchId,

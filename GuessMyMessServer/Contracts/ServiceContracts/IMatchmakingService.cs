@@ -18,15 +18,18 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
         void Disconnect(string username);
 
         [OperationContract]
+        [FaultContract(typeof(ServiceFaultDto))]
         List<MatchInfoDto> GetPublicMatches();
 
         [OperationContract]
+        [FaultContract(typeof(ServiceFaultDto))]
         OperationResultDto CreateMatch(string hostUsername, LobbySettingsDto settings);
 
         [OperationContract(IsOneWay = true)]
         void JoinPublicMatch(string username, string matchId);
 
         [OperationContract]
+        [FaultContract(typeof(ServiceFaultDto))]
         OperationResultDto JoinPrivateMatch(string username, string matchCode);
 
         [OperationContract(IsOneWay = true)]

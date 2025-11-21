@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Core; 
+using System.Data.Entity.Infrastructure; 
 using System.Linq;
 using System.Threading.Tasks;
 using GuessMyMessServer.Contracts.DataContracts;
 using GuessMyMessServer.DataAccess;
 using GuessMyMessServer.Utilities.Email;
+using log4net;
 
 namespace GuessMyMessServer.BusinessLogic
 {
     public class SocialLogic
     {
+        private static readonly ILog _log = LogManager.GetLogger(typeof(SocialLogic));
         private readonly IEmailService _emailService;
 
         public SocialLogic(IEmailService emailService)
@@ -20,84 +24,111 @@ namespace GuessMyMessServer.BusinessLogic
 
         public async Task<List<FriendDto>> GetFriendsListAsync(string username)
         {
-            using (var context = new GuessMyMessDBEntities())
+            try
             {
-                var player = await context.Player.FirstOrDefaultAsync(p => p.username == username);
-                if (player == null)
+                using (var context = new GuessMyMessDBEntities())
                 {
-                    throw new InvalidOperationException("User not found.");
-                }
-
-                const string AcceptedStatus = "Accepted";
-                const string OnlineStatus = "Online";
-
-                var friendships = await context.Friendship
-                    .Where(f => (f.Player_idPlayer1 == player.idPlayer || f.Player_idPlayer2 == player.idPlayer)
-                                 && f.FriendShipStatus.status == AcceptedStatus)
-                    .Select(f => f.Player_idPlayer1 == player.idPlayer ? f.Player1 : f.Player)
-                    .Select(p => new
+                    var player = await context.Player.FirstOrDefaultAsync(p => p.username == username);
+                    if (player == null)
                     {
-                        p.username,
-                        Status = p.UserStatus.status
-                    })
-                    .ToListAsync();
+                        _log.Warn($"GetFriendsList failed: User '{username}' not found.");
+                        throw new InvalidOperationException("User not found.");
+                    }
 
-                return friendships.Select(f => new FriendDto
-                {
-                    Username = f.username,
-                    IsOnline = f.Status == OnlineStatus
-                }).ToList();
+                    const string AcceptedStatus = "Accepted";
+                    const string OnlineStatus = "Online";
+
+                    var friendships = await context.Friendship
+                        .Where(f => (f.Player_idPlayer1 == player.idPlayer || f.Player_idPlayer2 == player.idPlayer)
+                                     && f.FriendShipStatus.status == AcceptedStatus)
+                        .Select(f => f.Player_idPlayer1 == player.idPlayer ? f.Player1 : f.Player)
+                        .Select(p => new
+                        {
+                            p.username,
+                            Status = p.UserStatus.status
+                        })
+                        .ToListAsync();
+
+                    return friendships.Select(f => new FriendDto
+                    {
+                        Username = f.username,
+                        IsOnline = f.Status == OnlineStatus
+                    }).ToList();
+                }
+            }
+            catch (EntityException ex)
+            {
+                _log.Error($"Database connection error retrieving friends list for '{username}'.", ex);
+                throw;
             }
         }
 
         public async Task<List<FriendRequestInfoDto>> GetFriendRequestsAsync(string username)
         {
-            using (var context = new GuessMyMessDBEntities())
+            try
             {
-                var player = await context.Player.FirstOrDefaultAsync(p => p.username == username);
-                if (player == null)
+                using (var context = new GuessMyMessDBEntities())
                 {
-                    return new List<FriendRequestInfoDto>();
-                }
-
-                const string PendingStatus = "Pending";
-
-                return await context.Friendship
-                    .Where(f => f.Player_idPlayer2 == player.idPlayer && f.FriendShipStatus.status == PendingStatus)
-                    .Select(f => new FriendRequestInfoDto
+                    var player = await context.Player.FirstOrDefaultAsync(p => p.username == username);
+                    if (player == null)
                     {
-                        RequesterUsername = f.Player.username
-                    }).ToListAsync();
+                        _log.Warn($"GetFriendRequests failed: User '{username}' not found.");
+                        return new List<FriendRequestInfoDto>();
+                    }
+
+                    const string PendingStatus = "Pending";
+
+                    return await context.Friendship
+                        .Where(f => f.Player_idPlayer2 == player.idPlayer && f.FriendShipStatus.status == PendingStatus)
+                        .Select(f => new FriendRequestInfoDto
+                        {
+                            RequesterUsername = f.Player.username
+                        }).ToListAsync();
+                }
+            }
+            catch (EntityException ex)
+            {
+                _log.Error($"Database error retrieving friend requests for '{username}'.", ex);
+                throw;
             }
         }
 
         public async Task<List<UserProfileDto>> SearchUsersAsync(string searchUsername, string requesterUsername)
         {
-            using (var context = new GuessMyMessDBEntities())
+            try
             {
-                var requester = await context.Player.FirstOrDefaultAsync(p => p.username == requesterUsername);
-                if (requester == null)
+                using (var context = new GuessMyMessDBEntities())
                 {
-                    throw new InvalidOperationException("User not found.");
-                }
-
-                var requesterId = requester.idPlayer;
-
-                var existingRelationshipsPlayerIds = await context.Friendship
-                    .Where(f => f.Player_idPlayer1 == requesterId || f.Player_idPlayer2 == requesterId)
-                    .Select(f => f.Player_idPlayer1 == requesterId ? f.Player_idPlayer2 : f.Player_idPlayer1)
-                    .Distinct()
-                    .ToListAsync();
-
-                existingRelationshipsPlayerIds.Add(requesterId);
-
-                return await context.Player
-                    .Where(p => p.username.Contains(searchUsername) &&
-                                !existingRelationshipsPlayerIds.Contains(p.idPlayer))
-                    .Select(p => new UserProfileDto
+                    var requester = await context.Player.FirstOrDefaultAsync(p => p.username == requesterUsername);
+                    if (requester == null)
                     {
-                        Username = p.username
-                    }).ToListAsync();
+                        _log.Warn($"SearchUsers failed: Requester '{requesterUsername}' not found.");
+                        throw new InvalidOperationException("User not found.");
+                    }
+
+                    var requesterId = requester.idPlayer;
+
+                    var existingRelationshipsPlayerIds = await context.Friendship
+                        .Where(f => f.Player_idPlayer1 == requesterId || f.Player_idPlayer2 == requesterId)
+                        .Select(f => f.Player_idPlayer1 == requesterId ? f.Player_idPlayer2 : f.Player_idPlayer1)
+                        .Distinct()
+                        .ToListAsync();
+
+                    existingRelationshipsPlayerIds.Add(requesterId);
+
+                    return await context.Player
+                        .Where(p => p.username.Contains(searchUsername) &&
+                                    !existingRelationshipsPlayerIds.Contains(p.idPlayer))
+                        .Select(p => new UserProfileDto
+                        {
+                            Username = p.username
+                        }).ToListAsync();
+                }
+            }
+            catch (EntityException ex)
+            {
+                _log.Error($"Database error searching users for '{requesterUsername}' with query '{searchUsername}'.", ex);
+                throw;
             }
         }
 
@@ -110,6 +141,7 @@ namespace GuessMyMessServer.BusinessLogic
 
                 if (requester == null || target == null)
                 {
+                    _log.Warn($"SendFriendRequest failed: One or both users not found ({requesterUsername} -> {targetUsername}).");
                     throw new InvalidOperationException("Requester or target user is invalid.");
                 }
 
@@ -124,6 +156,7 @@ namespace GuessMyMessServer.BusinessLogic
 
                 if (existing != null)
                 {
+                    _log.Info($"Friend request redundant: Relationship already exists between '{requesterUsername}' and '{targetUsername}'.");
                     throw new InvalidOperationException("A relationship or pending request already exists between these users.");
                 }
 
@@ -131,6 +164,7 @@ namespace GuessMyMessServer.BusinessLogic
                 var pendingStatusEntity = await context.FriendShipStatus.FirstOrDefaultAsync(fs => fs.status == PendingStatus);
                 if (pendingStatusEntity == null)
                 {
+                    _log.Error("Critical: 'Pending' status missing in database configuration.");
                     throw new InvalidOperationException("Internal error: 'Pending' friendship status is not configured.");
                 }
 
@@ -141,7 +175,17 @@ namespace GuessMyMessServer.BusinessLogic
                     FriendShipStatus_idFriendShipStatus = pendingStatusEntity.idFriendShipStatus
                 };
                 context.Friendship.Add(friendship);
-                await context.SaveChangesAsync();
+
+                try
+                {
+                    await context.SaveChangesAsync();
+                    _log.Info($"Friend request sent from '{requesterUsername}' to '{targetUsername}'.");
+                }
+                catch (DbUpdateException dbEx)
+                {
+                    _log.Error($"Database error saving friend request from '{requesterUsername}' to '{targetUsername}'.", dbEx);
+                    throw new InvalidOperationException("Could not send friend request due to a database error.", dbEx);
+                }
             }
         }
 
@@ -154,7 +198,7 @@ namespace GuessMyMessServer.BusinessLogic
 
                 if (target == null || requester == null)
                 {
-                    Console.WriteLine("Error responding to request: User not found.");
+                    _log.Warn($"RespondToFriendRequest failed: Users not found.");
                     return;
                 }
 
@@ -162,11 +206,12 @@ namespace GuessMyMessServer.BusinessLogic
                 var friendship = await context.Friendship
                     .Include(f => f.FriendShipStatus)
                     .FirstOrDefaultAsync(f => f.Player_idPlayer1 == requester.idPlayer &&
-                                                f.Player_idPlayer2 == target.idPlayer &&
-                                                f.FriendShipStatus.status == PendingStatus);
+                                              f.Player_idPlayer2 == target.idPlayer &&
+                                              f.FriendShipStatus.status == PendingStatus);
 
                 if (friendship == null)
                 {
+                    _log.Warn($"RespondToFriendRequest: No pending request found from '{requesterUsername}' to '{targetUsername}'.");
                     throw new InvalidOperationException("A valid pending friend request was not found.");
                 }
 
@@ -176,15 +221,27 @@ namespace GuessMyMessServer.BusinessLogic
                     var acceptedStatusEntity = await context.FriendShipStatus.FirstOrDefaultAsync(fs => fs.status == AcceptedStatus);
                     if (acceptedStatusEntity == null)
                     {
+                        _log.Error("Critical: 'Accepted' status missing in database configuration.");
                         throw new InvalidOperationException("Internal error: 'Accepted' friendship status is not configured.");
                     }
                     friendship.FriendShipStatus_idFriendShipStatus = acceptedStatusEntity.idFriendShipStatus;
+                    _log.Info($"Friend request accepted by '{targetUsername}'. New friendship established.");
                 }
                 else
                 {
                     context.Friendship.Remove(friendship);
+                    _log.Info($"Friend request rejected by '{targetUsername}'. Request removed.");
                 }
-                await context.SaveChangesAsync();
+
+                try
+                {
+                    await context.SaveChangesAsync();
+                }
+                catch (DbUpdateException dbEx)
+                {
+                    _log.Error($"Database error updating friend request response for '{targetUsername}'.", dbEx);
+                    throw new InvalidOperationException("Could not process friend response due to a database error.", dbEx);
+                }
             }
         }
 
@@ -197,7 +254,7 @@ namespace GuessMyMessServer.BusinessLogic
 
                 if (player == null || friend == null)
                 {
-                    Console.WriteLine("Error removing friend: User not found.");
+                    _log.Warn($"RemoveFriend failed: User or friend not found.");
                     return;
                 }
 
@@ -208,11 +265,20 @@ namespace GuessMyMessServer.BusinessLogic
                 if (friendship != null)
                 {
                     context.Friendship.Remove(friendship);
-                    await context.SaveChangesAsync();
+                    try
+                    {
+                        await context.SaveChangesAsync();
+                        _log.Info($"Friendship removed between '{username}' and '{friendToRemove}'.");
+                    }
+                    catch (DbUpdateException dbEx)
+                    {
+                        _log.Error($"Database error removing friendship between '{username}' and '{friendToRemove}'.", dbEx);
+                        throw;
+                    }
                 }
                 else
                 {
-                    Console.WriteLine($"Attempt to remove non-existent friendship between {username} and {friendToRemove}.");
+                    _log.Info($"RemoveFriend: No friendship found to remove between '{username}' and '{friendToRemove}'.");
                 }
             }
         }
@@ -224,19 +290,30 @@ namespace GuessMyMessServer.BusinessLogic
                 var player = await context.Player.FirstOrDefaultAsync(p => p.username == username);
                 if (player == null)
                 {
+                    _log.Warn($"UpdatePlayerStatus failed: User '{username}' not found.");
                     throw new InvalidOperationException($"User '{username}' not found to update status.");
                 }
 
                 var userStatus = await context.UserStatus.FirstOrDefaultAsync(s => s.status == status);
                 if (userStatus == null)
                 {
+                    _log.Error($"UpdatePlayerStatus failed: Invalid status '{status}' requested.");
                     throw new InvalidOperationException($"User status '{status}' is not valid.");
                 }
 
                 if (player.UserStatus_idUserStatus != userStatus.idUserStatus)
                 {
                     player.UserStatus_idUserStatus = userStatus.idUserStatus;
-                    await context.SaveChangesAsync();
+                    try
+                    {
+                        await context.SaveChangesAsync();
+                        _log.Debug($"User '{username}' status updated to '{status}'.");
+                    }
+                    catch (DbUpdateException dbEx)
+                    {
+                        _log.Error($"Database error updating status for user '{username}'.", dbEx);
+                        throw;
+                    }
                 }
             }
         }
@@ -246,6 +323,7 @@ namespace GuessMyMessServer.BusinessLogic
             if (message == null || string.IsNullOrWhiteSpace(message.SenderUsername) ||
                 string.IsNullOrWhiteSpace(message.RecipientUsername) || string.IsNullOrWhiteSpace(message.Content))
             {
+                _log.Warn("SendDirectMessage failed: Invalid message data.");
                 throw new ArgumentException("The direct message contains invalid data.");
             }
 
@@ -256,6 +334,7 @@ namespace GuessMyMessServer.BusinessLogic
 
                 if (sender == null || recipient == null)
                 {
+                    _log.Warn($"SendDirectMessage failed: Sender or recipient not found.");
                     throw new InvalidOperationException("The sender or recipient of the message does not exist.");
                 }
 
@@ -268,67 +347,93 @@ namespace GuessMyMessServer.BusinessLogic
                 };
 
                 dbContext.DirectMessages.Add(dbMessage);
-                await dbContext.SaveChangesAsync();
 
-                message.Timestamp = dbMessage.Timestamp;
+                try
+                {
+                    await dbContext.SaveChangesAsync();
+                    message.Timestamp = dbMessage.Timestamp;
+                }
+                catch (DbUpdateException dbEx)
+                {
+                    _log.Error($"Database error saving direct message from '{message.SenderUsername}'.", dbEx);
+                    throw new InvalidOperationException("Failed to send message due to a storage error.", dbEx);
+                }
             }
         }
 
         public async Task<List<FriendDto>> GetConversationsAsync(string username)
         {
-            using (var dbContext = new GuessMyMessDBEntities())
+            try
             {
-                var user = await dbContext.Player.FirstOrDefaultAsync(p => p.username == username);
-                if (user == null)
+                using (var dbContext = new GuessMyMessDBEntities())
                 {
-                    return new List<FriendDto>();
-                }
-
-                var userId = user.idPlayer;
-
-                var counterpartIds = await dbContext.DirectMessages
-                    .Where(m => m.SenderPlayerID == userId || m.RecipientPlayerID == userId)
-                    .Select(m => m.SenderPlayerID == userId ? m.RecipientPlayerID : m.SenderPlayerID)
-                    .Distinct()
-                    .ToListAsync();
-
-                const string OnlineStatus = "Online";
-
-                return await dbContext.Player
-                    .Where(p => counterpartIds.Contains(p.idPlayer))
-                    .Select(p => new FriendDto
+                    var user = await dbContext.Player.FirstOrDefaultAsync(p => p.username == username);
+                    if (user == null)
                     {
-                        Username = p.username,
-                        IsOnline = p.UserStatus.status == OnlineStatus
-                    })
-                    .ToListAsync();
+                        _log.Warn($"GetConversations failed: User '{username}' not found.");
+                        return new List<FriendDto>();
+                    }
+
+                    var userId = user.idPlayer;
+
+                    var counterpartIds = await dbContext.DirectMessages
+                        .Where(m => m.SenderPlayerID == userId || m.RecipientPlayerID == userId)
+                        .Select(m => m.SenderPlayerID == userId ? m.RecipientPlayerID : m.SenderPlayerID)
+                        .Distinct()
+                        .ToListAsync();
+
+                    const string OnlineStatus = "Online";
+
+                    return await dbContext.Player
+                        .Where(p => counterpartIds.Contains(p.idPlayer))
+                        .Select(p => new FriendDto
+                        {
+                            Username = p.username,
+                            IsOnline = p.UserStatus.status == OnlineStatus
+                        })
+                        .ToListAsync();
+                }
+            }
+            catch (EntityException ex)
+            {
+                _log.Error($"Database error retrieving conversations for '{username}'.", ex);
+                throw;
             }
         }
 
         public async Task<List<DirectMessageDto>> GetConversationHistoryAsync(string user1, string user2)
         {
-            using (var dbContext = new GuessMyMessDBEntities())
+            try
             {
-                var player1 = await dbContext.Player.FirstOrDefaultAsync(p => p.username == user1);
-                var player2 = await dbContext.Player.FirstOrDefaultAsync(p => p.username == user2);
-
-                if (player1 == null || player2 == null)
+                using (var dbContext = new GuessMyMessDBEntities())
                 {
-                    return new List<DirectMessageDto>();
-                }
+                    var player1 = await dbContext.Player.FirstOrDefaultAsync(p => p.username == user1);
+                    var player2 = await dbContext.Player.FirstOrDefaultAsync(p => p.username == user2);
 
-                return await dbContext.DirectMessages
-                    .Where(m => (m.SenderPlayerID == player1.idPlayer && m.RecipientPlayerID == player2.idPlayer) ||
-                                (m.SenderPlayerID == player2.idPlayer && m.RecipientPlayerID == player1.idPlayer))
-                    .OrderBy(m => m.Timestamp)
-                    .Select(m => new DirectMessageDto
+                    if (player1 == null || player2 == null)
                     {
-                        SenderUsername = m.Player1.username,
-                        RecipientUsername = m.Player.username,
-                        Content = m.MessageContent,
-                        Timestamp = m.Timestamp
-                    })
-                    .ToListAsync();
+                        _log.Warn($"GetConversationHistory failed: One or both users not found.");
+                        return new List<DirectMessageDto>();
+                    }
+
+                    return await dbContext.DirectMessages
+                        .Where(m => (m.SenderPlayerID == player1.idPlayer && m.RecipientPlayerID == player2.idPlayer) ||
+                                    (m.SenderPlayerID == player2.idPlayer && m.RecipientPlayerID == player1.idPlayer))
+                        .OrderBy(m => m.Timestamp)
+                        .Select(m => new DirectMessageDto
+                        {
+                            SenderUsername = m.Player1.username,
+                            RecipientUsername = m.Player.username,
+                            Content = m.MessageContent,
+                            Timestamp = m.Timestamp
+                        })
+                        .ToListAsync();
+                }
+            }
+            catch (EntityException ex)
+            {
+                _log.Error($"Database error retrieving history between '{user1}' and '{user2}'.", ex);
+                throw;
             }
         }
     }
