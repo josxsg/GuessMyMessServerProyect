@@ -112,7 +112,19 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                return await _socialLogic.GetFriendsListAsync(username);
+                var friends = await _socialLogic.GetFriendsListAsync(username);
+                lock (_clientLock)
+                {
+                    foreach (var friend in friends)
+                    {
+                        if (connectedClients.ContainsKey(friend.Username))
+                        {
+                            friend.IsOnline = true;
+                        }
+                    }
+                }
+
+                return friends;
             }
             catch (EntityException ex)
             {

@@ -271,6 +271,18 @@ namespace GuessMyMessServer.BusinessLogic
             }
         }
 
+        public static void SetMatchAsPlaying(string matchId)
+        {
+            if (_activeLobbies.TryGetValue(matchId, out var lobby))
+            {
+                lobby.Status = "Playing";
+                _log.Info($"Match {matchId} status set to 'Playing' in memory.");
+            }
+
+            UpdateMatchStatusInDb(matchId, "Playing");
+            BroadcastPublicMatchList();
+        }
+
         private static void UpdatePlayerCountInDb(string matchId, int change)
         {
             Task.Run(() =>

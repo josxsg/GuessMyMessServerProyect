@@ -94,7 +94,7 @@ namespace GuessMyMessServer.BusinessLogic
 
                             _log.Info($"Lobby {MatchId}: Game started. Disbanding lobby instance.");
                             Broadcast(conn => conn.Callback.OnGameStarted());
-
+                            MatchmakingLogic.SetMatchAsPlaying(MatchId);
                             LobbyLogic.RemoveLobby(MatchId);
                         }
                         else
@@ -348,6 +348,7 @@ namespace GuessMyMessServer.BusinessLogic
                 if (lobby.Players.Count < 2)
                 {
                     _log.Info($"StartGame failed: Not enough players in lobby {matchId} (Count: {lobby.Players.Count}).");
+                    return;
                 }
 
                 _log.Info($"Host '{hostUsername}' initiated game start for {matchId}.");
@@ -387,6 +388,12 @@ namespace GuessMyMessServer.BusinessLogic
 
                     if (match != null)
                     {
+                        if (match.matchStatus != "Waiting")
+                        {
+                            _log.Warn($"Connection refused: Match {matchId} is in status '{match.matchStatus}'.");
+                            return null;
+                        }
+
                         return new MatchInfoDto
                         {
                             MatchId = matchId,

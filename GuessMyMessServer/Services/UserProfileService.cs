@@ -34,7 +34,7 @@ namespace GuessMyMessServer.Services
                     return await logic.GetUserProfileAsync(username);
                 }
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException)
             {
                 _log.Warn($"GetUserProfileAsync: User '{username}' not found.");
                 throw new FaultException<ServiceFaultDto>(
@@ -61,7 +61,7 @@ namespace GuessMyMessServer.Services
                     return await logic.UpdateProfileAsync(username, profileData);
                 }
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
                 throw new FaultException<ServiceFaultDto>(
                     new ServiceFaultDto(ServiceErrorType.OperationFailed, Lang.Error_FieldsRequired),
@@ -94,7 +94,7 @@ namespace GuessMyMessServer.Services
                     return await logic.RequestChangeEmailAsync(username, newEmail);
                 }
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException)
             {
                 throw new FaultException<ServiceFaultDto>(
                     new ServiceFaultDto(ServiceErrorType.OperationFailed, Lang.Error_EmailFormat),
@@ -203,7 +203,7 @@ namespace GuessMyMessServer.Services
                     return await logic.ConfirmChangePasswordAsync(username, newPassword, verificationCode);
                 }
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException)
             {
                 throw new FaultException<ServiceFaultDto>(
                     new ServiceFaultDto(ServiceErrorType.OperationFailed, Lang.Error_PasswordInsecure),
