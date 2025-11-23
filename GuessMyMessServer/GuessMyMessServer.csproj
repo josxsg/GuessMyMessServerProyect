@@ -114,6 +114,7 @@
   <ItemGroup>
     <Compile Include="BusinessLogic\AuthenticationLogic.cs" />
     <Compile Include="BusinessLogic\GameLogic.cs" />
+    <Compile Include="BusinessLogic\GuestInvite.cs" />
     <Compile Include="BusinessLogic\LobbyLogic.cs" />
     <Compile Include="BusinessLogic\MatchmakingLogic.cs" />
     <Compile Include="BusinessLogic\SocialLogic.cs" />
@@ -227,6 +228,7 @@
     <Compile Include="Utilities\Email\IEmailTemplate.cs" />
     <Compile Include="Utilities\Email\SmtpEmailService.cs" />
     <Compile Include="Utilities\Email\Templates\EmailChangeVerificationEmailTemplate.cs" />
+    <Compile Include="Utilities\Email\Templates\InvitationForMatchEmailTemplate.cs" />
     <Compile Include="Utilities\Email\Templates\PasswordChangeVerificationEmailTemplate.cs" />
     <Compile Include="Utilities\Email\Templates\VerificationEmailTemplate.cs" />
     <Compile Include="Utilities\InputValidator.cs" />

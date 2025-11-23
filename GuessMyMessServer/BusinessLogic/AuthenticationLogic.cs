@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure; 
 using System.Data.Entity.Validation;      
@@ -222,6 +223,43 @@ namespace GuessMyMessServer.BusinessLogic
             }
 
             return new OperationResultDto { Success = true, Message = "Account verified successfully. Welcome!" };
+        }
+
+        public OperationResultDto LoginAsGuest(string email, string code)
+        {
+            if (GuestInviteManager.ValidateInvite(email, code, out string matchId))
+            {
+                string uniqueSessionId = $"Guest_{Guid.NewGuid().ToString().Substring(0, 8)}";
+                bool isPrivate = false;
+
+                using (var context = new GuessMyMessDBEntities())
+                {
+                    if (int.TryParse(matchId, out int id))
+                    {
+                        var match = context.Match.FirstOrDefault(m => m.idMatch == id);
+                        if (match != null)
+                        {
+                            isPrivate = match.isPrivate == 1;
+                        }
+                    }
+                }
+
+                return new OperationResultDto
+                {
+                    Success = true,
+                    Message = uniqueSessionId,
+                    Data = new Dictionary<string, string>
+                    {
+                        { "MatchId", matchId },
+                        { "IsGuest", "true" },
+                        { "IsPrivate", isPrivate.ToString() }
+                    }
+                };
+            }
+            else
+            {
+                throw new InvalidOperationException("Invalid email or code.");
+            }
         }
 
         public void LogOut(string username)

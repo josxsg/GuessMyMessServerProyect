@@ -24,7 +24,7 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
 
         [OperationContract]
         [FaultContract(typeof(ServiceFaultDto))]
-        Task<OperationResultDto> LoginAsGuestAsync(string username, string avatarPath);
+        Task<OperationResultDto> LoginAsGuestAsync(string email, string code);
 
         [OperationContract]
         [FaultContract(typeof(ServiceFaultDto))]

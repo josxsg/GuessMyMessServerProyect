@@ -42,6 +42,12 @@ namespace GuessMyMessServer.BusinessLogic
             private Timer _countdownTimer;
             private int _countdownSeconds = 5;
             private volatile bool _gameHasStarted = false;
+            private int _guestCounter = 1;
+
+            public int GetNextGuestNumber()
+            {
+                return _guestCounter++;
+            }
 
             public Lobby(string matchId, string hostUsername, MatchInfoDto matchInfo)
             {
@@ -197,11 +203,34 @@ namespace GuessMyMessServer.BusinessLogic
                 return;
             }
 
-            var connection = new PlayerConnection(username, callback);
+            string finalDisplayName = username;
 
-            if (lobby.Players.TryAdd(username, connection))
+            if (username.StartsWith("Guest_"))
             {
-                _log.Info($"Player '{username}' joined lobby {lobby.MatchId}.");
+                int guestNum = lobby.GetNextGuestNumber();
+                finalDisplayName = $"Invitado {guestNum}";
+                _log.Info($"Guest '{username}' renamed to '{finalDisplayName}'");
+            }
+
+            var connection = new PlayerConnection(finalDisplayName, callback);
+
+
+            if (lobby.Players.TryAdd(finalDisplayName, connection)) // Usamos el nombre bonito como Key
+            {
+                _log.Info($"Player '{finalDisplayName}' joined lobby {lobby.MatchId}.");
+
+                // Notificar al cliente ESPECÍFICO cuál es su nombre real asignado
+                // Necesitas agregar un método al callback o reutilizar uno.
+                // Lo más fácil es asumir que el cliente actualizará su SessionManager al recibir el LobbyState 
+                // o mandar un mensaje directo.
+
+                // HACK: Enviamos un mensaje de sistema solo a él
+                callback.ReceiveLobbyMessage(new ChatMessageDto 
+                {
+                    SenderUsername = "System", MessageContent = $"Bienvenido! Juegas como: {finalDisplayName}", 
+                    Timestamp = DateTime.UtcNow
+                });
+
                 BroadcastLobbyState(lobby);
             }
             else

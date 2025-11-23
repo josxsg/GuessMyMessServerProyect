@@ -198,10 +198,22 @@ namespace GuessMyMessServer.Services
             }
         }
 
-        public Task<OperationResultDto> LoginAsGuestAsync(string username, string avatarPath)
+        public Task<OperationResultDto> LoginAsGuestAsync(string email, string code) 
         {
-            var fault = new ServiceFaultDto(ServiceErrorType.OperationFailed, "Guest login not implemented yet.");
-            throw new FaultException<ServiceFaultDto>(fault, new FaultReason("Not Implemented"));
+            try
+            {
+                var logic = new AuthenticationLogic(new SmtpEmailService(), null);
+                var result = logic.LoginAsGuest(email, code);
+                _log.Info($"Guest logged in: {email}");
+                return Task.FromResult(result);
+            }
+            catch (Exception ex)
+            {
+                _log.Warn($"Guest login failed: {ex.Message}");
+                throw new FaultException<ServiceFaultDto>(
+                    new ServiceFaultDto(ServiceErrorType.InvalidCredentials, "Invalid Invite Code"),
+                    new FaultReason("Guest Login Failed"));
+            }
         }
 
         public Task<OperationResultDto> SendPasswordRecoveryCodeAsync(string email)

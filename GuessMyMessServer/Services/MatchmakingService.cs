@@ -150,6 +150,41 @@ namespace GuessMyMessServer.Services
             }
         }
 
+        public void InviteGuestByEmail(string inviterUsername, string targetEmail, string matchId)
+        {
+            // 1. Seguridad: Validar que quien llama al servicio es quien dice ser
+            if (!IsSessionValid(inviterUsername))
+            {
+                throw new FaultException<ServiceFaultDto>(
+                    new ServiceFaultDto(ServiceErrorType.OperationFailed, "Sesión inválida."),
+                    new FaultReason("Session Error"));
+            }
+
+            try
+            {
+                // 2. Delegar al Núcleo: Llamamos a la lógica que acabamos de crear
+                MatchmakingLogic.InviteGuestByEmail(inviterUsername, targetEmail, matchId);
+            }
+            catch (InvalidOperationException ex) when (ex.Message == "EmailAlreadyRegistered")
+            {
+                // Manejo específico del error de negocio "Usuario ya registrado"
+                _log.Info($"InviteGuest blocked: Email '{targetEmail}' is already a registered user.");
+
+                throw new FaultException<ServiceFaultDto>(
+                    new ServiceFaultDto(ServiceErrorType.EmailAlreadyRegistered, "Este usuario ya tiene cuenta registrada."),
+                    new FaultReason("Email Already Registered"));
+            }
+            catch (Exception ex)
+            {
+                // Manejo de cualquier otro error imprevisto (BD caída, error de lógica, etc.)
+                _log.Error($"Error invoking InviteGuestByEmail logic for {targetEmail}", ex);
+
+                throw new FaultException<ServiceFaultDto>(
+                    new ServiceFaultDto(ServiceErrorType.OperationFailed, "Error interno al procesar la invitación."),
+                    new FaultReason("Server Error"));
+            }
+        }
+
         private void PerformDisconnect()
         {
             if (!string.IsNullOrEmpty(_connectedUsername))

@@ -34,6 +34,9 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
 
         [OperationContract(IsOneWay = true)]
         void InviteToMatch(string inviterUsername, string invitedUsername, string matchId);
+
+        [OperationContract]
+        void InviteGuestByEmail(string inviterUsername, string targetEmail, string matchId);
     }
 
     [ServiceContract]
