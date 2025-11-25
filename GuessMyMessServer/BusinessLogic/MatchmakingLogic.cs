@@ -287,26 +287,20 @@ namespace GuessMyMessServer.BusinessLogic
 
         public static void InviteGuestByEmail(string inviterUsername, string targetEmail, string matchId)
         {
-            // 1. VALIDACIÓN DE NEGOCIO: Verificar si el correo ya existe en BD
             using (var context = new GuessMyMessDBEntities())
             {
                 bool isRegistered = context.Player.Any(p => p.email == targetEmail);
                 if (isRegistered)
                 {
-                    // Lanzamos una excepción simple que el Servicio sabrá interpretar
                     throw new InvalidOperationException("EmailAlreadyRegistered");
                 }
             }
 
-            // 2. LÓGICA: Generar código y guardar en memoria (GuestInviteManager)
             string code = GuestInviteManager.CreateInvite(targetEmail, matchId);
 
-            // 3. INFRAESTRUCTURA: Enviar Correo
-            // Creamos la instancia aquí o usamos inyección si la tuvieras configurada
             var emailService = new SmtpEmailService();
-            var emailTemplate = new InvitationForMatchEmailTemplate(inviterUsername, code);
+            var emailTemplate = new InvitationForMatchEmailTemplate(code);
 
-            // Tarea en segundo plano para no bloquear el retorno al cliente
             Task.Run(async () =>
             {
                 try
@@ -315,7 +309,6 @@ namespace GuessMyMessServer.BusinessLogic
                 }
                 catch (Exception ex)
                 {
-                    // Logueamos aquí porque el contexto del servicio ya habrá retornado
                     _log.Error($"Error background sending invite email to {targetEmail}", ex);
                 }
             });

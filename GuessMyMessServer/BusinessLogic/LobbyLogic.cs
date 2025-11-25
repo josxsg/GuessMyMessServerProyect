@@ -11,6 +11,7 @@ using System.Data.Entity.Core;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
+using GuessMyMessServer.Properties.Langs;
 
 namespace GuessMyMessServer.BusinessLogic
 {
@@ -23,12 +24,14 @@ namespace GuessMyMessServer.BusinessLogic
 
         private sealed class PlayerConnection
         {
-            public string Username { get; }
+            public string Username { get; } 
+            public string DisplayName { get; } 
             public ILobbyServiceCallback Callback { get; }
 
-            public PlayerConnection(string username, ILobbyServiceCallback callback)
+            public PlayerConnection(string username, string displayName, ILobbyServiceCallback callback)
             {
                 Username = username;
+                DisplayName = displayName;
                 Callback = callback;
             }
         }
@@ -66,7 +69,7 @@ namespace GuessMyMessServer.BusinessLogic
                     CurrentPlayers = Players.Count,
                     MaxPlayers = MatchInfo.MaxPlayers,
                     MatchCode = MatchInfo.IsPrivate ? MatchInfo.MatchCode : null,
-                    PlayerUsernames = Players.Keys.ToList()
+                    PlayerUsernames = Players.Values.Select(p => p.DisplayName).ToList()
                 };
             }
 
@@ -204,32 +207,44 @@ namespace GuessMyMessServer.BusinessLogic
             }
 
             string finalDisplayName = username;
+            bool isGuest = false;
 
             if (username.StartsWith("Guest_"))
             {
-                int guestNum = lobby.GetNextGuestNumber();
-                finalDisplayName = $"Invitado {guestNum}";
-                _log.Info($"Guest '{username}' renamed to '{finalDisplayName}'");
+                if (lobby.Players.TryGetValue(username, out var existing))
+                {
+                    finalDisplayName = existing.DisplayName;
+                }
+                else
+                {
+                    int guestNum = lobby.GetNextGuestNumber();
+                    finalDisplayName = $"{Lang.Info_Guest} {guestNum}";
+                    isGuest = true;
+                }
             }
 
-            var connection = new PlayerConnection(finalDisplayName, callback);
+            var connection = new PlayerConnection(username, finalDisplayName, callback);
 
-
-            if (lobby.Players.TryAdd(finalDisplayName, connection)) // Usamos el nombre bonito como Key
+            if (lobby.Players.TryAdd(username, connection))
             {
                 _log.Info($"Player '{finalDisplayName}' joined lobby {lobby.MatchId}.");
 
-                // Notificar al cliente ESPECÍFICO cuál es su nombre real asignado
-                // Necesitas agregar un método al callback o reutilizar uno.
-                // Lo más fácil es asumir que el cliente actualizará su SessionManager al recibir el LobbyState 
-                // o mandar un mensaje directo.
-
-                // HACK: Enviamos un mensaje de sistema solo a él
-                callback.ReceiveLobbyMessage(new ChatMessageDto 
+                if (isGuest)
                 {
-                    SenderUsername = "System", MessageContent = $"Bienvenido! Juegas como: {finalDisplayName}", 
-                    Timestamp = DateTime.UtcNow
-                });
+                    try
+                    {
+                        callback.ReceiveLobbyMessage(new ChatMessageDto
+                        {
+                            SenderUsername = "System",
+                            MessageContent = $"{Lang.Info_GuestName} {finalDisplayName}",
+                            Timestamp = DateTime.UtcNow
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.Warn($"Error sending system name message to guest {finalDisplayName}", ex);
+                    }
+                }
 
                 BroadcastLobbyState(lobby);
             }
@@ -237,7 +252,8 @@ namespace GuessMyMessServer.BusinessLogic
             {
                 if (lobby.Players.TryGetValue(username, out var existingConnection))
                 {
-                    lobby.Players.TryUpdate(username, connection, existingConnection);
+                    var newConn = new PlayerConnection(username, existingConnection.DisplayName, callback);
+                    lobby.Players.TryUpdate(username, newConn, existingConnection);
                     _log.Info($"Player '{username}' reconnected to lobby {lobby.MatchId}.");
 
                     SafeCallback(callback, () => callback.UpdateLobbyState(lobby.GetCurrentState()));
@@ -279,13 +295,13 @@ namespace GuessMyMessServer.BusinessLogic
 
             if (_lobbies.TryGetValue(matchId, out Lobby lobby))
             {
-                if (lobby.Players.TryRemove(username, out _))
+                if (lobby.Players.TryRemove(username, out PlayerConnection removedPlayer))
                 {
-                    _log.Info($"Player '{username}' left lobby {matchId}.");
+                    _log.Info($"Player '{removedPlayer.DisplayName}' left lobby {matchId}.");
 
                     if (username.Equals(lobby.HostUsername, StringComparison.OrdinalIgnoreCase))
                     {
-                        _log.Info($"Host '{username}' left. Disbanding lobby {matchId}.");
+                        _log.Info($"Host left. Disbanding lobby.");
                         lobby.Broadcast(conn =>
                         {
                             try
@@ -325,9 +341,16 @@ namespace GuessMyMessServer.BusinessLogic
         {
             if (_lobbies.TryGetValue(matchId, out Lobby lobby))
             {
+                string senderDisplayName = senderUsername;
+
+                if (lobby.Players.TryGetValue(senderUsername, out var senderConnection))
+                {
+                    senderDisplayName = senderConnection.DisplayName; 
+                }
+
                 var messageDto = new ChatMessageDto
                 {
-                    SenderUsername = senderUsername,
+                    SenderUsername = senderDisplayName,
                     MessageContent = messageKey,
                     Timestamp = DateTime.UtcNow
                 };
@@ -346,16 +369,26 @@ namespace GuessMyMessServer.BusinessLogic
                     return;
                 }
 
-                if (hostUsername.Equals(playerToKickUsername, StringComparison.OrdinalIgnoreCase))
+                var targetPair = lobby.Players.FirstOrDefault(p => p.Value.DisplayName.Equals(playerToKickUsername, StringComparison.OrdinalIgnoreCase));
+
+                if (targetPair.Value == null)
+                {
+                    _log.Warn($"Kick failed: Player '{playerToKickUsername}' not found in lobby.");
+                    return;
+                }
+
+                string targetRealUsername = targetPair.Key;
+
+                if (hostUsername.Equals(targetRealUsername, StringComparison.OrdinalIgnoreCase))
                 {
                     _log.Warn($"Kick ignored: Host '{hostUsername}' tried to kick themselves.");
                     return;
                 }
 
-                if (lobby.Players.TryRemove(playerToKickUsername, out PlayerConnection kickedPlayerConnection))
+                if (lobby.Players.TryRemove(targetRealUsername, out PlayerConnection kickedPlayerConnection))
                 {
-                    MatchmakingLogic.HandlePlayerLeave(playerToKickUsername, matchId);
-                    _log.Info($"Player '{playerToKickUsername}' was kicked from lobby {matchId} by '{hostUsername}'.");
+                    MatchmakingLogic.HandlePlayerLeave(targetRealUsername, matchId);
+                    _log.Info($"Player '{targetRealUsername}' was kicked from lobby {matchId} by '{hostUsername}'.");
 
                     SafeCallback(kickedPlayerConnection.Callback, () => kickedPlayerConnection.Callback.KickedFromLobby("Kicked by the host."));
 

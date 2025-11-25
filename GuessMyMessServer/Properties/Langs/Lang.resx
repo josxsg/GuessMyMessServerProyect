@@ -129,6 +129,9 @@
   <data name="Error_DatabaseSave" xml:space="preserve">
     <value>Error saving data to the database.</value>
   </data>
+  <data name="Error_EmailAlreadyHasAnAccount" xml:space="preserve">
+    <value>This user already has a registered account.</value>
+  </data>
   <data name="Error_EmailAlreadyRegistered" xml:space="preserve">
     <value>The email is already registered.</value>
   </data>
@@ -153,8 +156,14 @@
   <data name="Error_InvalidCredentials" xml:space="preserve">
     <value>Incorrect credentials.</value>
   </data>
+  <data name="Error_InvalidInviteCode" xml:space="preserve">
+    <value>Invalid Invite Code</value>
+  </data>
   <data name="Error_InvalidOrExpiredCode" xml:space="preserve">
     <value>Invalid or expired verification code.</value>
+  </data>
+  <data name="Error_InvalidSession" xml:space="preserve">
+    <value>Invalid session.</value>
   </data>
   <data name="Error_JoiningLobbyData" xml:space="preserve">
     <value>Error joining the lobby. Please try again.</value>
@@ -179,6 +188,12 @@
   </data>
   <data name="Error_UserSearchFailed" xml:space="preserve">
     <value>Error occurred while searching for users.</value>
+  </data>
+  <data name="Info_Guest" xml:space="preserve">
+    <value>Guest</value>
+  </data>
+  <data name="Info_GuestName" xml:space="preserve">
+    <value>Welcome! You play as:</value>
   </data>
   <data name="Info_LoginSuccess" xml:space="preserve">
     <value>User logged in successfully.</value>

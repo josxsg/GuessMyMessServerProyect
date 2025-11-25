@@ -97,6 +97,15 @@ namespace GuessMyMessServer.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a This user already has a registered account..
+        /// </summary>
+        public static string Error_EmailAlreadyHasAnAccount {
+            get {
+                return ResourceManager.GetString("Error_EmailAlreadyHasAnAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a The email is already registered..
         /// </summary>
         public static string Error_EmailAlreadyRegistered {
@@ -169,11 +178,29 @@ namespace GuessMyMessServer.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Invalid Invite Code.
+        /// </summary>
+        public static string Error_InvalidInviteCode {
+            get {
+                return ResourceManager.GetString("Error_InvalidInviteCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Invalid or expired verification code..
         /// </summary>
         public static string Error_InvalidOrExpiredCode {
             get {
                 return ResourceManager.GetString("Error_InvalidOrExpiredCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Invalid session..
+        /// </summary>
+        public static string Error_InvalidSession {
+            get {
+                return ResourceManager.GetString("Error_InvalidSession", resourceCulture);
             }
         }
         
@@ -246,6 +273,24 @@ namespace GuessMyMessServer.Properties.Langs {
         public static string Error_UserSearchFailed {
             get {
                 return ResourceManager.GetString("Error_UserSearchFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Guest.
+        /// </summary>
+        public static string Info_Guest {
+            get {
+                return ResourceManager.GetString("Info_Guest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Welcome! You play as:.
+        /// </summary>
+        public static string Info_GuestName {
+            get {
+                return ResourceManager.GetString("Info_GuestName", resourceCulture);
             }
         }
         

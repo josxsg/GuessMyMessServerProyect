@@ -12,12 +12,12 @@ namespace GuessMyMessServer.Utilities.Email.Templates
 
         public string HtmlBody { get; }
 
-        public InvitationForMatchEmailTemplate(string username, string verificationCode)
+        public InvitationForMatchEmailTemplate(string verificationCode)
         {
             HtmlBody = $@"
                 <div style='font-family: Arial, sans-serif; text-align: center; color: #333;'>
                     <div style='max-width: 600px; margin: auto; border: 1px solid #ddd; padding: 20px; background-color: #f9f9f9; border-radius: 10px;'>
-                        <h2 style='color: #4A6E92;'>Hola {username},</h2> 
+                        <h2 style='color: #4A6E92;'>Hola jugador invitado,</h2> 
                         <p>Has recibido una invitación para jugar en Guess My Mess.</p>
                         <p>Usa el siguiente código enviado a tu correo <strong>actual</strong> para entrar a la partida:</p>
                         

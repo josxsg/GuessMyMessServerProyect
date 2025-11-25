@@ -129,6 +129,9 @@
   <data name="Error_DatabaseSave" xml:space="preserve">
     <value>Error al guardar los datos en la base de datos.</value>
   </data>
+  <data name="Error_EmailAlreadyHasAnAccount" xml:space="preserve">
+    <value>Este usuario ya tiene cuenta registrada.</value>
+  </data>
   <data name="Error_EmailAlreadyRegistered" xml:space="preserve">
     <value>El correo electrónico ya está registrado.</value>
   </data>
@@ -153,8 +156,14 @@
   <data name="Error_InvalidCredentials" xml:space="preserve">
     <value>Credenciales incorrectas.</value>
   </data>
+  <data name="Error_InvalidInviteCode" xml:space="preserve">
+    <value>Código de invitación no válido</value>
+  </data>
   <data name="Error_InvalidOrExpiredCode" xml:space="preserve">
     <value>Código de verificación no válido o caducado.</value>
+  </data>
+  <data name="Error_InvalidSession" xml:space="preserve">
+    <value>Sesión inválida.</value>
   </data>
   <data name="Error_JoiningLobbyData" xml:space="preserve">
     <value>Error al unirse a la sala. Por favor, inténtelo de nuevo.</value>
@@ -179,6 +188,12 @@
   </data>
   <data name="Error_UserSearchFailed" xml:space="preserve">
     <value>Se produjo un error al buscar usuarios.</value>
+  </data>
+  <data name="Info_Guest" xml:space="preserve">
+    <value>Invitado</value>
+  </data>
+  <data name="Info_GuestName" xml:space="preserve">
+    <value>Bienvenido! Juegas como:</value>
   </data>
   <data name="Info_LoginSuccess" xml:space="preserve">
     <value>El usuario inició sesión con éxito.</value>

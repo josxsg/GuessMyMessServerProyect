@@ -211,7 +211,7 @@ namespace GuessMyMessServer.Services
             {
                 _log.Warn($"Guest login failed: {ex.Message}");
                 throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.InvalidCredentials, "Invalid Invite Code"),
+                    new ServiceFaultDto(ServiceErrorType.InvalidCredentials, Lang.Error_InvalidInviteCode),
                     new FaultReason("Guest Login Failed"));
             }
         }
