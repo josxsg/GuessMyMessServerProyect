@@ -18,6 +18,10 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
 
         [OperationContract]
         [FaultContract(typeof(ServiceFaultDto))]
+        Task<OperationResultDto> AddOrUpdateSocialNetworkAsync(string username, SocialNetworkDto socialNetwork);
+
+        [OperationContract]
+        [FaultContract(typeof(ServiceFaultDto))]
         Task<OperationResultDto> RequestChangeEmailAsync(string username, string newEmail);
 
         [OperationContract]
@@ -35,5 +39,7 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
         [OperationContract]
         [FaultContract(typeof(ServiceFaultDto))]
         Task<List<AvatarDto>> GetAvailableAvatarsAsync();
+
+        
     }
 }

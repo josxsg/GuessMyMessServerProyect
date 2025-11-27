@@ -1,0 +1,65 @@
+¢
+˜C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\Email\IEmailService.csutf-8 
+–C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Services\UserProfileService.csutf-8Æ
+¼C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\Email\Templates\PasswordChangeVerificationEmailTemplate.csutf-8›
+‘C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Services\SocialService.csutf-8£
+™C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\Email\IEmailTemplate.csutf-8š
+C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Services\LobbyService.csutf-8£
+™C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Services\AuthenticationService.csutf-8
+ƒC:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Service1.csutf-8Ã
+¹C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\Email\Templates\EmailChangeVerificationEmailTemplate.csutf-8
+“C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\InputValidator.csutf-8 
+–C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Services\MatchmakingService.csutf-8
+“C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\PasswordHasher.csutf-8¸
+®C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\Email\Templates\VerificationEmailTemplate.csutf-8À
+´C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\obj\Debug\.NETFramework,Version=v4.7.2.AssemblyAttributes.csutf-8¥
+›C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\Email\SmtpEmailService.csutf-8™
+C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Services\GameService.csutf-8œ
+’C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Properties\AssemblyInfo.csutf-8
+„C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\IService1.csutf-8 
+”C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\WordDifficulty.csutf-8–
+ŠC:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Word.csutf-8œ
+C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\UserStatus.csutf-8£
+—C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\TypeSocialNetwork.csutf-8Ÿ
+“C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\SocialNetwork.csutf-8˜
+ŒC:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Player.csutf-8
+’C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\MatchHistory.csutf-8¡
+•C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\MatchDifficulty.csutf-8—
+‹C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Match.csutf-8š
+C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\KickVote.csutf-8¨
+œC:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\GuessMyMessDB.Designer.csutf-8Ÿ
+“C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\GuessMyMessDB.csutf-8§
+›C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\GuessMyMessDB.Context.csutf-8˜
+ŒC:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Gender.csutf-8¢
+–C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\FriendShipStatus.csutf-8™
+C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Drawing.csutf-8œ
+C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Friendship.csutf-8 
+”C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\DirectMessages.csutf-8®
+¤C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\ServiceContracts\ISocialService.csutf-8˜
+ŒC:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Avatar.csutf-8³
+©C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\ServiceContracts\IUserProfileService.csutf-8³
+©C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\ServiceContracts\IMatchmakingService.csutf-8­
+£C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\ServiceContracts\ILobbyService.csutf-8¬
+¢C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\ServiceContracts\IGameService.csutf-8¶
+¬C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\ServiceContracts\IAuthenticationService.csutf-8¤
+šC:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\WordDto.csutf-8«
+¡C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\UserProfileDto.csutf-8­
+£C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\SocialNetworkDto.csutf-8«
+¡C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\PlayerScoreDto.csutf-8¯
+¥C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\OperationResultDto.csutf-8­
+£C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\LobbySettingsDto.csutf-8©
+ŸC:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\MatchInfoDto.csutf-8¦
+œC:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\FriendDto.csutf-8ª
+ C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\LobbyStateDto.csutf-8§
+C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\DrawingDto.csutf-8­
+£C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\DirectMessageDto.csutf-8¥
+›C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\GuessDto.csutf-8±
+§C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\FriendRequestInfoDto.csutf-8¦
+œC:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\AvatarDto.csutf-8
+”C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\BusinessLogic\SocialLogic.csutf-8£
+™C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\BusinessLogic\MatchmakingLogic.csutf-8«
+¡C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\ChatMessageDto.csutf-8£
+™C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\BusinessLogic\UserProfileLogic.csutf-8
+“C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\BusinessLogic\LobbyLogic.csutf-8œ
+’C:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\BusinessLogic\GameLogic.csutf-8¦
+œC:\Users\Gabriela\Desktop\Rodrigo\5Â°Semestre\TecnologÃ­asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\BusinessLogic\AuthenticationLogic.csutf-8

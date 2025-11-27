@@ -1,0 +1,136 @@
+{
+  "scannerProperties": [
+    {
+      "key": "sonar.scanner.app",
+      "value": "ScannerMSBuild"
+    },
+    {
+      "key": "sonar.scanner.appVersion",
+      "value": "11.0"
+    },
+    {
+      "key": "sonar.scanner.bootstrapStartTime",
+      "value": "1763353315000"
+    },
+    {
+      "key": "sonar.projectKey",
+      "value": "GuessMyMessServerProyect"
+    },
+    {
+      "key": "sonar.working.directory",
+      "value": "C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\.sonarqube\\out\\.sonar"
+    },
+    {
+      "key": "sonar.projectBaseDir",
+      "value": "C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect"
+    },
+    {
+      "key": "sonar.pullrequest.cache.basepath",
+      "value": "C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect"
+    },
+    {
+      "key": "sonar.sources",
+      "value": "C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\.vs\\GuessMyMessServer\\v17\\DocumentLayout.backup.json,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\.vs\\GuessMyMessServer\\v17\\DocumentLayout.json,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\packages\\EntityFramework.6.5.1\\tools\\init.ps1,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\packages\\EntityFramework.6.5.1\\tools\\install.ps1,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\packages\\MailKit.4.14.0\\lib\\net462\\MailKit.dll.config,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\packages\\MailKit.4.14.0\\lib\\net47\\MailKit.dll.config,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\packages\\MailKit.4.14.0\\lib\\net48\\MailKit.dll.config,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\packages\\MailKit.4.14.0\\lib\\net8.0\\MailKit.dll.config,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\packages\\MailKit.4.14.0\\lib\\netstandard2.0\\MailKit.dll.config,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\packages\\MailKit.4.14.0\\lib\\netstandard2.1\\MailKit.dll.config,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\packages\\MimeKit.4.14.0\\lib\\net8.0\\MimeKit.dll.config,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\packages\\MimeKit.4.14.0\\lib\\netstandard2.0\\MimeKit.dll.config,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\packages\\MimeKit.4.14.0\\lib\\netstandard2.1\\MimeKit.dll.config,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\packages\\EntityFramework.6.5.1\\tools\\net6.0\\any\\ef6.runtimeconfig.json"
+    },
+    {
+      "key": "sonar.tests",
+      "value": ""
+    },
+    {
+      "key": "sonar.modules",
+      "value": "1F1B569A-8E29-4D63-8878-3353EC728312,04F1CCCA-A07B-4212-9718-B33F6EB18743"
+    },
+    {
+      "key": "1F1B569A-8E29-4D63-8878-3353EC728312.sonar.projectKey",
+      "value": "GuessMyMessServerProyect:1F1B569A-8E29-4D63-8878-3353EC728312"
+    },
+    {
+      "key": "1F1B569A-8E29-4D63-8878-3353EC728312.sonar.projectName",
+      "value": "GuessMyMessServer"
+    },
+    {
+      "key": "1F1B569A-8E29-4D63-8878-3353EC728312.sonar.projectBaseDir",
+      "value": "C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer"
+    },
+    {
+      "key": "1F1B569A-8E29-4D63-8878-3353EC728312.sonar.working.directory",
+      "value": "C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\.sonarqube\\out\\.sonar\\mod0"
+    },
+    {
+      "key": "1F1B569A-8E29-4D63-8878-3353EC728312.sonar.sourceEncoding",
+      "value": "utf-8"
+    },
+    {
+      "key": "1F1B569A-8E29-4D63-8878-3353EC728312.sonar.tests",
+      "value": ""
+    },
+    {
+      "key": "1F1B569A-8E29-4D63-8878-3353EC728312.sonar.sources",
+      "value": "C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\BusinessLogic\\AuthenticationLogic.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\BusinessLogic\\GameLogic.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\BusinessLogic\\LobbyLogic.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\BusinessLogic\\MatchmakingLogic.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\BusinessLogic\\SocialLogic.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\BusinessLogic\\UserProfileLogic.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Contracts\\DataContracts\\AvatarDto.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Contracts\\DataContracts\\ChatMessageDto.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Contracts\\DataContracts\\DirectMessageDto.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Contracts\\DataContracts\\DrawingDto.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Contracts\\DataContracts\\FriendDto.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Contracts\\DataContracts\\FriendRequestInfoDto.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Contracts\\DataContracts\\GuessDto.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Contracts\\DataContracts\\LobbySettingsDto.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Contracts\\DataContracts\\LobbyStateDto.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Contracts\\DataContracts\\MatchInfoDto.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Contracts\\DataContracts\\OperationResultDto.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Contracts\\DataContracts\\PlayerScoreDto.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Contracts\\DataContracts\\SocialNetworkDto.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Contracts\\DataContracts\\UserProfileDto.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Contracts\\DataContracts\\WordDto.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Contracts\\ServiceContracts\\IAuthenticationService.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Contracts\\ServiceContracts\\IGameService.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Contracts\\ServiceContracts\\ILobbyService.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Contracts\\ServiceContracts\\IMatchmakingService.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Contracts\\ServiceContracts\\ISocialService.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Contracts\\ServiceContracts\\IUserProfileService.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\DataAccess\\Avatar.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\DataAccess\\DirectMessages.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\DataAccess\\Drawing.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\DataAccess\\Friendship.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\DataAccess\\FriendShipStatus.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\DataAccess\\Gender.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\DataAccess\\KickVote.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\DataAccess\\Match.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\DataAccess\\MatchDifficulty.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\DataAccess\\MatchHistory.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\DataAccess\\Player.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\DataAccess\\SocialNetwork.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\DataAccess\\TypeSocialNetwork.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\DataAccess\\UserStatus.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\DataAccess\\Word.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\DataAccess\\WordDifficulty.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\IService1.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Properties\\AssemblyInfo.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Service1.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Services\\AuthenticationService.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Services\\GameService.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Services\\LobbyService.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Services\\MatchmakingService.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Services\\SocialService.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Services\\UserProfileService.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Utilities\\Email\\IEmailService.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Utilities\\Email\\IEmailTemplate.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Utilities\\Email\\SmtpEmailService.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Utilities\\Email\\Templates\\EmailChangeVerificationEmailTemplate.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Utilities\\Email\\Templates\\PasswordChangeVerificationEmailTemplate.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Utilities\\Email\\Templates\\VerificationEmailTemplate.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Utilities\\InputValidator.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Utilities\\PasswordHasher.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\DataAccess\\GuessMyMessDB.Context.tt,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\DataAccess\\GuessMyMessDB.tt,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Resources\\Images\\Avatars\\Bear.png,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Resources\\Images\\Avatars\\Duck.png,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Resources\\Images\\Avatars\\Flamengo.png,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Resources\\Images\\Avatars\\Raccoon.png,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Resources\\Images\\Avatars\\Rhino.png,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Resources\\Images\\Avatars\\Shark.png,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Resources\\Images\\Avatars\\Toucan.png,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\Resources\\Images\\Avatars\\Zebra.png,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\DataAccess\\GuessMyMessDB.edmx,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\App.config,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\DataAccess\\GuessMyMessDB.edmx.diagram,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\packages.config,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\.vs\\GuessMyMessServer.csproj.dtbcache.json,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\bin\\Debug\\GuessMyMessServer.dll.config,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer\\bin\\Debug\\MailKit.dll.config"
+    },
+    {
+      "key": "1F1B569A-8E29-4D63-8878-3353EC728312.sonar.cs.analyzer.projectOutPaths",
+      "value": "C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\.sonarqube\\out\\0"
+    },
+    {
+      "key": "1F1B569A-8E29-4D63-8878-3353EC728312.sonar.cs.roslyn.reportFilePaths",
+      "value": "C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\.sonarqube\\out\\0\\Issues.json"
+    },
+    {
+      "key": "1F1B569A-8E29-4D63-8878-3353EC728312.sonar.cs.scanner.telemetry",
+      "value": "C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\.sonarqube\\out\\0\\Telemetry.json"
+    },
+    {
+      "key": "04F1CCCA-A07B-4212-9718-B33F6EB18743.sonar.projectKey",
+      "value": "GuessMyMessServerProyect:04F1CCCA-A07B-4212-9718-B33F6EB18743"
+    },
+    {
+      "key": "04F1CCCA-A07B-4212-9718-B33F6EB18743.sonar.projectName",
+      "value": "GuessMyMessServer.Tests"
+    },
+    {
+      "key": "04F1CCCA-A07B-4212-9718-B33F6EB18743.sonar.projectBaseDir",
+      "value": "C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer.Tests"
+    },
+    {
+      "key": "04F1CCCA-A07B-4212-9718-B33F6EB18743.sonar.working.directory",
+      "value": "C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\.sonarqube\\out\\.sonar\\mod1"
+    },
+    {
+      "key": "04F1CCCA-A07B-4212-9718-B33F6EB18743.sonar.sourceEncoding",
+      "value": "utf-8"
+    },
+    {
+      "key": "04F1CCCA-A07B-4212-9718-B33F6EB18743.sonar.sources",
+      "value": ""
+    },
+    {
+      "key": "04F1CCCA-A07B-4212-9718-B33F6EB18743.sonar.tests",
+      "value": "C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer.Tests\\obj\\GuessMyMessServer.Tests.csproj.nuget.dgspec.json,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer.Tests\\obj\\project.assets.json,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer.Tests\\bin\\Debug\\net8.0\\GuessMyMessServer.dll.config,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer.Tests\\bin\\Debug\\net8.0\\GuessMyMessServer.Tests.deps.json,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer.Tests\\bin\\Debug\\net8.0\\GuessMyMessServer.Tests.runtimeconfig.json,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer.Tests\\obj\\Debug\\net8.0\\GuessMyMessServer.Tests.sourcelink.json,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer.Tests\\AuthenticationLogicTests.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer.Tests\\MockDbSetHelpers.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer.Tests\\PasswordHasherTests.cs,C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\GuessMyMessServer.Tests\\UserProfileLogicTests.cs"
+    },
+    {
+      "key": "04F1CCCA-A07B-4212-9718-B33F6EB18743.sonar.cs.analyzer.projectOutPaths",
+      "value": "C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\.sonarqube\\out\\1"
+    },
+    {
+      "key": "04F1CCCA-A07B-4212-9718-B33F6EB18743.sonar.cs.roslyn.reportFilePaths",
+      "value": "C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\.sonarqube\\out\\1\\Issues.json"
+    },
+    {
+      "key": "04F1CCCA-A07B-4212-9718-B33F6EB18743.sonar.cs.scanner.telemetry",
+      "value": "C:\\Users\\Gabriela\\Desktop\\Rodrigo\\5°Semestre\\TecnologíasParaLaConstruccion\\GuessMyMessServerProyect\\.sonarqube\\out\\1\\Telemetry.json"
+    },
+    {
+      "key": "sonar.login",
+      "value": "***"
+    },
+    {
+      "key": "sonar.host.url",
+      "value": "http://localhost:9000"
+    },
+    {
+      "key": "sonar.visualstudio.enable",
+      "value": "false"
+    }
+  ]
+}

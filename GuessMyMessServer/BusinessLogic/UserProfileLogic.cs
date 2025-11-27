@@ -39,6 +39,7 @@ namespace GuessMyMessServer.BusinessLogic
                     .AsNoTracking()
                     .Include(p => p.Gender)
                     .Include(p => p.Avatar)
+                    .Include("SocialNetwork.TypeSocialNetwork") 
                     .FirstOrDefaultAsync(p => p.username == username);
 
                 if (player == null)
@@ -47,6 +48,12 @@ namespace GuessMyMessServer.BusinessLogic
                     throw new InvalidOperationException("User not found.");
                 }
 
+                var socialNetworksList = player.SocialNetwork.Select(sn => new SocialNetworkDto
+                {
+                    NetworkType = sn.TypeSocialNetwork.type, 
+                    UserLink = sn.userLink
+                }).ToList();
+
                 return new UserProfileDto
                 {
                     Username = player.username,
@@ -54,7 +61,8 @@ namespace GuessMyMessServer.BusinessLogic
                     LastName = player.lastName,
                     Email = player.email,
                     GenderId = player.Gender_idGender.GetValueOrDefault(),
-                    AvatarId = player.Avatar_idAvatar.GetValueOrDefault()
+                    AvatarId = player.Avatar_idAvatar.GetValueOrDefault(),
+                    socialNetworks = socialNetworksList 
                 };
             }
             catch (EntityException ex)
@@ -63,7 +71,6 @@ namespace GuessMyMessServer.BusinessLogic
                 throw;
             }
         }
-
         public async Task<OperationResultDto> UpdateProfileAsync(string username, UserProfileDto profileData)
         {
             if (profileData == null)
@@ -95,6 +102,75 @@ namespace GuessMyMessServer.BusinessLogic
             {
                 _log.Error($"Database error updating profile for '{username}'.", dbEx);
                 throw new InvalidOperationException("Could not update profile due to a database error.", dbEx);
+            }
+        }
+
+        public async Task<OperationResultDto> AddOrUpdateSocialNetworkAsync(string username, SocialNetworkDto socialNetworkDto)
+        {
+            if (socialNetworkDto == null || string.IsNullOrWhiteSpace(socialNetworkDto.UserLink))
+            {
+                throw new ArgumentNullException(nameof(socialNetworkDto), "Datos de red social inválidos.");
+            }
+
+            try
+            {
+                // 1. Buscar Usuario
+                var player = await _context.Player.FirstOrDefaultAsync(p => p.username == username);
+                if (player == null)
+                {
+                    _log.Warn($"AddSocialNetwork: User '{username}' not found.");
+                    throw new InvalidOperationException("Usuario no encontrado.");
+                }
+
+                // 2. Buscar el ID del Tipo de Red (ej. "Discord")
+                // NOTA: Asegúrate de que los strings que envías desde el cliente ("Discord", "X", "Instagram")
+                // coincidan EXACTAMENTE con lo que insertaste en la tabla TypeSocialNetwork.
+                var networkType = await _context.TypeSocialNetwork
+                    .FirstOrDefaultAsync(t => t.type == socialNetworkDto.NetworkType);
+
+                if (networkType == null)
+                {
+                    _log.Warn($"AddSocialNetwork: Network type '{socialNetworkDto.NetworkType}' not found.");
+                    throw new InvalidOperationException($"La red social '{socialNetworkDto.NetworkType}' no es válida.");
+                }
+
+                // 3. Upsert (Update or Insert)
+                var existingSocial = await _context.SocialNetwork
+                    .FirstOrDefaultAsync(s => s.Player_idPlayer == player.idPlayer &&
+                                              s.TypeSocialNetwork_idTypeSocialNetwork == networkType.idTypeSocialNetwork);
+
+                if (existingSocial != null)
+                {
+                    // Actualizar existente
+                    existingSocial.userLink = socialNetworkDto.UserLink.Trim();
+                    _log.Info($"Updating social network '{socialNetworkDto.NetworkType}' to '{username}'.");
+                }
+                else
+                {
+                    // Crear nueva
+                    var newSocial = new SocialNetwork
+                    {
+                        Player_idPlayer = player.idPlayer,
+                        TypeSocialNetwork_idTypeSocialNetwork = networkType.idTypeSocialNetwork,
+                        userLink = socialNetworkDto.UserLink.Trim()
+                    };
+                    _context.SocialNetwork.Add(newSocial);
+                    _log.Info($"Creating new social network '{socialNetworkDto.NetworkType}' to '{username}'.");
+                }
+
+                await _context.SaveChangesAsync();
+
+                return new OperationResultDto { Success = true, Message = "Perfil social actualizado correctamente." };
+            }
+            catch (DbUpdateException dbEx)
+            {
+                _log.Error($"Database ERROR saving social network for '{username}'.", dbEx);
+                throw new InvalidOperationException("Error al guardar en la base de datos.", dbEx);
+            }
+            catch (Exception ex)
+            {
+                _log.Error($"Error saving social network '{username}'.", ex);
+                throw;
             }
         }
 
@@ -352,5 +428,6 @@ namespace GuessMyMessServer.BusinessLogic
                 throw;
             }
         }
+
     }
 }

@@ -83,6 +83,36 @@ namespace GuessMyMessServer.Services
             }
         }
 
+        public async Task<OperationResultDto> AddOrUpdateSocialNetworkAsync(string username, SocialNetworkDto socialNetwork)
+        {
+            try
+            {
+                using (var context = new GuessMyMessDBEntities())
+                {
+                    var emailService = new SmtpEmailService(); 
+                    var logic = new UserProfileLogic(emailService, context);
+                    return await logic.AddOrUpdateSocialNetworkAsync(username, socialNetwork);
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                ServiceErrorType type = ex.Message.Contains("no es válida")
+                    ? ServiceErrorType.OperationFailed
+                    : ServiceErrorType.NotFound;
+
+                throw new FaultException<ServiceFaultDto>(
+                    new ServiceFaultDto(type, ex.Message),
+                    new FaultReason(ex.Message));
+            }
+            catch (Exception ex)
+            {
+                _log.Error($"Error en AddOrUpdateSocialNetworkAsync para {username}", ex);
+                throw new FaultException<ServiceFaultDto>(
+                    new ServiceFaultDto(ServiceErrorType.Unknown, Lang.Error_ServerGeneric),
+                    new FaultReason("Error interno del servidor."));
+            }
+        }
+
         public async Task<OperationResultDto> RequestChangeEmailAsync(string username, string newEmail)
         {
             try
