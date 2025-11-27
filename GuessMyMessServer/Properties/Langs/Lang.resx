@@ -156,6 +156,9 @@
   <data name="Error_InvalidCredentials" xml:space="preserve">
     <value>Incorrect credentials.</value>
   </data>
+  <data name="Error_InvalidDataFormat" xml:space="preserve">
+    <value>Invalid Data Format</value>
+  </data>
   <data name="Error_InvalidInviteCode" xml:space="preserve">
     <value>Invalid Invite Code</value>
   </data>

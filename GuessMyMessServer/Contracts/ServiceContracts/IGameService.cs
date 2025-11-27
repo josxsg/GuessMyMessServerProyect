@@ -29,6 +29,9 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
 
         [OperationContract(IsOneWay = true)]
         void SendInGameChatMessage(string username, string matchId, string message);
+
+        [OperationContract(IsOneWay = true)]
+        void StartGame(string matchId, int totalRounds, List<string> playerUsernames);
     }
 
     [ServiceContract]

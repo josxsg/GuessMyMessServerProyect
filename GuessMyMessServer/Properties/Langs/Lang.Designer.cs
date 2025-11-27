@@ -178,6 +178,15 @@ namespace GuessMyMessServer.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Invalid Data Format.
+        /// </summary>
+        public static string Error_InvalidDataFormat {
+            get {
+                return ResourceManager.GetString("Error_InvalidDataFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Invalid Invite Code.
         /// </summary>
         public static string Error_InvalidInviteCode {

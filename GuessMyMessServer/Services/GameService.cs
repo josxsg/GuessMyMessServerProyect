@@ -118,5 +118,17 @@ namespace GuessMyMessServer.Services
                 _log.Warn($"Error sending in-game chat message from '{username}' in match '{matchId}'", ex);
             }
         }
+
+        public void StartGame(string matchId, int totalRounds, List<string> playerUsernames)
+        {
+            try
+            {
+                GameLogic.Instance.StartGame(matchId, totalRounds, playerUsernames);
+            }
+            catch (Exception ex)
+            {
+                _log.Error($"Error starting game for match '{matchId}'", ex);
+            }
+        }
     }
 }

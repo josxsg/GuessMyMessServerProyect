@@ -23,12 +23,13 @@ namespace GuessMyMessServer.Utilities.Email
             _host = ConfigurationManager.AppSettings["SmtpHost"];
             _port = Convert.ToInt32(ConfigurationManager.AppSettings["SmtpPort"]);
             _user = ConfigurationManager.AppSettings["SmtpUser"];
-            _pass = ConfigurationManager.AppSettings["SmtpPass"];
+            _pass = Environment.GetEnvironmentVariable("GUESSMYMESS_SMTP_PASS")
+                    ?? ConfigurationManager.AppSettings["SmtpPass"];
             _senderName = ConfigurationManager.AppSettings["SenderName"] ?? "Guess My Mess Team";
 
             if (string.IsNullOrEmpty(_host) || string.IsNullOrEmpty(_user) || string.IsNullOrEmpty(_pass))
             {
-                throw new InvalidOperationException("Email settings (SmtpHost, SmtpUser, SmtpPass) are missing or invalid in App.config.");
+                throw new InvalidOperationException("Email settings are missing. Ensure 'GUESSMYMESS_SMTP_PASS' environment variable is set.");
             }
         }
 

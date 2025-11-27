@@ -16,8 +16,21 @@ namespace GuessMyMessServer.DataAccess
     public partial class GuessMyMessDBEntities : DbContext
     {
         public GuessMyMessDBEntities()
-            : base("name=GuessMyMessDBEntities")
+            : base(GetConnectionString())
         {
+        }
+
+        private static string GetConnectionString()
+        {
+            string envConnection = Environment.GetEnvironmentVariable("GUESSMYMESS_DB_PASS");
+
+            if (string.IsNullOrEmpty(envConnection))
+            {
+                throw new InvalidOperationException(
+                    "CRITICAL ERROR: The enviroment variable 'GUESSMYMESS_DB_PASS' is not set. For security reasons, the application will not start.");
+            }
+
+            return envConnection;
         }
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
