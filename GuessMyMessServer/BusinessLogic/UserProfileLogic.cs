@@ -114,7 +114,6 @@ namespace GuessMyMessServer.BusinessLogic
 
             try
             {
-                // 1. Buscar Usuario
                 var player = await _context.Player.FirstOrDefaultAsync(p => p.username == username);
                 if (player == null)
                 {
@@ -122,9 +121,6 @@ namespace GuessMyMessServer.BusinessLogic
                     throw new InvalidOperationException("Usuario no encontrado.");
                 }
 
-                // 2. Buscar el ID del Tipo de Red (ej. "Discord")
-                // NOTA: Asegúrate de que los strings que envías desde el cliente ("Discord", "X", "Instagram")
-                // coincidan EXACTAMENTE con lo que insertaste en la tabla TypeSocialNetwork.
                 var networkType = await _context.TypeSocialNetwork
                     .FirstOrDefaultAsync(t => t.type == socialNetworkDto.NetworkType);
 
@@ -134,20 +130,17 @@ namespace GuessMyMessServer.BusinessLogic
                     throw new InvalidOperationException($"La red social '{socialNetworkDto.NetworkType}' no es válida.");
                 }
 
-                // 3. Upsert (Update or Insert)
                 var existingSocial = await _context.SocialNetwork
                     .FirstOrDefaultAsync(s => s.Player_idPlayer == player.idPlayer &&
                                               s.TypeSocialNetwork_idTypeSocialNetwork == networkType.idTypeSocialNetwork);
 
                 if (existingSocial != null)
                 {
-                    // Actualizar existente
                     existingSocial.userLink = socialNetworkDto.UserLink.Trim();
                     _log.Info($"Updating social network '{socialNetworkDto.NetworkType}' to '{username}'.");
                 }
                 else
                 {
-                    // Crear nueva
                     var newSocial = new SocialNetwork
                     {
                         Player_idPlayer = player.idPlayer,
