@@ -8,6 +8,7 @@ using GuessMyMessServer.Contracts.ServiceContracts;
 using GuessMyMessServer.DataAccess;
 using GuessMyMessServer.Properties;
 using GuessMyMessServer.Properties.Langs;
+using GuessMyMessServer.Utilities;
 using GuessMyMessServer.Utilities.Email;
 using log4net;
 
@@ -20,6 +21,12 @@ namespace GuessMyMessServer.Services
 
         public async Task<OperationResultDto> LoginAsync(string emailOrUsername, string password)
         {
+            if (string.IsNullOrWhiteSpace(emailOrUsername) || string.IsNullOrWhiteSpace(password))
+            {
+                throw new FaultException<ServiceFaultDto>(
+                    new ServiceFaultDto(ServiceErrorType.OperationFailed, Lang.Error_FieldsRequired),
+                    new FaultReason("Empty Credentials"));
+            }
             try
             {
                 using (var context = new GuessMyMessDBEntities())
@@ -89,6 +96,21 @@ namespace GuessMyMessServer.Services
         public async Task<OperationResultDto> RegisterAsync(UserProfileDto userProfile, string password)
         {
             string usernameLog = userProfile?.Username ?? "Unknown";
+            if (userProfile == null)
+            {
+                throw new FaultException<ServiceFaultDto>(
+                    new ServiceFaultDto(ServiceErrorType.OperationFailed, Lang.Error_FieldsRequired),
+                    new FaultReason("User profile is null"));
+            }
+            if (!InputValidator.IsValidEmail(userProfile.Email) ||
+                !InputValidator.IsPasswordSecure(password) ||
+                string.IsNullOrWhiteSpace(userProfile.Username))
+            {
+                _log.Warn($"Registration attempt with invalid data: {usernameLog}");
+                throw new FaultException<ServiceFaultDto>(
+                    new ServiceFaultDto(ServiceErrorType.OperationFailed, Lang.Error_InvalidDataFormat), 
+                    new FaultReason("Invalid data (Email or Insecure Password)"));
+            }
             try
             {
                 using (var context = new GuessMyMessDBEntities())
