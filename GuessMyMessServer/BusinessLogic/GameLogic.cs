@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
 using System.Linq;
-using System.ServiceModel;
+using System.Threading;
 using System.Threading.Tasks;
+using System.ServiceModel;
 using GuessMyMessServer.Contracts.DataContracts;
 using GuessMyMessServer.Contracts.ServiceContracts;
 using GuessMyMessServer.DataAccess;
@@ -12,500 +13,639 @@ using log4net;
 
 namespace GuessMyMessServer.BusinessLogic
 {
+    public enum MatchPhase
+    {
+        NotStarted,
+        Drawing,
+        Guessing,
+        Answers,
+        Finished
+    }
+
+    public class MatchState
+    {
+        public string MatchId { get; set; }
+        public MatchPhase Phase { get; set; } = MatchPhase.NotStarted;
+        public Timer GameTimer { get; set; }
+        public int CurrentRound { get; set; } = 1;
+        public int TotalRounds { get; set; }
+        public int CurrentDrawingIndex { get; set; } = 0;
+        public List<string> Players { get; set; } = new List<string>();
+        public Dictionary<string, string> PlayerSelectedWords { get; set; } = new Dictionary<string, string>();
+        public List<DrawingDto> Drawings { get; set; } = new List<DrawingDto>();
+        public List<GuessDto> Guesses { get; set; } = new List<GuessDto>();
+        public List<PlayerScoreDto> Scores { get; set; } = new List<PlayerScoreDto>();
+
+        public void DisposeTimer()
+        {
+            GameTimer?.Dispose();
+            GameTimer = null;
+        }
+    }
+
     public class GameLogic
     {
         private static readonly ILog _log = LogManager.GetLogger(typeof(GameLogic));
         private static readonly GameLogic _instance = new GameLogic();
         public static GameLogic Instance => _instance;
 
-        private readonly Dictionary<string, IGameServiceCallback> _connectedPlayers = new Dictionary<string, IGameServiceCallback>();
-        private readonly Dictionary<string, string> _playerSelectedWords = new Dictionary<string, string>();
-        private readonly Dictionary<string, List<DrawingDto>> _matchDrawings = new Dictionary<string, List<DrawingDto>>();
-        private readonly Dictionary<string, List<string>> _matchPlayers = new Dictionary<string, List<string>>();
-        private readonly Dictionary<string, List<GuessDto>> _matchGuesses = new Dictionary<string, List<GuessDto>>();
-        private readonly Dictionary<string, int> _matchCurrentDrawingIndex = new Dictionary<string, int>();
-        private readonly Dictionary<string, List<PlayerScoreDto>> _matchScores = new Dictionary<string, List<PlayerScoreDto>>();
+        private readonly ConcurrentDictionary<string, IGameServiceCallback> _connectedPlayers = new ConcurrentDictionary<string, IGameServiceCallback>();
+        private readonly Dictionary<string, MatchState> _matches = new Dictionary<string, MatchState>();
 
-        private const int SecondsPerGuess = 10;
+        private readonly object _gameStateLock = new object();
         private const int CorrectGuessScore = 50;
         private const int DrawingGuessedCorrectlyScore = 10;
-        private static readonly Random _random = new Random();
 
         private GameLogic() { }
 
+        private void StopMatchTimer(string matchId)
+        {
+            lock (_gameStateLock)
+            {
+                if (_matches.TryGetValue(matchId, out var match))
+                {
+                    try
+                    {
+                        match.DisposeTimer();
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.Warn($"Error disposing timer for match {matchId}", ex);
+                    }
+                }
+            }
+        }
+
+        private void StartTimer(string matchId, TimerCallback callback, object state, int delaySeconds)
+        {
+            lock (_gameStateLock)
+            {
+                if (_matches.TryGetValue(matchId, out var match))
+                {
+                    match.DisposeTimer();
+                    match.GameTimer = new Timer(callback, state, delaySeconds * 1000, Timeout.Infinite);
+                }
+            }
+        }
+
         public async Task<List<WordDto>> GetRandomWordsAsync()
         {
-            const int WordsToSelect = 3;
+            try
+            {
+                using (var context = new GuessMyMessDBEntities())
+                {
+                    return await context.Word
+                        .OrderBy(w => Guid.NewGuid())
+                        .Take(3)
+                        .Select(w => new WordDto { WordId = w.idWord, WordKey = w.word1 })
+                        .ToListAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.Error("Error getting random words from DB", ex);
+                throw new FaultException("Database error while retrieving words.");
+            }
+        }
+
+        public void RegisterMatchStart(string matchId, List<string> playerUsernames)
+        {
+            if (!int.TryParse(matchId, out int matchIdInt))
+            {
+                return;
+            }
 
             try
             {
                 using (var context = new GuessMyMessDBEntities())
                 {
-                    var allWords = await context.Word
-                        .Select(w => new WordDto
-                        {
-                            WordId = w.idWord,
-                            WordKey = w.word1
-                        })
-                        .ToListAsync();
-
-                    if (allWords.Count < WordsToSelect)
+                    var matchEntity = context.Match.FirstOrDefault(m => m.idMatch == matchIdInt);
+                    if (matchEntity == null)
                     {
-                        _log.Warn($"Insufficient words in database. Requested: {WordsToSelect}, Available: {allWords.Count}.");
-                        return allWords;
+                        return;
                     }
 
-                    var randomWords = allWords
-                        .OrderBy(w => _random.Next())
-                        .Take(WordsToSelect)
-                        .ToList();
+                    matchEntity.matchStatus = "Playing";
 
-                    return randomWords;
+                    foreach (var username in playerUsernames)
+                    {
+                        AddPlayerToHistory(context, matchIdInt, username);
+                    }
+                    context.SaveChanges();
                 }
             }
-            // We catch the general Exception here because EF can throw multiple on read (EntityException, SqlException)
-            catch (Exception ex) 
+            catch (Exception ex)
             {
-                _log.Warn("Database error retrieving random words.", ex);
-                throw;
+                _log.Error($"Error registering match start in DB for MatchID: {matchId}", ex);
             }
         }
 
-        public void ConnectPlayer(string username, string matchId, IGameServiceCallback callback)
+        private void AddPlayerToHistory(GuessMyMessDBEntities context, int matchId, string username)
         {
-            lock (_connectedPlayers)
+            var player = context.Player.FirstOrDefault(p => p.username.ToLower() == username.ToLower());
+            if (player != null && !context.MatchHistory.Any(h => h.Match_idMatch == matchId && h.Player_idPlayer == player.idPlayer))
             {
-                _connectedPlayers[username] = callback;
+                context.MatchHistory.Add(new MatchHistory { Match_idMatch = matchId, Player_idPlayer = player.idPlayer, finalScore = 0, ranking = 0 });
             }
-
-            lock (_matchPlayers)
-            {
-                if (!_matchPlayers.ContainsKey(matchId))
-                {
-                    _matchPlayers[matchId] = new List<string>();
-                    _log.Info($"Match {matchId} created in memory.");
-                }
-                if (!_matchPlayers[matchId].Contains(username))
-                {
-                    _matchPlayers[matchId].Add(username);
-                }
-            }
-
-            _log.Info($"Player '{username}' connected to match {matchId}.");
         }
 
-        public void DisconnectPlayer(string username, string matchId)
+        public void RegisterMatchEnd(string matchId, List<PlayerScoreDto> finalScores)
         {
-            lock (_connectedPlayers)
+            if (!int.TryParse(matchId, out int matchIdInt))
             {
-                _connectedPlayers.Remove(username);
+                return;
             }
 
-            lock (_playerSelectedWords)
+            try
             {
-                _playerSelectedWords.Remove(username);
-            }
-
-            lock (_matchPlayers)
-            {
-                if (matchId != null && _matchPlayers.ContainsKey(matchId))
+                using (var context = new GuessMyMessDBEntities())
                 {
-                    _matchPlayers[matchId].Remove(username);
-
-                    if (_matchPlayers[matchId].Count == 0)
+                    var matchEntity = context.Match.FirstOrDefault(m => m.idMatch == matchIdInt);
+                    if (matchEntity == null)
                     {
-                        ClearMatchData(matchId);
+                        return;
                     }
+
+                    matchEntity.matchStatus = "Finished";
+                    UpdateMatchHistoryScores(context, matchIdInt, finalScores);
+                    context.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.Error($"Error registering match end in DB for MatchID: {matchId}", ex);
+            }
+        }
+
+        private void UpdateMatchHistoryScores(GuessMyMessDBEntities context, int matchId, List<PlayerScoreDto> finalScores)
+        {
+            if (finalScores == null)
+            {
+                return;
+            }
+
+            var sorted = finalScores.OrderByDescending(s => s.Score).ToList();
+            for (int i = 0; i < sorted.Count; i++)
+            {
+                var sc = sorted[i];
+                var p = context.Player.FirstOrDefault(x => x.username.ToLower() == sc.Username.ToLower());
+                if (p == null)
+                {
+                    continue;
+                }
+
+                var h = context.MatchHistory.FirstOrDefault(x => x.Match_idMatch == matchId && x.Player_idPlayer == p.idPlayer);
+                if (h != null)
+                {
+                    h.finalScore = sc.Score;
+                    h.ranking = i + 1;
+                }
+            }
+        }
+
+        public void StartGame(string matchId, int totalRounds, List<string> playersFromLobby)
+        {
+            StopMatchTimer(matchId);
+
+            lock (_gameStateLock)
+            {
+                if (!_matches.ContainsKey(matchId))
+                {
+                    _matches[matchId] = new MatchState { MatchId = matchId };
+                }
+
+                var match = _matches[matchId];
+                match.CurrentRound = 1;
+                match.TotalRounds = totalRounds;
+                match.Phase = MatchPhase.NotStarted;
+                match.Players = match.Players.Union(playersFromLobby).Distinct().ToList();
+
+                if (match.Scores.Count == 0)
+                {
+                    match.Scores = match.Players.Select(u => new PlayerScoreDto { Username = u, Score = 0 }).ToList();
                 }
             }
 
-            _log.Info($"Player '{username}' disconnected.");
+            Task.Run(() => RegisterMatchStart(matchId, playersFromLobby));
+            StartNewRound(matchId);
+        }
+
+        private void StartNewRound(string matchId)
+        {
+            StopMatchTimer(matchId);
+            int roundToSend = 0;
+
+            lock (_gameStateLock)
+            {
+                if (!_matches.TryGetValue(matchId, out var match))
+                {
+                    return;
+                }
+
+                match.Phase = MatchPhase.Drawing;
+                match.CurrentDrawingIndex = 0;
+                match.Drawings.Clear();
+                match.Guesses.Clear();
+                match.PlayerSelectedWords.Clear();
+
+                roundToSend = match.CurrentRound;
+            }
+
+            BroadcastToMatch(matchId, callback => callback.OnRoundStart(roundToSend, new List<string>()));
         }
 
         public void RegisterSelectedWord(string username, string matchId, string selectedWord)
         {
-            lock (_playerSelectedWords)
+            lock (_gameStateLock)
             {
-                _playerSelectedWords[username] = selectedWord;
+                if (_matches.TryGetValue(matchId, out var match))
+                {
+                    match.PlayerSelectedWords[username] = selectedWord;
+                }
             }
-            _log.Info($"Player '{username}' selected a word in match {matchId}.");
         }
 
         public void AddDrawing(string username, string matchId, byte[] drawingData)
         {
-            string wordToSave = "Unknown";
-            lock (_playerSelectedWords)
+            lock (_gameStateLock)
             {
-                if (_playerSelectedWords.ContainsKey(username))
-                {
-                    wordToSave = _playerSelectedWords[username];
-                }
-            }
-
-            var newDrawing = new DrawingDto
-            {
-                OwnerUsername = username,
-                DrawingData = drawingData,
-                WordKey = wordToSave,
-                IsGuessed = false
-            };
-
-            lock (_matchDrawings)
-            {
-                if (!_matchDrawings.ContainsKey(matchId))
-                {
-                    _matchDrawings[matchId] = new List<DrawingDto>();
-                }
-                newDrawing.DrawingId = _matchDrawings[matchId].Count + 1;
-                _matchDrawings[matchId].Add(newDrawing);
-            }
-
-            _log.Info($"Drawing received. Match: {matchId}, User: '{username}'.");
-            CheckIfAllPlayersFinishedDrawing(matchId);
-        }
-
-        public void ProcessGuess(string username, string matchId, int drawingId, string guess)
-        {
-            DrawingDto currentDrawing = null;
-            lock (_matchDrawings)
-            {
-                if (_matchDrawings.ContainsKey(matchId))
-                {
-                    currentDrawing = _matchDrawings[matchId].FirstOrDefault(d => d.DrawingId == drawingId);
-                }
-            }
-
-            if (currentDrawing == null)
-            {
-                _log.Warn($"ProcessGuess Warning: Drawing {drawingId} not found in match {matchId}.");
-                return;
-            }
-
-            bool isCorrect = string.Equals(guess, currentDrawing.WordKey, StringComparison.OrdinalIgnoreCase);
-
-            var newGuess = new GuessDto
-            {
-                GuesserUsername = username,
-                DrawingId = drawingId,
-                GuessText = guess,
-                IsCorrect = isCorrect,
-                WordKey = currentDrawing.WordKey
-            };
-
-            lock (_matchGuesses)
-            {
-                if (!_matchGuesses.ContainsKey(matchId))
-                {
-                    _matchGuesses[matchId] = new List<GuessDto>();
-                }
-                _matchGuesses[matchId].RemoveAll(g => g.GuesserUsername == username && g.DrawingId == drawingId);
-                _matchGuesses[matchId].Add(newGuess);
-            }
-
-            if (isCorrect)
-            {
-                _log.Info($"Correct guess! Player '{username}' guessed the word in match {matchId}.");
-                CalculateScores(matchId, username, currentDrawing.OwnerUsername);
-            }
-            else
-            {
-                _log.Info($"Incorrect guess by '{username}' in match {matchId}.");
-            }
-
-            CheckIfAllGuessesForCurrentDrawingAreIn(matchId, currentDrawing);
-        }
-
-        public void BroadcastChatMessage(string senderUsername, string matchId, string message)
-        {
-            List<string> playersInMatch;
-            lock (_matchPlayers)
-            {
-                if (!_matchPlayers.ContainsKey(matchId))
+                if (!_matches.TryGetValue(matchId, out var match))
                 {
                     return;
                 }
-                playersInMatch = new List<string>(_matchPlayers[matchId]);
-            }
 
-            foreach (var playerUsername in playersInMatch)
-            {
-                NotifyPlayer(playerUsername, callback => callback.OnInGameMessageReceived(senderUsername, message));
-            }
-        }
-
-        private void CalculateScores(string matchId, string guesser, string artistUsername)
-        {
-            lock (_matchScores)
-            {
-                if (!_matchScores.ContainsKey(matchId))
+                if (match.Phase != MatchPhase.Drawing)
                 {
-                    _matchScores[matchId] = new List<PlayerScoreDto>();
+                    return;
                 }
 
-                var playerToScore = _matchScores[matchId].FirstOrDefault(p => p.Username == guesser);
-                if (playerToScore == null)
+                string wordToSave = match.PlayerSelectedWords.ContainsKey(username) ? match.PlayerSelectedWords[username] : "Unknown";
+
+                match.Drawings.Add(new DrawingDto
                 {
-                    playerToScore = new PlayerScoreDto { Username = guesser, Score = 0 };
-                    _matchScores[matchId].Add(playerToScore);
-                }
-                playerToScore.Score += CorrectGuessScore;
+                    OwnerUsername = username,
+                    DrawingData = drawingData,
+                    WordKey = wordToSave,
+                    IsGuessed = false,
+                    DrawingId = match.Drawings.Count + 1
+                });
 
-                var artist = _matchScores[matchId].FirstOrDefault(p => p.Username == artistUsername);
-                if (artist == null)
+                if (match.Drawings.Count >= match.Players.Count && match.Players.Count > 0)
                 {
-                    artist = new PlayerScoreDto { Username = artistUsername, Score = 0 };
-                    _matchScores[matchId].Add(artist);
+                    Task.Run(() => NotifyGuessingPhaseStart(matchId));
                 }
-                artist.Score += DrawingGuessedCorrectlyScore;
-            }
-        }
-
-        private void CheckIfAllPlayersFinishedDrawing(string matchId)
-        {
-            int totalPlayers = 0;
-            int totalDrawings = 0;
-
-            lock (_matchPlayers)
-            {
-                if (_matchPlayers.ContainsKey(matchId))
-                {
-                    totalPlayers = _matchPlayers[matchId].Count;
-                }
-            }
-
-            lock (_matchDrawings)
-            {
-                if (_matchDrawings.ContainsKey(matchId))
-                {
-                    totalDrawings = _matchDrawings[matchId].Count;
-                }
-            }
-
-            if (totalPlayers > 0 && totalDrawings >= totalPlayers)
-            {
-                _log.Info($"Match {matchId}: All players finished drawing. Proceeding to guessing phase.");
-                NotifyGuessingPhaseStart(matchId);
             }
         }
 
         private void NotifyGuessingPhaseStart(string matchId)
         {
-            InitializeMatchForGuessing(matchId);
+            DrawingDto firstDrawing = null;
 
-            List<DrawingDto> drawings;
-            lock (_matchDrawings)
+            lock (_gameStateLock)
             {
-                drawings = _matchDrawings[matchId];
-            }
-
-            DrawingDto firstDrawing = drawings.FirstOrDefault();
-            if (firstDrawing == null)
-            {
-                _log.Warn($"Match {matchId}: Tried to start guessing phase but no drawings were found.");
-                return;
-            }
-
-            BroadcastToMatch(matchId, callback => callback.OnGuessingPhaseStart(firstDrawing));
-        }
-
-        private void InitializeMatchForGuessing(string matchId)
-        {
-            List<string> players;
-            lock (_matchPlayers)
-            {
-                players = new List<string>(_matchPlayers[matchId]);
-            }
-
-            lock (_matchCurrentDrawingIndex)
-            {
-                _matchCurrentDrawingIndex[matchId] = 0;
-            }
-
-            lock (_matchScores)
-            {
-                _matchScores[matchId] = players
-                    .Select(u => new PlayerScoreDto { Username = u, Score = 0 })
-                    .ToList();
-            }
-
-            lock (_matchGuesses)
-            {
-                _matchGuesses.Remove(matchId);
-            }
-        }
-
-        private void CheckIfAllGuessesForCurrentDrawingAreIn(string matchId, DrawingDto currentDrawing)
-        {
-            int totalPlayers;
-            lock (_matchPlayers)
-            {
-                if (!_matchPlayers.ContainsKey(matchId))
+                if (!_matches.TryGetValue(matchId, out var match))
                 {
                     return;
                 }
-                totalPlayers = _matchPlayers[matchId].Count;
+
+                if (match.Phase != MatchPhase.Drawing)
+                {
+                    return;
+                }
+
+                match.Phase = MatchPhase.Guessing;
+                match.CurrentDrawingIndex = 0;
+                match.Guesses.Clear();
+
+                firstDrawing = match.Drawings.FirstOrDefault();
             }
 
-            int guessesForThisDrawing = 0;
-            lock (_matchGuesses)
+            if (firstDrawing != null)
             {
-                if (_matchGuesses.ContainsKey(matchId))
-                {
-                    guessesForThisDrawing = _matchGuesses[matchId].Count(g => g.DrawingId == currentDrawing.DrawingId);
-                }
+                BroadcastToMatch(matchId, c => c.OnGuessingPhaseStart(firstDrawing));
             }
+        }
+
+        public void ProcessGuess(string username, string matchId, int drawingId, string guessText)
+        {
+            lock (_gameStateLock)
+            {
+                if (!_matches.TryGetValue(matchId, out var match))
+                {
+                    return;
+                }
+
+                if (match.Phase != MatchPhase.Guessing)
+                {
+                    return;
+                }
+
+                var drawing = match.Drawings.FirstOrDefault(d => d.DrawingId == drawingId);
+                if (drawing == null) return;
+
+                bool isCorrect = string.Equals(guessText, drawing.WordKey, StringComparison.OrdinalIgnoreCase);
+                bool alreadyGuessedCorrectly = match.Guesses.Any(g => g.GuesserUsername == username && g.DrawingId == drawingId && g.IsCorrect);
+
+                if (!alreadyGuessedCorrectly)
+                {
+                    AddGuess(match, username, drawingId, guessText, isCorrect, drawing.WordKey);
+                    if (isCorrect)
+                    {
+                        ApplyScores(match, username, drawing.OwnerUsername);
+                    }
+                }
+
+                CheckDrawingCompletion(match, drawingId);
+            }
+        }
+
+        private void AddGuess(MatchState match, string username, int drawingId, string guessText, bool isCorrect, string wordKey)
+        {
+            match.Guesses.Add(new GuessDto
+            {
+                GuesserUsername = username,
+                DrawingId = drawingId,
+                GuessText = guessText,
+                IsCorrect = isCorrect,
+                WordKey = wordKey
+            });
+        }
+
+        private void ApplyScores(MatchState match, string guesser, string artist)
+        {
+            var guesserScore = match.Scores.FirstOrDefault(p => p.Username == guesser);
+            if (guesserScore != null)
+            {
+                guesserScore.Score += CorrectGuessScore;
+            }
+
+            var artistScore = match.Scores.FirstOrDefault(p => p.Username == artist);
+            if (artistScore != null)
+            {
+                artistScore.Score += DrawingGuessedCorrectlyScore;
+            }
+        }
+
+        private void CheckDrawingCompletion(MatchState match, int currentDrawingId)
+        {
+            if (match.CurrentDrawingIndex >= match.Drawings.Count)
+            {
+                return;
+            }
+
+            if (match.Drawings[match.CurrentDrawingIndex].DrawingId != currentDrawingId)
+            {
+                return;
+            }
+
+            int totalPlayers = match.Players.Count;
+            int guessesForThisDrawing = match.Guesses.Count(g => g.DrawingId == currentDrawingId);
 
             if (guessesForThisDrawing >= (totalPlayers - 1))
             {
-                _log.Info($"Match {matchId}: Drawing {currentDrawing.DrawingId} completed. Moving to next step.");
-                GoToNextDrawingOrAnswersPhase(matchId);
+                Task.Run(() => GoToNextDrawingOrAnswersPhase(match.MatchId));
             }
         }
 
         private void GoToNextDrawingOrAnswersPhase(string matchId)
         {
-            int nextIndex;
-            lock (_matchCurrentDrawingIndex)
+            DrawingDto nextDrawing = null;
+            bool shouldStartAnswers = false;
+
+            lock (_gameStateLock)
             {
-                _matchCurrentDrawingIndex[matchId]++;
-                nextIndex = _matchCurrentDrawingIndex[matchId];
+                if (!_matches.TryGetValue(matchId, out var match))
+                {
+                    return;
+                }
+
+                if (match.Phase != MatchPhase.Guessing)
+                {
+                    return;
+                }
+
+                match.CurrentDrawingIndex++;
+
+                if (match.CurrentDrawingIndex < match.Drawings.Count)
+                {
+                    nextDrawing = match.Drawings[match.CurrentDrawingIndex];
+                }
+                else
+                {
+                    shouldStartAnswers = true;
+                }
             }
 
-            List<DrawingDto> drawings;
-            lock (_matchDrawings)
+            if (nextDrawing != null)
             {
-                drawings = _matchDrawings[matchId];
+                BroadcastToMatch(matchId, c => c.OnShowNextDrawing(nextDrawing));
             }
-
-            if (nextIndex < drawings.Count)
+            else if (shouldStartAnswers)
             {
-                DrawingDto nextDrawing = drawings[nextIndex];
-                BroadcastToMatch(matchId, callback => callback.OnShowNextDrawing(nextDrawing));
-            }
-            else
-            {
-                StartAnswersPhase(matchId, drawings);
+                StartAnswersPhase(matchId);
             }
         }
 
-        private void StartAnswersPhase(string matchId, List<DrawingDto> allDrawings)
+        private void StartAnswersPhase(string matchId)
         {
-            _log.Info($"Match {matchId}: Starting Answers Phase.");
-
-            List<GuessDto> allGuesses;
-            List<PlayerScoreDto> currentScores;
-
-            lock (_matchGuesses)
+            MatchState snapshot;
+            lock (_gameStateLock)
             {
-                allGuesses = _matchGuesses.ContainsKey(matchId) ? new List<GuessDto>(_matchGuesses[matchId]) : new List<GuessDto>();
+                if (!_matches.TryGetValue(matchId, out var match))
+                {
+                    return;
+                }
+
+                if (match.Phase != MatchPhase.Guessing)
+                {
+                    return;
+                }
+
+                match.Phase = MatchPhase.Answers;
+
+                snapshot = new MatchState
+                {
+                    Drawings = new List<DrawingDto>(match.Drawings),
+                    Guesses = new List<GuessDto>(match.Guesses),
+                    Scores = new List<PlayerScoreDto>(match.Scores),
+                    CurrentRound = match.CurrentRound
+                };
             }
-            lock (_matchScores)
+
+            BroadcastToMatch(matchId, c => c.OnAnswersPhaseStart(
+                snapshot.Drawings.ToArray(),
+                snapshot.Guesses.ToArray(),
+                snapshot.Scores.ToArray()));
+
+            int totalItems = snapshot.Drawings.Count + snapshot.Guesses.Count;
+            int delaySeconds = (totalItems * 5) + 15;
+
+            StartTimer(matchId, TimerCallback, new Tuple<string, int>(matchId, snapshot.CurrentRound), delaySeconds);
+        }
+
+        private void TimerCallback(object state)
+        {
+            var tuple = (Tuple<string, int>)state;
+            CheckEndOfRoundOrGame(tuple.Item1, tuple.Item2);
+        }
+
+        private void CheckEndOfRoundOrGame(string matchId, int expectedRound)
+        {
+            bool startNextRound = false;
+
+            lock (_gameStateLock)
             {
-                currentScores = new List<PlayerScoreDto>(_matchScores[matchId]);
+                if (!_matches.TryGetValue(matchId, out var match))
+                {
+                    return;
+                }
+
+                if (match.CurrentRound != expectedRound)
+                {
+                    return;
+                }
+
+                if (match.CurrentRound < match.TotalRounds)
+                {
+                    match.CurrentRound++;
+                    startNextRound = true;
+                }
             }
 
-            BroadcastToMatch(matchId, callback =>
-                callback.OnAnswersPhaseStart(allDrawings.ToArray(), allGuesses.ToArray(), currentScores.ToArray()));
-
-            int delaySeconds = ((allDrawings.Count + allGuesses.Count) * SecondsPerGuess);
-
-            Task.Delay(TimeSpan.FromSeconds(delaySeconds)).ContinueWith(t => NotifyGameEnd(matchId));
+            if (startNextRound)
+            {
+                StartNewRound(matchId);
+            }
+            else
+            {
+                NotifyGameEnd(matchId);
+            }
         }
 
         private void NotifyGameEnd(string matchId)
         {
-            List<PlayerScoreDto> finalScores;
-            lock (_matchScores)
+            StopMatchTimer(matchId);
+            List<PlayerScoreDto> finalScores = null;
+
+            lock (_gameStateLock)
             {
-                if (!_matchScores.ContainsKey(matchId))
+                if (_matches.TryGetValue(matchId, out var match))
                 {
-                    return;
+                    match.Phase = MatchPhase.Finished;
+                    finalScores = match.Scores.OrderByDescending(s => s.Score).ToList();
                 }
-                finalScores = _matchScores[matchId].OrderByDescending(s => s.Score).ToList();
             }
 
-            _log.Info($"Match {matchId}: Game ended. Notifying players.");
-            BroadcastToMatch(matchId, callback => callback.OnGameEnd(finalScores));
-
-            ClearMatchData(matchId);
+            if (finalScores != null)
+            {
+                MatchmakingLogic.SetMatchAsFinished(matchId);
+                Task.Run(() => RegisterMatchEnd(matchId, finalScores));
+                BroadcastToMatch(matchId, c => c.OnGameEnd(finalScores));
+            }
         }
 
-        private void ClearMatchData(string matchId)
+        public void ConnectPlayer(string username, string matchId, IGameServiceCallback callback)
         {
-            lock (_matchDrawings)
+            _connectedPlayers.AddOrUpdate(username, callback, (key, old) => callback);
+
+            lock (_gameStateLock)
             {
-                _matchDrawings.Remove(matchId);
+                if (!_matches.ContainsKey(matchId))
+                {
+                    _matches[matchId] = new MatchState { MatchId = matchId };
+                }
+
+                var match = _matches[matchId];
+                if (!match.Players.Contains(username))
+                {
+                    match.Players.Add(username);
+                }
+            }
+        }
+
+        public void DisconnectPlayer(string username, string matchId)
+        {
+            _connectedPlayers.TryRemove(username, out _);
+
+            bool shouldClear = false;
+            lock (_gameStateLock)
+            {
+                if (matchId != null && _matches.TryGetValue(matchId, out var match))
+                {
+                    match.Players.Remove(username);
+                    if (match.Players.Count == 0)
+                    {
+                        shouldClear = true;
+                    }
+                }
             }
 
-            lock (_matchPlayers)
+            if (shouldClear)
             {
-                _matchPlayers.Remove(matchId);
+                StopMatchTimer(matchId);
+                lock (_gameStateLock)
+                {
+                    _matches.Remove(matchId);
+                }
+            }
+        }
+
+        public void BroadcastChatMessage(string sender, string matchId, string msg)
+        {
+            List<string> players = null;
+            lock (_gameStateLock)
+            {
+                if (_matches.TryGetValue(matchId, out var match))
+                {
+                    players = new List<string>(match.Players);
+                }
             }
 
-            lock (_matchGuesses)
+            if (players != null)
             {
-                _matchGuesses.Remove(matchId);
+                foreach (var u in players)
+                {
+                    NotifyPlayer(u, c => c.OnInGameMessageReceived(sender, msg));
+                }
             }
-
-            lock (_matchCurrentDrawingIndex)
-            {
-                _matchCurrentDrawingIndex.Remove(matchId);
-            }
-
-            lock (_matchScores)
-            {
-                _matchScores.Remove(matchId);
-            }
-
-            _log.Info($"Match {matchId}: Data cleared from memory.");
         }
 
         private void BroadcastToMatch(string matchId, Action<IGameServiceCallback> action)
         {
-            List<string> players;
-            lock (_matchPlayers)
+            List<string> players = null;
+            lock (_gameStateLock)
             {
-                if (!_matchPlayers.ContainsKey(matchId))
+                if (_matches.TryGetValue(matchId, out var match))
                 {
-                    return;
+                    players = new List<string>(match.Players);
                 }
-                players = new List<string>(_matchPlayers[matchId]);
             }
 
-            foreach (var user in players)
+            if (players != null)
             {
-                NotifyPlayer(user, action);
+                foreach (var user in players) NotifyPlayer(user, action);
             }
         }
 
         private void NotifyPlayer(string username, Action<IGameServiceCallback> action)
         {
-            IGameServiceCallback callback = null;
-            lock (_connectedPlayers)
-            {
-                if (_connectedPlayers.ContainsKey(username))
-                {
-                    callback = _connectedPlayers[username];
-                }
-            }
-
-            if (callback != null)
+            if (_connectedPlayers.TryGetValue(username, out var cb))
             {
                 try
                 {
-                    action(callback);
+                    action(cb);
                 }
-                catch (CommunicationException comEx)
+                catch (CommunicationException commEx)
                 {
-                    _log.Warn($"Communication error notifying player '{username}'. The client might have disconnected.", comEx);
+                    _log.Warn($"Communication error with player {username}. They might have disconnected unexpectedly.", commEx);
                 }
-                catch (TimeoutException timeEx)
+                catch (TimeoutException timeoutEx)
                 {
-                    _log.Warn($"Timeout trying to notify player '{username}'.", timeEx);
+                    _log.Warn($"Timeout contacting player {username}", timeoutEx);
                 }
                 catch (Exception ex)
                 {
-                    _log.Error($"Unexpected error notifying player '{username}'.", ex);
+                    _log.Error($"Unexpected error notifying player {username}", ex);
                 }
             }
         }

@@ -238,6 +238,15 @@ namespace GuessMyMessServer.BusinessLogic
             }
         }
 
+        public static void SetMatchAsFinished(string matchId)
+        {
+            if (_activeLobbies.TryGetValue(matchId, out var lobby))
+            {
+                lobby.Status = "Finished";
+                _log.Info($"Match {matchId} status set to 'Finished' in matchmaking memory.");
+            }
+        }
+
         public static void HandlePlayerLeave(string username, string matchId)
         {
             if (_activeLobbies.TryGetValue(matchId, out var lobby))
@@ -248,14 +257,28 @@ namespace GuessMyMessServer.BusinessLogic
                 {
                     lobby.CurrentPlayers--;
                     UpdatePlayerCountInDb(matchId, -1);
-                    _log.Info($"Player '{username}' left lobby {matchId}. Current count: {lobby.CurrentPlayers}");
+                    _log.Info($"Player '{username}' left lobby {matchId}.");
+                }
+
+                if (lobby.Status == "Finished")
+                {
+                    if (lobby.Players.Count == 0)
+                    {
+                        _log.Info($"Lobby {matchId} (Finished) is empty. Removing from memory.");
+                        _activeLobbies.TryRemove(matchId, out _);
+                    }
+                    return; 
                 }
 
                 if (lobby.Players.Count == 0 || lobby.HostUsername == username)
                 {
-                    _log.Info($"Lobby {matchId} closing (Host left or empty).");
+                    _log.Info($"Lobby {matchId} closing (Host left or empty while active). Status: {lobby.Status}");
                     _activeLobbies.TryRemove(matchId, out _);
-                    UpdateMatchStatusInDb(matchId, "Aborted");
+
+                    if (lobby.Status != "Finished")
+                    {
+                        UpdateMatchStatusInDb(matchId, "Aborted");
+                    }
 
                     if (!lobby.Settings.IsPrivate)
                     {
@@ -281,7 +304,7 @@ namespace GuessMyMessServer.BusinessLogic
                 _log.Info($"Match {matchId} status set to 'Playing' in memory.");
             }
 
-            UpdateMatchStatusInDb(matchId, "Playing");
+            Task.Run(() => UpdateMatchStatusInDb(matchId, "Playing"));
             BroadcastPublicMatchList();
         }
 
