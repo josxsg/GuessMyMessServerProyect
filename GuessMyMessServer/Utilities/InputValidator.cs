@@ -12,7 +12,9 @@ namespace GuessMyMessServer.Utilities
         public static bool IsValidEmail(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
+            {
                 return false;
+            }
 
             try
             {
@@ -28,25 +30,39 @@ namespace GuessMyMessServer.Utilities
         public static bool IsPasswordSecure(string password)
         {
             if (string.IsNullOrWhiteSpace(password))
+            {
                 return false;
+            }
 
             if (password.Length < 8)
+            {
                 return false;
+            }
 
             if (!password.Any(char.IsUpper))
+            {
                 return false;
-            
+            }
+
             if (!password.Any(char.IsLower))
+            {
                 return false;
-            
+            }
+
             if (!password.Any(char.IsDigit))
+            {
                 return false;
+            }
 
             if (!password.Contains(","))
+            {
                 return false;
+            }
 
             if (password.All(char.IsLetterOrDigit))
+            {
                 return false;
+            }
 
             return true;
         }
