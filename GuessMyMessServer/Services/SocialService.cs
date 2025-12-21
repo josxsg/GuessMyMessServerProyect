@@ -49,7 +49,6 @@ namespace GuessMyMessServer.Services
                 _log.Info($"SocialService: User '{username}' connected.");
 
                 Task.Run(async () => {
-                    // Usamos Logic (crea nuevo contexto)
                     await Logic.UpdatePlayerStatusAsync(username, "Online");
                     await NotifyFriendStatusUpdate(username, "Online");
                 });
@@ -110,10 +109,23 @@ namespace GuessMyMessServer.Services
             catch (Exception ex) { _log.Error($"Error responding request", ex); }
         }
 
-        public async void RemoveFriend(string username, string friendToRemove)
+        public async Task<OperationResultDto> RemoveFriendAsync(string username, string friendToRemove)
         {
-            try { await Logic.RemoveFriendAsync(username, friendToRemove); }
-            catch (Exception ex) { _log.Error($"Error removing friend", ex); }
+            try
+            {
+                var result = await Logic.RemoveFriendAsync(username, friendToRemove);
+
+                if (result.Success)
+                {
+                    NotifyIfConnected(friendToRemove, cb => cb.NotifyFriendRemoved(username));
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _log.Error($"Error removing friend", ex);
+                throw new FaultException<ServiceFaultDto>(new ServiceFaultDto(ServiceErrorType.OperationFailed, "Error del servidor."), new FaultReason(ex.Message));
+            }
         }
 
         public async void SendDirectMessage(DirectMessageDto message)
@@ -129,16 +141,27 @@ namespace GuessMyMessServer.Services
         public async Task<List<FriendDto>> GetConversationsAsync(string username) => await Logic.GetConversationsAsync(username);
         public async Task<List<DirectMessageDto>> GetConversationHistoryAsync(string user1, string user2) => await Logic.GetConversationHistoryAsync(user1, user2);
 
+        public async Task<FriendProfileDto> GetFriendProfileAsync(string username)
+        {
+            try
+            {
+                return await Logic.GetFriendProfileAsync(username);
+            }
+            catch (Exception ex)
+            {
+                _log.Error($"Error getting profile for {username}", ex);
+                throw new FaultException<ServiceFaultDto>(new ServiceFaultDto(ServiceErrorType.OperationFailed, "Error al obtener el perfil."), new FaultReason(ex.Message));
+            }
+        }
+
         public Task<OperationResultDto> InviteFriendToGameByEmailAsync(string fromUsername, string friendEmail, string matchCode)
         {
             var fault = new ServiceFaultDto(ServiceErrorType.OperationFailed, "Not implemented yet.");
             throw new FaultException<ServiceFaultDto>(fault, new FaultReason("Not Implemented"));
         }
 
-        #region Helpers
         private async Task NotifyFriendStatusUpdate(string username, string status)
         {
-            // Usamos Logic para obtener amigos frescos
             var friends = await Logic.GetFriendsListAsync(username);
             foreach (var friend in friends) NotifyIfConnected(friend.Username, cb => cb.NotifyFriendStatusChanged(username, status));
         }
@@ -162,6 +185,5 @@ namespace GuessMyMessServer.Services
                 catch { lock (_clientLock) { ConnectedClients.Remove(target); } }
             }
         }
-        #endregion
     }
 }

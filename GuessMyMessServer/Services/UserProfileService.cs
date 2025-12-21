@@ -76,5 +76,11 @@ namespace GuessMyMessServer.Services
             _log.Info($"Request ConfirmChangePassword for: {username}");
             return await Logic.ConfirmChangePasswordAsync(username, newPassword, verificationCode);
         }
+
+        public async Task<List<PlayerScoreDto>> GetGlobalRankingAsync()
+        {
+            _log.Info("Request GetGlobalRanking");
+            return await Logic.GetGlobalRankingAsync();
+        }
     }
 }

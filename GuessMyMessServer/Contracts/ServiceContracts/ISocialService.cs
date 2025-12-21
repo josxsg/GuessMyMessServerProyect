@@ -29,8 +29,9 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
         [OperationContract(IsOneWay = true)]
         void RespondToFriendRequest(string targetUsername, string requesterUsername, bool accepted);
 
-        [OperationContract(IsOneWay = true)]
-        void RemoveFriend(string username, string friendToRemove);
+        [OperationContract]
+        [FaultContract(typeof(ServiceFaultDto))]
+        Task<OperationResultDto> RemoveFriendAsync(string username, string friendToRemove);
 
         [OperationContract]
         [FaultContract(typeof(ServiceFaultDto))]
@@ -49,6 +50,10 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
 
         [OperationContract(IsOneWay = true)]
         void Disconnect(string username);
+
+        [OperationContract]
+        [FaultContract(typeof(ServiceFaultDto))]
+        Task<FriendProfileDto> GetFriendProfileAsync(string username);
     }
 
     [ServiceContract]
@@ -65,5 +70,8 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
 
         [OperationContract(IsOneWay = true)]
         void NotifyMessageReceived(DirectMessageDto message);
+
+        [OperationContract(IsOneWay = true)]
+        void NotifyFriendRemoved(string requesterUsername);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using GuessMyMessServer.DataAccess;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace GuessMyMessServer.DataAccess.Abstractions
@@ -9,5 +10,6 @@ namespace GuessMyMessServer.DataAccess.Abstractions
         Task<SocialNetwork> GetPlayerSocialNetworkAsync(int playerId, int typeId);
         void AddSocialNetwork(SocialNetwork socialNetwork);
         Task<int> SaveChangesAsync();
+        Task<List<SocialNetwork>> GetSocialNetworksAsync(int playerId);
     }
 }

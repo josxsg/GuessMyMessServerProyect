@@ -40,6 +40,8 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
         [FaultContract(typeof(ServiceFaultDto))]
         Task<List<AvatarDto>> GetAvailableAvatarsAsync();
 
-        
+        [OperationContract]
+        [FaultContract(typeof(ServiceFaultDto))]
+        Task<List<PlayerScoreDto>> GetGlobalRankingAsync();
     }
 }

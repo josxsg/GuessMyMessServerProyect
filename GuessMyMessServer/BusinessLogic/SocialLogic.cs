@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using GuessMyMessServer.Contracts.DataContracts;
 using GuessMyMessServer.DataAccess;
 using GuessMyMessServer.DataAccess.Abstractions;
+using GuessMyMessServer.DataAccess.Repositories;
 using GuessMyMessServer.Utilities;
 using log4net;
 
@@ -16,14 +17,16 @@ namespace GuessMyMessServer.BusinessLogic
         private static readonly ILog _log = LogManager.GetLogger(typeof(SocialLogic));
         private readonly ISocialRepository _socialRepository;
         private readonly IPlayerRepository _playerRepository;
+        private readonly ISocialNetworkRepository _socialNetworkRepository;
         private const int StatusAccepted = 2;
         private const int StatusPending = 1;
         private const string OnlineStatusString = "Online";
 
-        public SocialLogic(ISocialRepository socialRepository, IPlayerRepository playerRepository)
+        public SocialLogic(ISocialRepository socialRepository, IPlayerRepository playerRepository, ISocialNetworkRepository socialNetworkRepository)
         {
             _socialRepository = socialRepository;
             _playerRepository = playerRepository;
+            _socialNetworkRepository = socialNetworkRepository;
         }
 
         public async Task<List<FriendDto>> GetFriendsListAsync(string username)
@@ -204,14 +207,17 @@ namespace GuessMyMessServer.BusinessLogic
             }
         }
 
-        public async Task RemoveFriendAsync(string username, string friendToRemove)
+        public async Task<OperationResultDto> RemoveFriendAsync(string username, string friendToRemove)
         {
+            var result = new OperationResultDto { Success = false };
+
             var player = await _playerRepository.GetPlayerByUsernameAsync(username);
             var friend = await _playerRepository.GetPlayerByUsernameAsync(friendToRemove);
 
             if (player == null || friend == null)
             {
-                return;
+                result.Message = "Usuario no encontrado.";
+                return result;
             }
 
             var friendship = await _socialRepository.GetFriendshipAsync(player.idPlayer, friend.idPlayer);
@@ -221,15 +227,55 @@ namespace GuessMyMessServer.BusinessLogic
                 _socialRepository.RemoveFriendship(friendship);
                 try
                 {
-                    await _socialRepository.SaveChangesAsync();
-                    _log.Info($"Friendship removed between '{username}' and '{friendToRemove}'.");
+                    if (await _socialRepository.SaveChangesAsync() > 0)
+                    {
+                        _log.Info($"Friendship removed between '{username}' and '{friendToRemove}'.");
+                        result.Success = true;
+                        result.Message = "Amigo eliminado correctamente.";
+                    }
+                    else
+                    {
+                        result.Message = "No se pudo eliminar el registro de amistad.";
+                    }
                 }
                 catch (Exception ex)
                 {
                     _log.Error("Error removing friendship.", ex);
-                    ThrowServiceFault(ServiceErrorType.DatabaseError, "Could not remove friend.");
+                    ThrowServiceFault(ServiceErrorType.DatabaseError, "Error en base de datos al eliminar amigo.");
                 }
             }
+            else
+            {
+                result.Message = "La amistad no existe.";
+            }
+
+            return result;
+        }
+
+        public async Task<FriendProfileDto> GetFriendProfileAsync(string username)
+        {
+            var player = await _playerRepository.GetPlayerByUsernameAsync(username);
+            if (player == null)
+            {
+                ThrowServiceFault(ServiceErrorType.NotFound, "Usuario no encontrado.");
+            }
+
+            var socialNetworks = await _socialNetworkRepository.GetSocialNetworksAsync(player.idPlayer);
+
+            var dto = new FriendProfileDto
+            {
+                FirstName = player.name,
+                LastName = player.lastName,
+                Email = player.email,
+                GenderId = player.Gender_idGender.GetValueOrDefault(),
+                SocialNetworks = socialNetworks.Select(sn => new SocialNetworkDto
+                {
+                    NetworkType = sn.TypeSocialNetwork.type,
+                    UserLink = sn.userLink
+                }).ToList()
+            };
+
+            return dto;
         }
 
         public async Task UpdatePlayerStatusAsync(string username, string status)

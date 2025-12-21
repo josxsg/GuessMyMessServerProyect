@@ -356,6 +356,20 @@ namespace GuessMyMessServer.BusinessLogic
             }
         }
 
+        public async Task<List<PlayerScoreDto>> GetGlobalRankingAsync()
+        {
+            try
+            {
+                return await _playerRepository.GetGlobalRankingAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.Error("Error generating global ranking.", ex);
+                ThrowServiceFault(ServiceErrorType.DatabaseError, "Could not retrieve global ranking.");
+                return null;
+            }
+        }
+
         private async Task<byte[]> ReadFileAsync(string filePath)
         {
             if (!File.Exists(filePath))

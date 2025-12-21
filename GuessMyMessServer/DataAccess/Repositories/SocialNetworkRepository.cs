@@ -1,5 +1,7 @@
 ﻿using GuessMyMessServer.DataAccess.Abstractions;
+using System.Collections.Generic;
 using System.Data.Entity;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace GuessMyMessServer.DataAccess.Repositories
@@ -34,6 +36,14 @@ namespace GuessMyMessServer.DataAccess.Repositories
         public async Task<int> SaveChangesAsync()
         {
             return await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<SocialNetwork>> GetSocialNetworksAsync(int playerId)
+        {
+            return await _context.SocialNetwork
+                .Include(s => s.TypeSocialNetwork) 
+                .Where(s => s.Player_idPlayer == playerId)
+                .ToListAsync();
         }
     }
 }

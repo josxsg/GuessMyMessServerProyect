@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
+using GuessMyMessServer.Contracts.DataContracts;
 
 namespace GuessMyMessServer.DataAccess.Repositories
 {
@@ -66,17 +67,14 @@ namespace GuessMyMessServer.DataAccess.Repositories
 
         public async Task<List<Player>> SearchPlayersNotFriendsAsync(string searchText, int requesterId)
         {
-            // Obtener IDs de amigos actuales para excluirlos
             var friendIds = await _context.Friendship
                 .Where(f => f.Player_idPlayer1 == requesterId || f.Player_idPlayer2 == requesterId)
                 .Select(f => f.Player_idPlayer1 == requesterId ? f.Player_idPlayer2 : f.Player_idPlayer1)
                 .Distinct()
                 .ToListAsync();
 
-            // Agregar al propio usuario para excluirlo también
             friendIds.Add(requesterId);
 
-            // Buscar usuarios que coincidan con el texto y NO estén en la lista de amigos/propio
             return await _context.Player
                 .AsNoTracking()
                 .Where(p => p.username.Contains(searchText) &&
@@ -88,6 +86,32 @@ namespace GuessMyMessServer.DataAccess.Repositories
         {
             var status = await _context.UserStatus.FirstOrDefaultAsync(s => s.status == statusName);
             return status?.idUserStatus;
+        }
+
+        public async Task<List<PlayerScoreDto>> GetGlobalRankingAsync()
+        {
+            var rawData = await _context.Player
+                .GroupJoin(
+                    _context.MatchHistory,
+                    player => player.idPlayer,
+                    match => match.Player_idPlayer,
+                    (player, matches) => new
+                    {
+                        Username = player.username,
+                        TotalScore = matches.Sum(m => (int?)m.finalScore) ?? 0
+                    }
+                )
+                .OrderByDescending(x => x.TotalScore) 
+                .ToListAsync();
+
+            var rankingList = rawData.Select((item, index) => new PlayerScoreDto
+            {
+                Rank = index + 1,
+                Username = item.Username,
+                Score = item.TotalScore
+            }).ToList();
+
+            return rankingList;
         }
     }
 }
