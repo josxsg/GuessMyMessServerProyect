@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.Entity.Core; 
-using System.Data.Entity.Infrastructure; 
 using System.IO;
 using System.Linq;
-using System.Net.Mail; 
+using System.ServiceModel;
 using System.Threading.Tasks;
 using GuessMyMessServer.Contracts.DataContracts;
 using GuessMyMessServer.DataAccess;
+using GuessMyMessServer.DataAccess.Abstractions;
 using GuessMyMessServer.Utilities;
 using GuessMyMessServer.Utilities.Email;
 using GuessMyMessServer.Utilities.Email.Templates;
@@ -19,14 +17,23 @@ namespace GuessMyMessServer.BusinessLogic
     public class UserProfileLogic
     {
         private static readonly ILog _log = LogManager.GetLogger(typeof(UserProfileLogic));
-        private readonly IEmailService _emailService;
-        private readonly GuessMyMessDBEntities _context;
         private static readonly Random _random = new Random();
 
-        public UserProfileLogic(IEmailService emailService, GuessMyMessDBEntities context)
+        private readonly IPlayerRepository _playerRepository;
+        private readonly IAvatarRepository _avatarRepository;
+        private readonly ISocialNetworkRepository _socialRepository;
+        private readonly IEmailService _emailService;
+
+        public UserProfileLogic(
+            IPlayerRepository playerRepository,
+            IAvatarRepository avatarRepository,
+            ISocialNetworkRepository socialRepository,
+            IEmailService emailService)
         {
+            _playerRepository = playerRepository;
+            _avatarRepository = avatarRepository;
+            _socialRepository = socialRepository;
             _emailService = emailService;
-            _context = context;
         }
 
         private string GenerateCode() => _random.Next(100000, 999999).ToString("D6");
@@ -35,22 +42,17 @@ namespace GuessMyMessServer.BusinessLogic
         {
             try
             {
-                var player = await _context.Player
-                    .AsNoTracking()
-                    .Include(p => p.Gender)
-                    .Include(p => p.Avatar)
-                    .Include("SocialNetwork.TypeSocialNetwork") 
-                    .FirstOrDefaultAsync(p => p.username == username);
+                var player = await _playerRepository.GetPlayerProfileDataAsync(username);
 
                 if (player == null)
                 {
                     _log.Warn($"GetUserProfile failed: User '{username}' not found.");
-                    throw new InvalidOperationException("User not found.");
+                    ThrowServiceFault(ServiceErrorType.NotFound, "User not found.");
                 }
 
                 var socialNetworksList = player.SocialNetwork.Select(sn => new SocialNetworkDto
                 {
-                    NetworkType = sn.TypeSocialNetwork.type, 
+                    NetworkType = sn.TypeSocialNetwork.type,
                     UserLink = sn.userLink
                 }).ToList();
 
@@ -62,46 +64,60 @@ namespace GuessMyMessServer.BusinessLogic
                     Email = player.email,
                     GenderId = player.Gender_idGender.GetValueOrDefault(),
                     AvatarId = player.Avatar_idAvatar.GetValueOrDefault(),
-                    socialNetworks = socialNetworksList 
+                    socialNetworks = socialNetworksList
                 };
             }
-            catch (EntityException ex)
+            catch (Exception ex) when (!(ex is FaultException<ServiceFaultDto>))
             {
-                _log.Error($"Database connection error retrieving profile for '{username}'.", ex);
-                throw;
+                _log.Error($"Error retrieving profile for '{username}'.", ex);
+                ThrowServiceFault(ServiceErrorType.DatabaseError, "Could not retrieve user profile.");
+                return null;
             }
         }
+
         public async Task<OperationResultDto> UpdateProfileAsync(string username, UserProfileDto profileData)
         {
             if (profileData == null)
             {
-                _log.Warn("UpdateProfile failed: Null profile data received.");
-                throw new ArgumentNullException(nameof(profileData), "Invalid profile data.");
+                ThrowServiceFault(ServiceErrorType.OperationFailed, "Invalid profile data.");
+            }
+
+            if (profileData.AvatarId > 0)
+            {
+                var avatar = await _avatarRepository.GetAvatarByIdAsync(profileData.AvatarId);
+                if (avatar == null)
+                {
+                    ThrowServiceFault(ServiceErrorType.OperationFailed, "Selected avatar does not exist.");
+                }
+            }
+
+            var playerToUpdate = await _playerRepository.GetPlayerByUsernameAsync(username);
+
+            if (playerToUpdate == null)
+            {
+                ThrowServiceFault(ServiceErrorType.NotFound, "User not found.");
+            }
+
+            playerToUpdate.name = profileData.FirstName;
+            playerToUpdate.lastName = profileData.LastName;
+            playerToUpdate.Gender_idGender = profileData.GenderId;
+
+            if (profileData.AvatarId > 0)
+            {
+                playerToUpdate.Avatar_idAvatar = profileData.AvatarId;
             }
 
             try
             {
-                var playerToUpdate = await _context.Player.FirstOrDefaultAsync(p => p.username == username);
-                if (playerToUpdate == null)
-                {
-                    _log.Warn($"UpdateProfile failed: User '{username}' not found in DB.");
-                    throw new InvalidOperationException("User not found.");
-                }
-
-                playerToUpdate.name = profileData.FirstName;
-                playerToUpdate.lastName = profileData.LastName;
-                playerToUpdate.Gender_idGender = profileData.GenderId;
-                playerToUpdate.Avatar_idAvatar = profileData.AvatarId > 0 ? profileData.AvatarId : playerToUpdate.Avatar_idAvatar;
-
-                await _context.SaveChangesAsync();
-
+                await _playerRepository.SaveChangesAsync();
                 _log.Info($"Profile updated successfully for user '{username}'.");
                 return new OperationResultDto { Success = true, Message = "Profile updated successfully." };
             }
-            catch (DbUpdateException dbEx)
+            catch (Exception ex)
             {
-                _log.Error($"Database error updating profile for '{username}'.", dbEx);
-                throw new InvalidOperationException("Could not update profile due to a database error.", dbEx);
+                _log.Error($"Database error updating profile for '{username}'.", ex);
+                ThrowServiceFault(ServiceErrorType.DatabaseError, "Could not update profile.");
+                return null;
             }
         }
 
@@ -109,61 +125,48 @@ namespace GuessMyMessServer.BusinessLogic
         {
             if (socialNetworkDto == null || string.IsNullOrWhiteSpace(socialNetworkDto.UserLink))
             {
-                throw new ArgumentNullException(nameof(socialNetworkDto), "Datos de red social inválidos.");
+                ThrowServiceFault(ServiceErrorType.OperationFailed, "Invalid social network data.");
+            }
+
+            var player = await _playerRepository.GetPlayerByUsernameAsync(username);
+            if (player == null)
+            {
+                ThrowServiceFault(ServiceErrorType.NotFound, "User not found.");
+            }
+
+            var networkType = await _socialRepository.GetTypeByNameAsync(socialNetworkDto.NetworkType);
+            if (networkType == null)
+            {
+                ThrowServiceFault(ServiceErrorType.OperationFailed, $"Invalid social network type: {socialNetworkDto.NetworkType}");
+            }
+
+            var existingSocial = await _socialRepository.GetPlayerSocialNetworkAsync(player.idPlayer, networkType.idTypeSocialNetwork);
+
+            if (existingSocial != null)
+            {
+                existingSocial.userLink = socialNetworkDto.UserLink.Trim();
+            }
+            else
+            {
+                var newSocial = new SocialNetwork
+                {
+                    Player_idPlayer = player.idPlayer,
+                    TypeSocialNetwork_idTypeSocialNetwork = networkType.idTypeSocialNetwork,
+                    userLink = socialNetworkDto.UserLink.Trim()
+                };
+                _socialRepository.AddSocialNetwork(newSocial);
             }
 
             try
             {
-                var player = await _context.Player.FirstOrDefaultAsync(p => p.username == username);
-                if (player == null)
-                {
-                    _log.Warn($"AddSocialNetwork: User '{username}' not found.");
-                    throw new InvalidOperationException("Usuario no encontrado.");
-                }
-
-                var networkType = await _context.TypeSocialNetwork
-                    .FirstOrDefaultAsync(t => t.type == socialNetworkDto.NetworkType);
-
-                if (networkType == null)
-                {
-                    _log.Warn($"AddSocialNetwork: Network type '{socialNetworkDto.NetworkType}' not found.");
-                    throw new InvalidOperationException($"La red social '{socialNetworkDto.NetworkType}' no es válida.");
-                }
-
-                var existingSocial = await _context.SocialNetwork
-                    .FirstOrDefaultAsync(s => s.Player_idPlayer == player.idPlayer &&
-                                              s.TypeSocialNetwork_idTypeSocialNetwork == networkType.idTypeSocialNetwork);
-
-                if (existingSocial != null)
-                {
-                    existingSocial.userLink = socialNetworkDto.UserLink.Trim();
-                    _log.Info($"Updating social network '{socialNetworkDto.NetworkType}' to '{username}'.");
-                }
-                else
-                {
-                    var newSocial = new SocialNetwork
-                    {
-                        Player_idPlayer = player.idPlayer,
-                        TypeSocialNetwork_idTypeSocialNetwork = networkType.idTypeSocialNetwork,
-                        userLink = socialNetworkDto.UserLink.Trim()
-                    };
-                    _context.SocialNetwork.Add(newSocial);
-                    _log.Info($"Creating new social network '{socialNetworkDto.NetworkType}' to '{username}'.");
-                }
-
-                await _context.SaveChangesAsync();
-
-                return new OperationResultDto { Success = true, Message = "Perfil social actualizado correctamente." };
-            }
-            catch (DbUpdateException dbEx)
-            {
-                _log.Error($"Database ERROR saving social network for '{username}'.", dbEx);
-                throw new InvalidOperationException("Error al guardar en la base de datos.", dbEx);
+                await _socialRepository.SaveChangesAsync();
+                return new OperationResultDto { Success = true, Message = "Social profile updated." };
             }
             catch (Exception ex)
             {
-                _log.Error($"Error saving social network '{username}'.", ex);
-                throw;
+                _log.Error($"Error saving social network for '{username}'.", ex);
+                ThrowServiceFault(ServiceErrorType.DatabaseError, "Could not save social network.");
+                return null;
             }
         }
 
@@ -174,7 +177,7 @@ namespace GuessMyMessServer.BusinessLogic
 
             try
             {
-                var avatarsFromDb = await _context.Avatar.AsNoTracking().ToListAsync();
+                var avatarsFromDb = await _avatarRepository.GetAllAvatarsAsync();
 
                 foreach (var avatarRecord in avatarsFromDb)
                 {
@@ -182,44 +185,7 @@ namespace GuessMyMessServer.BusinessLogic
                     if (!string.IsNullOrEmpty(avatarRecord.avatarUrl))
                     {
                         string filePath = Path.Combine(basePath, avatarRecord.avatarUrl);
-
-                        if (File.Exists(filePath))
-                        {
-                            try
-                            {
-                                using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 4096, useAsync: true))
-                                {
-                                    imageData = new byte[stream.Length];
-                                    int totalBytesRead = 0;
-                                    int bytesRead;
-                                    while (totalBytesRead < imageData.Length &&
-                                          (bytesRead = await stream.ReadAsync(imageData, totalBytesRead, imageData.Length - totalBytesRead)) > 0)
-                                    {
-                                        totalBytesRead += bytesRead;
-                                    }
-
-                                    if (totalBytesRead != imageData.Length)
-                                    {
-                                        Array.Resize(ref imageData, totalBytesRead);
-                                        _log.Warn($"Read mismatch for avatar {filePath}. Expected {stream.Length}, got {totalBytesRead}.");
-                                    }
-                                }
-                            }
-                            catch (IOException ioEx)
-                            {
-                                _log.Warn($"IO Error reading avatar file '{filePath}'. Skipping.", ioEx);
-                                continue; 
-                            }
-                            catch (UnauthorizedAccessException authEx)
-                            {
-                                _log.Warn($"Access denied reading avatar file '{filePath}'.", authEx);
-                                continue;
-                            }
-                        }
-                        else
-                        {
-                            _log.Warn($"Avatar file missing at path: {filePath}");
-                        }
+                        imageData = await ReadFileAsync(filePath);
                     }
 
                     avatarsDtoList.Add(new AvatarDto
@@ -230,15 +196,10 @@ namespace GuessMyMessServer.BusinessLogic
                     });
                 }
             }
-            catch (EntityException ex)
-            {
-                _log.Error("Database error retrieving avatar list.", ex);
-                throw;
-            }
             catch (Exception ex)
             {
-                _log.Error("Unexpected error processing avatar list.", ex);
-                throw;
+                _log.Error("Error retrieving avatar list.", ex);
+                ThrowServiceFault(ServiceErrorType.OperationFailed, "Could not retrieve avatars.");
             }
 
             return avatarsDtoList;
@@ -246,90 +207,30 @@ namespace GuessMyMessServer.BusinessLogic
 
         public async Task<OperationResultDto> RequestChangePasswordAsync(string username)
         {
-            try
+            var player = await _playerRepository.GetPlayerByUsernameAsync(username);
+            if (player == null)
             {
-                var player = await _context.Player.FirstOrDefaultAsync(p => p.username == username);
-                if (player == null)
-                {
-                    _log.Warn($"RequestChangePassword failed: User '{username}' not found.");
-                    throw new InvalidOperationException("User not found.");
-                }
-
-                string code = GenerateCode();
-                player.temp_code = code;
-                player.temp_code_expiry = DateTime.UtcNow.AddMinutes(10);
-
-                await _context.SaveChangesAsync();
-
-                try
-                {
-                    var emailTemplate = new PasswordChangeVerificationEmailTemplate(player.username, code);
-                    await _emailService.SendEmailAsync(player.email, player.username, emailTemplate);
-                    _log.Info($"Password change code sent to user '{username}'.");
-                }
-                catch (Exception emailEx)
-                {
-                    _log.Error($"Failed to send password change email to '{player.email}'.", emailEx);
-                    throw new InvalidOperationException("Could not send verification email. Please try again later.", emailEx);
-                }
-
-                return new OperationResultDto { Success = true, Message = "A verification code has been sent to your registered email." };
+                ThrowServiceFault(ServiceErrorType.NotFound, "User not found.");
             }
-            catch (DbUpdateException dbEx)
-            {
-                _log.Error($"Database error requesting password change for '{username}'.", dbEx);
-                throw;
-            }
-        }
 
-        public async Task<OperationResultDto> RequestChangeEmailAsync(string username, string newEmail)
-        {
-            if (string.IsNullOrWhiteSpace(newEmail) || !InputValidator.IsValidEmail(newEmail))
-            {
-                _log.Warn($"RequestChangeEmail failed: Invalid email format '{newEmail}'.");
-                throw new ArgumentException("Invalid new email format.", nameof(newEmail));
-            }
+            string code = GenerateCode();
+            player.temp_code = code;
+            player.temp_code_expiry = DateTime.UtcNow.AddMinutes(10);
 
             try
             {
-                var player = await _context.Player.FirstOrDefaultAsync(p => p.username == username);
-                if (player == null)
-                {
-                    _log.Warn($"RequestChangeEmail failed: User '{username}' not found.");
-                    throw new InvalidOperationException("User not found.");
-                }
+                await _playerRepository.SaveChangesAsync();
 
-                if (await _context.Player.AnyAsync(p => p.email == newEmail))
-                {
-                    _log.Info($"RequestChangeEmail denied: Email '{newEmail}' is already taken.");
-                    throw new InvalidOperationException("The new email is already registered.");
-                }
+                var emailTemplate = new PasswordChangeVerificationEmailTemplate(player.username, code);
+                await _emailService.SendEmailAsync(player.email, player.username, emailTemplate);
 
-                string code = GenerateCode();
-                player.temp_code = code;
-                player.temp_code_expiry = DateTime.UtcNow.AddMinutes(10);
-                player.new_email_pending = newEmail;
-
-                await _context.SaveChangesAsync();
-
-                try
-                {
-                    var emailTemplate = new EmailChangeVerificationEmailTemplate(player.username, code);
-                    await _emailService.SendEmailAsync(player.email, player.username, emailTemplate);
-                    _log.Info($"Email change code sent to '{player.email}' for user '{username}'.");
-                }
-                catch (Exception emailEx)
-                {
-                    _log.Error($"Failed to send email change verification to '{player.email}'.", emailEx);
-                    throw new InvalidOperationException("Could not send verification email.", emailEx);
-                }
-
-                return new OperationResultDto { Success = true, Message = $"A code has been sent to your current email ({player.email}) to confirm." };
+                return new OperationResultDto { Success = true, Message = "Verification code sent." };
             }
-            catch (DbUpdateException dbEx)
+            catch (Exception ex)
             {
-                _log.Error($"Database error requesting email change for '{username}'.", dbEx);
-                throw;
+                _log.Error($"Error in RequestChangePassword for '{username}'.", ex);
+                ThrowServiceFault(ServiceErrorType.OperationFailed, "Could not process request.");
+                return null;
             }
         }
 
@@ -337,90 +238,151 @@ namespace GuessMyMessServer.BusinessLogic
         {
             if (!InputValidator.IsPasswordSecure(newPassword))
             {
-                _log.Warn($"ConfirmChangePassword failed: Password insecure for '{username}'.");
-                throw new ArgumentException("The new password does not meet the security requirements.", nameof(newPassword));
+                ThrowServiceFault(ServiceErrorType.OperationFailed, "Password does not meet security requirements.");
             }
+
+            var player = await _playerRepository.GetPlayerByUsernameAsync(username);
+            if (player == null)
+            {
+                ThrowServiceFault(ServiceErrorType.NotFound, "User not found.");
+            }
+
+            if (player.temp_code != verificationCode || player.temp_code_expiry < DateTime.UtcNow)
+            {
+                ThrowServiceFault(ServiceErrorType.InvalidCredentials, "Invalid or expired code.");
+            }
+
+            player.password = PasswordHasher.HashPassword(newPassword);
+            player.temp_code = null;
+            player.temp_code_expiry = null;
 
             try
             {
-                var player = await _context.Player.FirstOrDefaultAsync(p => p.username == username);
-                if (player == null)
-                {
-                    throw new InvalidOperationException("User not found.");
-                }
-
-                if (player.temp_code != verificationCode || player.temp_code_expiry < DateTime.UtcNow)
-                {
-                    _log.Info($"ConfirmChangePassword failed: Invalid/Expired code for '{username}'.");
-                    throw new InvalidOperationException("Invalid or expired verification code.");
-                }
-
-                player.password = PasswordHasher.HashPassword(newPassword);
-                player.temp_code = null;
-                player.temp_code_expiry = null;
-
-                await _context.SaveChangesAsync();
-
-                _log.Info($"Password successfully changed for user '{username}'.");
+                await _playerRepository.SaveChangesAsync();
                 return new OperationResultDto { Success = true, Message = "Password updated successfully." };
             }
-            catch (DbUpdateException dbEx)
+            catch (Exception ex)
             {
-                _log.Error($"Database error confirming password change for '{username}'.", dbEx);
-                throw;
+                _log.Error($"Database error changing password for '{username}'.", ex);
+                ThrowServiceFault(ServiceErrorType.DatabaseError, "Could not update password.");
+                return null;
+            }
+        }
+
+        public async Task<OperationResultDto> RequestChangeEmailAsync(string username, string newEmail)
+        {
+            if (!InputValidator.IsValidEmail(newEmail))
+            {
+                ThrowServiceFault(ServiceErrorType.OperationFailed, "Invalid email format.");
+            }
+
+            var player = await _playerRepository.GetPlayerByUsernameAsync(username);
+            if (player == null)
+            {
+                ThrowServiceFault(ServiceErrorType.NotFound, "User not found.");
+            }
+
+            var existingUser = await _playerRepository.GetPlayerByEmailAsync(newEmail);
+            if (existingUser != null)
+            {
+                ThrowServiceFault(ServiceErrorType.EmailAlreadyRegistered, "The email is already registered.");
+            }
+
+            string code = GenerateCode();
+            player.temp_code = code;
+            player.temp_code_expiry = DateTime.UtcNow.AddMinutes(10);
+            player.new_email_pending = newEmail;
+
+            try
+            {
+                await _playerRepository.SaveChangesAsync();
+
+                var emailTemplate = new EmailChangeVerificationEmailTemplate(player.username, code);
+                await _emailService.SendEmailAsync(player.email, player.username, emailTemplate);
+
+                return new OperationResultDto { Success = true, Message = "Verification code sent to your current email." };
+            }
+            catch (Exception ex)
+            {
+                _log.Error($"Error requesting email change for '{username}'.", ex);
+                ThrowServiceFault(ServiceErrorType.OperationFailed, "Could not process request.");
+                return null;
             }
         }
 
         public async Task<OperationResultDto> ConfirmChangeEmailAsync(string username, string verificationCode)
         {
+            var player = await _playerRepository.GetPlayerByUsernameAsync(username);
+            if (player == null)
+            {
+                ThrowServiceFault(ServiceErrorType.NotFound, "User not found.");
+            }
+
+            if (string.IsNullOrEmpty(player.new_email_pending))
+            {
+                ThrowServiceFault(ServiceErrorType.OperationFailed, "No pending email change request.");
+            }
+
+            if (player.temp_code != verificationCode || player.temp_code_expiry < DateTime.UtcNow)
+            {
+                ThrowServiceFault(ServiceErrorType.InvalidCredentials, "Invalid or expired code.");
+            }
+
+            var collisionUser = await _playerRepository.GetPlayerByEmailAsync(player.new_email_pending);
+            if (collisionUser != null && collisionUser.idPlayer != player.idPlayer)
+            {
+                player.temp_code = null;
+                player.new_email_pending = null;
+                await _playerRepository.SaveChangesAsync();
+
+                ThrowServiceFault(ServiceErrorType.EmailAlreadyRegistered, "Email already taken by another user.");
+            }
+
+            player.email = player.new_email_pending;
+            player.temp_code = null;
+            player.temp_code_expiry = null;
+            player.new_email_pending = null;
+
             try
             {
-                var player = await _context.Player.FirstOrDefaultAsync(p => p.username == username);
-                if (player == null)
-                {
-                    throw new InvalidOperationException("User not found.");
-                }
-
-                if (string.IsNullOrEmpty(player.new_email_pending))
-                {
-                    _log.Warn($"ConfirmChangeEmail failed: No pending email change for '{username}'.");
-                    throw new InvalidOperationException("There is no pending email change.");
-                }
-
-                if (player.temp_code != verificationCode || player.temp_code_expiry < DateTime.UtcNow)
-                {
-                    _log.Info($"ConfirmChangeEmail failed: Invalid/Expired code for '{username}'.");
-                    throw new InvalidOperationException("Invalid or expired verification code.");
-                }
-
-                if (await _context.Player.AnyAsync(p => p.email == player.new_email_pending && p.idPlayer != player.idPlayer))
-                {
-                    _log.Warn($"ConfirmChangeEmail aborted: Pending email '{player.new_email_pending}' was taken by another user.");
-
-                    player.temp_code = null;
-                    player.temp_code_expiry = null;
-                    player.new_email_pending = null;
-                    await _context.SaveChangesAsync();
-
-                    throw new InvalidOperationException("The new email is already registered by another user.");
-                }
-
-                player.email = player.new_email_pending;
-                player.temp_code = null;
-                player.temp_code_expiry = null;
-                player.new_email_pending = null;
-
-                await _context.SaveChangesAsync();
-
-                _log.Info($"Email updated successfully for user '{username}'.");
+                await _playerRepository.SaveChangesAsync();
                 return new OperationResultDto { Success = true, Message = "Email updated successfully." };
             }
-            catch (DbUpdateException dbEx)
+            catch (Exception ex)
             {
-                _log.Error($"Database error confirming email change for '{username}'.", dbEx);
-                throw;
+                _log.Error($"Error confirming email change for '{username}'.", ex);
+                ThrowServiceFault(ServiceErrorType.DatabaseError, "Could not update email.");
+                return null;
             }
         }
 
+        private async Task<byte[]> ReadFileAsync(string filePath)
+        {
+            if (!File.Exists(filePath))
+            {
+                return null;
+            }
+
+            try
+            {
+                using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true))
+                {
+                    byte[] buffer = new byte[stream.Length];
+                    await stream.ReadAsync(buffer, 0, buffer.Length);
+                    return buffer;
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.Warn($"Error reading file {filePath}", ex);
+                return null;
+            }
+        }
+
+        private void ThrowServiceFault(ServiceErrorType type, string message)
+        {
+            var fault = new ServiceFaultDto(type, message);
+            throw new FaultException<ServiceFaultDto>(fault, new FaultReason(message));
+        }
     }
 }

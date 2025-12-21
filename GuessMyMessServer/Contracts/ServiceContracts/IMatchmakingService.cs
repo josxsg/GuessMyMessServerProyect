@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading.Tasks; 
 using GuessMyMessServer.Contracts.DataContracts;
 
 namespace GuessMyMessServer.Contracts.ServiceContracts
@@ -19,24 +16,25 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
 
         [OperationContract]
         [FaultContract(typeof(ServiceFaultDto))]
-        List<MatchInfoDto> GetPublicMatches();
+        Task<List<MatchInfoDto>> GetPublicMatches();
 
         [OperationContract]
         [FaultContract(typeof(ServiceFaultDto))]
-        OperationResultDto CreateMatch(string hostUsername, LobbySettingsDto settings);
+        Task<OperationResultDto> CreateMatch(string hostUsername, LobbySettingsDto settings);
 
         [OperationContract(IsOneWay = true)]
         void JoinPublicMatch(string username, string matchId);
 
         [OperationContract]
         [FaultContract(typeof(ServiceFaultDto))]
-        OperationResultDto JoinPrivateMatch(string username, string matchCode);
+        Task<OperationResultDto> JoinPrivateMatch(string username, string matchCode);
 
         [OperationContract(IsOneWay = true)]
         void InviteToMatch(string inviterUsername, string invitedUsername, string matchId);
 
         [OperationContract]
-        void InviteGuestByEmail(string inviterUsername, string targetEmail, string matchId);
+        [FaultContract(typeof(ServiceFaultDto))]
+        Task InviteGuestByEmail(string inviterUsername, string targetEmail, string matchId);
     }
 
     [ServiceContract]
@@ -49,7 +47,7 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
         void MatchUpdate(MatchInfoDto matchInfo);
 
         [OperationContract(IsOneWay = true)]
-        void MatchJoined(string matchId, OperationResultDto result); 
+        void MatchJoined(string matchId, OperationResultDto result);
 
         [OperationContract(IsOneWay = true)]
         void MatchmakingFailed(string reason);

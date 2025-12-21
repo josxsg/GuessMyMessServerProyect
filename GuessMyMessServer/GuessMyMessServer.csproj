@@ -36,6 +36,10 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
     <Reference Include="Autofac, Version=9.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.9.0.0\lib\netstandard2.0\Autofac.dll</HintPath>
@@ -123,6 +127,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppStart\Bootstrapper.cs" />
     <Compile Include="BusinessLogic\AuthenticationLogic.cs" />
     <Compile Include="BusinessLogic\GameLogic.cs" />
     <Compile Include="BusinessLogic\GuestInvite.cs" />
@@ -153,6 +158,12 @@
     <Compile Include="Contracts\ServiceContracts\IMatchmakingService.cs" />
     <Compile Include="Contracts\ServiceContracts\ISocialService.cs" />
     <Compile Include="Contracts\ServiceContracts\IUserProfileService.cs" />
+    <Compile Include="DataAccess\Abstractions\IAvatarRepository.cs" />
+    <Compile Include="DataAccess\Abstractions\IMatchRepository.cs" />
+    <Compile Include="DataAccess\Abstractions\IPlayerRepository.cs" />
+    <Compile Include="DataAccess\Abstractions\ISocialNetworkRepository.cs" />
+    <Compile Include="DataAccess\Abstractions\ISocialRepository.cs" />
+    <Compile Include="DataAccess\Abstractions\IWordRepository.cs" />
     <Compile Include="DataAccess\Avatar.cs">
       <DependentUpon>GuessMyMessDB.tt</DependentUpon>
     </Compile>
@@ -201,6 +212,12 @@
     <Compile Include="DataAccess\Player.cs">
       <DependentUpon>GuessMyMessDB.tt</DependentUpon>
     </Compile>
+    <Compile Include="DataAccess\Repositories\AvatarRepository.cs" />
+    <Compile Include="DataAccess\Repositories\MatchRepository.cs" />
+    <Compile Include="DataAccess\Repositories\PlayerRepository.cs" />
+    <Compile Include="DataAccess\Repositories\SocialNetworkRepository.cs" />
+    <Compile Include="DataAccess\Repositories\SocialRepository.cs" />
+    <Compile Include="DataAccess\Repositories\WordRepository.cs" />
     <Compile Include="DataAccess\SocialNetwork.cs">
       <DependentUpon>GuessMyMessDB.tt</DependentUpon>
     </Compile>

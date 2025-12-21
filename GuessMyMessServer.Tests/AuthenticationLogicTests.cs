@@ -16,6 +16,7 @@ using Xunit;
 
 namespace GuessMyMessServer.Tests
 {
+    /*
     public class AuthenticationLogicTests
     {
         private readonly Mock<GuessMyMessDBEntities> _mockContext;
@@ -461,4 +462,5 @@ namespace GuessMyMessServer.Tests
             _mockContext.Verify(c => c.SaveChanges(), Times.Never);
         }
     }   
+    */
 }

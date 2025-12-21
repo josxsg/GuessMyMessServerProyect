@@ -46,7 +46,7 @@
     
     mimetype: application/x-microsoft.net.object.binary.base64
     value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : System.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
     
     mimetype: application/x-microsoft.net.object.soap.base64
@@ -60,7 +60,6 @@
             : and then encoded with base64 encoding.
     -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -69,10 +68,9 @@
               <xsd:sequence>
                 <xsd:element name="value" type="xsd:string" minOccurs="0" />
               </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
               <xsd:attribute name="type" type="xsd:string" />
               <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
@@ -87,10 +85,9 @@
                 <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
                 <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
               <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
               <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
@@ -112,108 +109,9 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Error_AccountNotVerified" xml:space="preserve">
-    <value>The account has not been verified. Please, check your email.</value>
-  </data>
-  <data name="Error_ConversationsFailed" xml:space="preserve">
-    <value>Could not load recent conversations.</value>
-  </data>
-  <data name="Error_DatabaseConnectionError" xml:space="preserve">
-    <value>Database unavailable. Please try again later.</value>
-  </data>
-  <data name="Error_DatabaseSave" xml:space="preserve">
-    <value>Error saving data to the database.</value>
-  </data>
-  <data name="Error_EmailAlreadyHasAnAccount" xml:space="preserve">
-    <value>This user already has a registered account.</value>
-  </data>
-  <data name="Error_EmailAlreadyRegistered" xml:space="preserve">
-    <value>The email is already registered.</value>
-  </data>
-  <data name="Error_EmailFormat" xml:space="preserve">
-    <value>The email format is not valid.</value>
-  </data>
-  <data name="Error_EmailSendFailed" xml:space="preserve">
-    <value>Could not send verification email.</value>
-  </data>
-  <data name="Error_FieldsRequired" xml:space="preserve">
-    <value>Username/Email and password are required.</value>
-  </data>
-  <data name="Error_FriendListFailed" xml:space="preserve">
-    <value>Could not retrieve friends list. Please try again.</value>
-  </data>
-  <data name="Error_FriendRequestsFailed" xml:space="preserve">
-    <value>Could not retrieve friend requests.</value>
-  </data>
-  <data name="Error_GameWordsFailed" xml:space="preserve">
-    <value>Failed to retrieve game words. Please try again.</value>
-  </data>
-  <data name="Error_HostLeft" xml:space="preserve">
-    <value>The host has left the lobby. The match is cancelled.</value>
-  </data>
-  <data name="Error_InvalidCredentials" xml:space="preserve">
-    <value>Incorrect credentials.</value>
-  </data>
-  <data name="Error_InvalidDataFormat" xml:space="preserve">
-    <value>Invalid Data Format</value>
-  </data>
-  <data name="Error_InvalidInviteCode" xml:space="preserve">
-    <value>Invalid Invite Code</value>
-  </data>
-  <data name="Error_InvalidOrExpiredCode" xml:space="preserve">
-    <value>Invalid or expired verification code.</value>
-  </data>
-  <data name="Error_InvalidSession" xml:space="preserve">
-    <value>Invalid session.</value>
-  </data>
-  <data name="Error_JoiningLobbyData" xml:space="preserve">
-    <value>Error joining the lobby. Please try again.</value>
-  </data>
-  <data name="Error_KickedByHost" xml:space="preserve">
-    <value>You have been kicked by the host.</value>
-  </data>
-  <data name="Error_LobbyFull" xml:space="preserve">
-    <value>The match lobby is full.</value>
-  </data>
-  <data name="Error_MatchNotFound" xml:space="preserve">
-    <value>The match does not exist or has ended.</value>
-  </data>
-  <data name="Error_MessageHistoryFailed" xml:space="preserve">
-    <value>Could not load chat history.</value>
-  </data>
-  <data name="Error_PasswordInsecure" xml:space="preserve">
-    <value>The password does not meet the security requirements.</value>
-  </data>
-  <data name="Error_ServerGeneric" xml:space="preserve">
-    <value>An unexpected server error occurred.</value>
-  </data>
-  <data name="Error_SessionMismatch" xml:space="preserve">
-    <value>Security warning: Session user mismatch.</value>
-  </data>
-  <data name="Error_UserAlreadyExists" xml:space="preserve">
-    <value>The username is already in use.</value>
-  </data>
-  <data name="Error_UserNotFound" xml:space="preserve">
-    <value>User not found.</value>
-  </data>
-  <data name="Error_UserSearchFailed" xml:space="preserve">
-    <value>Error occurred while searching for users.</value>
-  </data>
-  <data name="Info_Guest" xml:space="preserve">
-    <value>Guest</value>
-  </data>
-  <data name="Info_GuestName" xml:space="preserve">
-    <value>Welcome! You play as:</value>
-  </data>
-  <data name="Info_LoginSuccess" xml:space="preserve">
-    <value>User logged in successfully.</value>
-  </data>
-  <data name="Info_RegisterSuccess" xml:space="preserve">
-    <value>Registration successful. A verification code has been sent.</value>
-  </data>
 </root>

@@ -153,6 +153,9 @@
   <data name="Error_GameWordsFailed" xml:space="preserve">
     <value>No se pudieron recuperar las palabras del juego. Inténtelo de nuevo.</value>
   </data>
+  <data name="Error_HostLeft" xml:space="preserve">
+    <value>El anfitrión abandonó la sala. La partida ha sido cancelada.</value>
+  </data>
   <data name="Error_InvalidCredentials" xml:space="preserve">
     <value>Credenciales incorrectas.</value>
   </data>
@@ -170,6 +173,15 @@
   </data>
   <data name="Error_JoiningLobbyData" xml:space="preserve">
     <value>Error al unirse a la sala. Por favor, inténtelo de nuevo.</value>
+  </data>
+  <data name="Error_KickedByHost" xml:space="preserve">
+    <value>Has sido expulsado por el anfitrión.</value>
+  </data>
+  <data name="Error_LobbyFull" xml:space="preserve">
+    <value>La sala está llena.</value>
+  </data>
+  <data name="Error_MatchNotFound" xml:space="preserve">
+    <value>La partida no existe o ha terminado.</value>
   </data>
   <data name="Error_MessageHistoryFailed" xml:space="preserve">
     <value>No se pudo cargar el historial de chat.</value>

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
+using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
-using System.ServiceModel;
 using GuessMyMessServer.Contracts.DataContracts;
 using GuessMyMessServer.Contracts.ServiceContracts;
 using GuessMyMessServer.DataAccess;
+using GuessMyMessServer.DataAccess.Abstractions;
 using log4net;
 
 namespace GuessMyMessServer.BusinessLogic
@@ -46,164 +46,76 @@ namespace GuessMyMessServer.BusinessLogic
     public class GameLogic
     {
         private static readonly ILog _log = LogManager.GetLogger(typeof(GameLogic));
-        private static readonly GameLogic _instance = new GameLogic();
-        public static GameLogic Instance => _instance;
+        private static readonly ConcurrentDictionary<string, IGameServiceCallback> _connectedPlayers = new ConcurrentDictionary<string, IGameServiceCallback>();
+        private static readonly Dictionary<string, MatchState> _matches = new Dictionary<string, MatchState>();
+        private static readonly object _gameStateLock = new object();
 
-        private readonly ConcurrentDictionary<string, IGameServiceCallback> _connectedPlayers = new ConcurrentDictionary<string, IGameServiceCallback>();
-        private readonly Dictionary<string, MatchState> _matches = new Dictionary<string, MatchState>();
-
-        private readonly object _gameStateLock = new object();
         private const int CorrectGuessScore = 50;
         private const int DrawingGuessedCorrectlyScore = 10;
 
-        private GameLogic() { }
+        private readonly IWordRepository _wordRepository;
+        private readonly IMatchRepository _matchRepository;
+        private readonly IPlayerRepository _playerRepository;
 
-        private void StopMatchTimer(string matchId)
+        public GameLogic(
+            IWordRepository wordRepository,
+            IMatchRepository matchRepository,
+            IPlayerRepository playerRepository)
         {
+            _wordRepository = wordRepository;
+            _matchRepository = matchRepository;
+            _playerRepository = playerRepository;
+        }
+
+        public void ConnectPlayer(string username, string matchId, IGameServiceCallback callback)
+        {
+            _connectedPlayers.AddOrUpdate(username, callback, (key, old) => callback);
+
             lock (_gameStateLock)
             {
-                if (_matches.TryGetValue(matchId, out var match))
+                if (!_matches.ContainsKey(matchId))
                 {
-                    try
-                    {
-                        match.DisposeTimer();
-                    }
-                    catch (Exception ex)
-                    {
-                        _log.Warn($"Error disposing timer for match {matchId}", ex);
-                    }
+                    _matches[matchId] = new MatchState { MatchId = matchId };
+                }
+
+                var match = _matches[matchId];
+                if (!match.Players.Contains(username))
+                {
+                    match.Players.Add(username);
                 }
             }
+            _log.Info($"GameLogic: Player '{username}' connected to match {matchId}.");
         }
 
-        private void StartTimer(string matchId, TimerCallback callback, object state, int delaySeconds)
+        public void DisconnectPlayer(string username, string matchId)
         {
+            _connectedPlayers.TryRemove(username, out _);
+
+            bool shouldClear = false;
             lock (_gameStateLock)
             {
-                if (_matches.TryGetValue(matchId, out var match))
+                if (matchId != null && _matches.TryGetValue(matchId, out var match))
                 {
-                    match.DisposeTimer();
-                    match.GameTimer = new Timer(callback, state, delaySeconds * 1000, Timeout.Infinite);
-                }
-            }
-        }
-
-        public async Task<List<WordDto>> GetRandomWordsAsync()
-        {
-            try
-            {
-                using (var context = new GuessMyMessDBEntities())
-                {
-                    return await context.Word
-                        .OrderBy(w => Guid.NewGuid())
-                        .Take(3)
-                        .Select(w => new WordDto { WordId = w.idWord, WordKey = w.word1 })
-                        .ToListAsync();
-                }
-            }
-            catch (Exception ex)
-            {
-                _log.Error("Error getting random words from DB", ex);
-                throw new FaultException("Database error while retrieving words.");
-            }
-        }
-
-        public void RegisterMatchStart(string matchId, List<string> playerUsernames)
-        {
-            if (!int.TryParse(matchId, out int matchIdInt))
-            {
-                return;
-            }
-
-            try
-            {
-                using (var context = new GuessMyMessDBEntities())
-                {
-                    var matchEntity = context.Match.FirstOrDefault(m => m.idMatch == matchIdInt);
-                    if (matchEntity == null)
+                    match.Players.Remove(username);
+                    if (match.Players.Count == 0)
                     {
-                        return;
+                        shouldClear = true;
                     }
-
-                    matchEntity.matchStatus = "Playing";
-
-                    foreach (var username in playerUsernames)
-                    {
-                        AddPlayerToHistory(context, matchIdInt, username);
-                    }
-                    context.SaveChanges();
                 }
             }
-            catch (Exception ex)
-            {
-                _log.Error($"Error registering match start in DB for MatchID: {matchId}", ex);
-            }
-        }
 
-        private void AddPlayerToHistory(GuessMyMessDBEntities context, int matchId, string username)
-        {
-            var player = context.Player.FirstOrDefault(p => p.username.ToLower() == username.ToLower());
-            if (player != null && !context.MatchHistory.Any(h => h.Match_idMatch == matchId && h.Player_idPlayer == player.idPlayer))
+            if (shouldClear)
             {
-                context.MatchHistory.Add(new MatchHistory { Match_idMatch = matchId, Player_idPlayer = player.idPlayer, finalScore = 0, ranking = 0 });
-            }
-        }
-
-        public void RegisterMatchEnd(string matchId, List<PlayerScoreDto> finalScores)
-        {
-            if (!int.TryParse(matchId, out int matchIdInt))
-            {
-                return;
-            }
-
-            try
-            {
-                using (var context = new GuessMyMessDBEntities())
+                StopMatchTimer(matchId);
+                lock (_gameStateLock)
                 {
-                    var matchEntity = context.Match.FirstOrDefault(m => m.idMatch == matchIdInt);
-                    if (matchEntity == null)
-                    {
-                        return;
-                    }
-
-                    matchEntity.matchStatus = "Finished";
-                    UpdateMatchHistoryScores(context, matchIdInt, finalScores);
-                    context.SaveChanges();
+                    _matches.Remove(matchId);
                 }
-            }
-            catch (Exception ex)
-            {
-                _log.Error($"Error registering match end in DB for MatchID: {matchId}", ex);
+                _log.Info($"GameLogic: Match {matchId} removed from memory (empty).");
             }
         }
 
-        private void UpdateMatchHistoryScores(GuessMyMessDBEntities context, int matchId, List<PlayerScoreDto> finalScores)
-        {
-            if (finalScores == null)
-            {
-                return;
-            }
-
-            var sorted = finalScores.OrderByDescending(s => s.Score).ToList();
-            for (int i = 0; i < sorted.Count; i++)
-            {
-                var sc = sorted[i];
-                var p = context.Player.FirstOrDefault(x => x.username.ToLower() == sc.Username.ToLower());
-                if (p == null)
-                {
-                    continue;
-                }
-
-                var h = context.MatchHistory.FirstOrDefault(x => x.Match_idMatch == matchId && x.Player_idPlayer == p.idPlayer);
-                if (h != null)
-                {
-                    h.finalScore = sc.Score;
-                    h.ranking = i + 1;
-                }
-            }
-        }
-
-        public void StartGame(string matchId, int totalRounds, List<string> playersFromLobby)
+        public async Task StartGameAsync(string matchId, int totalRounds, List<string> playersFromLobby)
         {
             StopMatchTimer(matchId);
 
@@ -226,11 +138,11 @@ namespace GuessMyMessServer.BusinessLogic
                 }
             }
 
-            Task.Run(() => RegisterMatchStart(matchId, playersFromLobby));
-            StartNewRound(matchId);
+            await RegisterMatchStartAsync(matchId, playersFromLobby);
+            await StartNewRoundAsync(matchId);
         }
 
-        private void StartNewRound(string matchId)
+        private async Task StartNewRoundAsync(string matchId)
         {
             StopMatchTimer(matchId);
             int roundToSend = 0;
@@ -254,6 +166,22 @@ namespace GuessMyMessServer.BusinessLogic
             BroadcastToMatch(matchId, callback => callback.OnRoundStart(roundToSend, new List<string>()));
         }
 
+        public async Task<List<WordDto>> GetRandomWordsAsync()
+        {
+            try
+            {
+                var words = await _wordRepository.GetRandomWordsAsync(3);
+                return words.Select(w => new WordDto { WordId = w.idWord, WordKey = w.word1 }).ToList();
+            }
+            catch (Exception ex)
+            {
+                _log.Error("Error retrieving random words.", ex);
+                throw new FaultException<ServiceFaultDto>(
+                    new ServiceFaultDto(Contracts.DataContracts.ServiceErrorType.DatabaseError, "Could not retrieve words."),
+                    new FaultReason("Database Error"));
+            }
+        }
+
         public void RegisterSelectedWord(string username, string matchId, string selectedWord)
         {
             lock (_gameStateLock)
@@ -267,6 +195,8 @@ namespace GuessMyMessServer.BusinessLogic
 
         public void AddDrawing(string username, string matchId, byte[] drawingData)
         {
+            bool allDrawingsReceived = false;
+
             lock (_gameStateLock)
             {
                 if (!_matches.TryGetValue(matchId, out var match))
@@ -281,19 +211,27 @@ namespace GuessMyMessServer.BusinessLogic
 
                 string wordToSave = match.PlayerSelectedWords.ContainsKey(username) ? match.PlayerSelectedWords[username] : "Unknown";
 
-                match.Drawings.Add(new DrawingDto
+                if (!match.Drawings.Any(d => d.OwnerUsername == username))
                 {
-                    OwnerUsername = username,
-                    DrawingData = drawingData,
-                    WordKey = wordToSave,
-                    IsGuessed = false,
-                    DrawingId = match.Drawings.Count + 1
-                });
+                    match.Drawings.Add(new DrawingDto
+                    {
+                        OwnerUsername = username,
+                        DrawingData = drawingData,
+                        WordKey = wordToSave,
+                        IsGuessed = false,
+                        DrawingId = match.Drawings.Count + 1
+                    });
+                }
 
                 if (match.Drawings.Count >= match.Players.Count && match.Players.Count > 0)
                 {
-                    Task.Run(() => NotifyGuessingPhaseStart(matchId));
+                    allDrawingsReceived = true;
                 }
+            }
+
+            if (allDrawingsReceived)
+            {
+                NotifyGuessingPhaseStart(matchId);
             }
         }
 
@@ -304,11 +242,6 @@ namespace GuessMyMessServer.BusinessLogic
             lock (_gameStateLock)
             {
                 if (!_matches.TryGetValue(matchId, out var match))
-                {
-                    return;
-                }
-
-                if (match.Phase != MatchPhase.Drawing)
                 {
                     return;
                 }
@@ -341,14 +274,25 @@ namespace GuessMyMessServer.BusinessLogic
                 }
 
                 var drawing = match.Drawings.FirstOrDefault(d => d.DrawingId == drawingId);
-                if (drawing == null) return;
+                if (drawing == null)
+                {
+                    return;
+                }
 
                 bool isCorrect = string.Equals(guessText, drawing.WordKey, StringComparison.OrdinalIgnoreCase);
                 bool alreadyGuessedCorrectly = match.Guesses.Any(g => g.GuesserUsername == username && g.DrawingId == drawingId && g.IsCorrect);
 
                 if (!alreadyGuessedCorrectly)
                 {
-                    AddGuess(match, username, drawingId, guessText, isCorrect, drawing.WordKey);
+                    match.Guesses.Add(new GuessDto
+                    {
+                        GuesserUsername = username,
+                        DrawingId = drawingId,
+                        GuessText = guessText,
+                        IsCorrect = isCorrect,
+                        WordKey = drawing.WordKey
+                    });
+
                     if (isCorrect)
                     {
                         ApplyScores(match, username, drawing.OwnerUsername);
@@ -357,18 +301,6 @@ namespace GuessMyMessServer.BusinessLogic
 
                 CheckDrawingCompletion(match, drawingId);
             }
-        }
-
-        private void AddGuess(MatchState match, string username, int drawingId, string guessText, bool isCorrect, string wordKey)
-        {
-            match.Guesses.Add(new GuessDto
-            {
-                GuesserUsername = username,
-                DrawingId = drawingId,
-                GuessText = guessText,
-                IsCorrect = isCorrect,
-                WordKey = wordKey
-            });
         }
 
         private void ApplyScores(MatchState match, string guesser, string artist)
@@ -455,12 +387,6 @@ namespace GuessMyMessServer.BusinessLogic
                 {
                     return;
                 }
-
-                if (match.Phase != MatchPhase.Guessing)
-                {
-                    return;
-                }
-
                 match.Phase = MatchPhase.Answers;
 
                 snapshot = new MatchState
@@ -486,10 +412,10 @@ namespace GuessMyMessServer.BusinessLogic
         private void TimerCallback(object state)
         {
             var tuple = (Tuple<string, int>)state;
-            CheckEndOfRoundOrGame(tuple.Item1, tuple.Item2);
+            Task.Run(() => CheckEndOfRoundOrGame(tuple.Item1, tuple.Item2));
         }
 
-        private void CheckEndOfRoundOrGame(string matchId, int expectedRound)
+        private async Task CheckEndOfRoundOrGame(string matchId, int expectedRound)
         {
             bool startNextRound = false;
 
@@ -499,7 +425,6 @@ namespace GuessMyMessServer.BusinessLogic
                 {
                     return;
                 }
-
                 if (match.CurrentRound != expectedRound)
                 {
                     return;
@@ -514,15 +439,15 @@ namespace GuessMyMessServer.BusinessLogic
 
             if (startNextRound)
             {
-                StartNewRound(matchId);
+                await StartNewRoundAsync(matchId);
             }
             else
             {
-                NotifyGameEnd(matchId);
+                await NotifyGameEndAsync(matchId);
             }
         }
 
-        private void NotifyGameEnd(string matchId)
+        private async Task NotifyGameEndAsync(string matchId)
         {
             StopMatchTimer(matchId);
             List<PlayerScoreDto> finalScores = null;
@@ -538,55 +463,8 @@ namespace GuessMyMessServer.BusinessLogic
 
             if (finalScores != null)
             {
-                MatchmakingLogic.SetMatchAsFinished(matchId);
-                Task.Run(() => RegisterMatchEnd(matchId, finalScores));
+                await RegisterMatchEndAsync(matchId, finalScores);
                 BroadcastToMatch(matchId, c => c.OnGameEnd(finalScores));
-            }
-        }
-
-        public void ConnectPlayer(string username, string matchId, IGameServiceCallback callback)
-        {
-            _connectedPlayers.AddOrUpdate(username, callback, (key, old) => callback);
-
-            lock (_gameStateLock)
-            {
-                if (!_matches.ContainsKey(matchId))
-                {
-                    _matches[matchId] = new MatchState { MatchId = matchId };
-                }
-
-                var match = _matches[matchId];
-                if (!match.Players.Contains(username))
-                {
-                    match.Players.Add(username);
-                }
-            }
-        }
-
-        public void DisconnectPlayer(string username, string matchId)
-        {
-            _connectedPlayers.TryRemove(username, out _);
-
-            bool shouldClear = false;
-            lock (_gameStateLock)
-            {
-                if (matchId != null && _matches.TryGetValue(matchId, out var match))
-                {
-                    match.Players.Remove(username);
-                    if (match.Players.Count == 0)
-                    {
-                        shouldClear = true;
-                    }
-                }
-            }
-
-            if (shouldClear)
-            {
-                StopMatchTimer(matchId);
-                lock (_gameStateLock)
-                {
-                    _matches.Remove(matchId);
-                }
             }
         }
 
@@ -606,6 +484,116 @@ namespace GuessMyMessServer.BusinessLogic
                 foreach (var u in players)
                 {
                     NotifyPlayer(u, c => c.OnInGameMessageReceived(sender, msg));
+                }
+            }
+        }
+
+        private async Task RegisterMatchStartAsync(string matchIdStr, List<string> playerUsernames)
+        {
+            if (!int.TryParse(matchIdStr, out int matchId))
+            {
+                return;
+            }
+
+            try
+            {
+                var match = await _matchRepository.GetMatchByIdAsync(matchId);
+                if (match != null)
+                {
+                    match.matchStatus = "Playing";
+
+                    foreach (var username in playerUsernames)
+                    {
+                        var player = await _playerRepository.GetPlayerByUsernameAsync(username);
+                        if (player != null)
+                        {
+                            bool exists = await _matchRepository.PlayerHasHistoryInMatchAsync(matchId, player.idPlayer);
+                            if (!exists)
+                            {
+                                _matchRepository.AddMatchHistory(new MatchHistory
+                                {
+                                    Match_idMatch = matchId,
+                                    Player_idPlayer = player.idPlayer,
+                                    finalScore = 0,
+                                    ranking = 0
+                                });
+                            }
+                        }
+                    }
+                    await _matchRepository.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.Error($"DB Error registering match start {matchId}", ex);
+            }
+        }
+
+        private async Task RegisterMatchEndAsync(string matchIdStr, List<PlayerScoreDto> finalScores)
+        {
+            if (!int.TryParse(matchIdStr, out int matchId))
+            {
+                return;
+            }
+
+            try
+            {
+                var match = await _matchRepository.GetMatchByIdAsync(matchId);
+                if (match != null)
+                {
+                    match.matchStatus = "Finished";
+
+                    var histories = await _matchRepository.GetMatchHistoryByMatchIdAsync(matchId);
+
+                    for (int i = 0; i < finalScores.Count; i++)
+                    {
+                        var score = finalScores[i];
+                        var player = await _playerRepository.GetPlayerByUsernameAsync(score.Username);
+                        if (player != null)
+                        {
+                            var entry = histories.FirstOrDefault(h => h.Player_idPlayer == player.idPlayer);
+                            if (entry != null)
+                            {
+                                entry.finalScore = score.Score;
+                                entry.ranking = i + 1;
+                            }
+                        }
+                    }
+                    await _matchRepository.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.Error($"DB Error registering match end {matchId}", ex);
+            }
+        }
+
+        private void StopMatchTimer(string matchId)
+        {
+            lock (_gameStateLock)
+            {
+                if (_matches.TryGetValue(matchId, out var match))
+                {
+                    try
+                    {
+                        match.DisposeTimer();
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.Warn($"Error disposing timer for match {matchId}", ex);
+                    }
+                }
+            }
+        }
+
+        private void StartTimer(string matchId, TimerCallback callback, object state, int delaySeconds)
+        {
+            lock (_gameStateLock)
+            {
+                if (_matches.TryGetValue(matchId, out var match))
+                {
+                    match.DisposeTimer();
+                    match.GameTimer = new Timer(callback, state, delaySeconds * 1000, Timeout.Infinite);
                 }
             }
         }
@@ -635,17 +623,12 @@ namespace GuessMyMessServer.BusinessLogic
                 {
                     action(cb);
                 }
-                catch (CommunicationException commEx)
+                catch (CommunicationException)
                 {
-                    _log.Warn($"Communication error with player {username}. They might have disconnected unexpectedly.", commEx);
-                }
-                catch (TimeoutException timeoutEx)
-                {
-                    _log.Warn($"Timeout contacting player {username}", timeoutEx);
                 }
                 catch (Exception ex)
                 {
-                    _log.Error($"Unexpected error notifying player {username}", ex);
+                    _log.Warn($"Error notifying player {username}", ex);
                 }
             }
         }

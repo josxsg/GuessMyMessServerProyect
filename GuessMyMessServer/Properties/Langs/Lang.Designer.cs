@@ -169,6 +169,15 @@ namespace GuessMyMessServer.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a The host has left the lobby. The match is cancelled..
+        /// </summary>
+        public static string Error_HostLeft {
+            get {
+                return ResourceManager.GetString("Error_HostLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Incorrect credentials..
         /// </summary>
         public static string Error_InvalidCredentials {
@@ -219,6 +228,33 @@ namespace GuessMyMessServer.Properties.Langs {
         public static string Error_JoiningLobbyData {
             get {
                 return ResourceManager.GetString("Error_JoiningLobbyData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a You have been kicked by the host..
+        /// </summary>
+        public static string Error_KickedByHost {
+            get {
+                return ResourceManager.GetString("Error_KickedByHost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a The match lobby is full..
+        /// </summary>
+        public static string Error_LobbyFull {
+            get {
+                return ResourceManager.GetString("Error_LobbyFull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a The match does not exist or has ended..
+        /// </summary>
+        public static string Error_MatchNotFound {
+            get {
+                return ResourceManager.GetString("Error_MatchNotFound", resourceCulture);
             }
         }
         

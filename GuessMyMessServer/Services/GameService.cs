@@ -1,134 +1,123 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity.Core;
 using System.ServiceModel;
 using System.Threading.Tasks;
+using Autofac;
+using GuessMyMessServer.AppStart;
 using GuessMyMessServer.BusinessLogic;
 using GuessMyMessServer.Contracts.DataContracts;
 using GuessMyMessServer.Contracts.ServiceContracts;
-using GuessMyMessServer.Properties;
 using GuessMyMessServer.Properties.Langs;
 using log4net;
 
 namespace GuessMyMessServer.Services
 {
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Reentrant)]
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Reentrant)]
     public class GameService : IGameService
     {
         private static readonly ILog _log = LogManager.GetLogger(typeof(GameService));
+        private readonly IGameServiceCallback _callback;
+
+        // Variables de sesión
+        private string _connectedUsername;
+        private string _connectedMatchId;
+
+        // Propiedad para resolver la lógica bajo demanda
+        private GameLogic Logic => Bootstrapper.Container.Resolve<GameLogic>();
+
+        // Constructor WCF (Predeterminado)
+        public GameService()
+        {
+            Bootstrapper.Init();
+            _callback = OperationContext.Current.GetCallbackChannel<IGameServiceCallback>();
+            SubscribeToChannelEvents();
+        }
+
+        private void SubscribeToChannelEvents()
+        {
+            IContextChannel channel = OperationContext.Current.Channel;
+            channel.Faulted += Channel_FaultedOrClosed;
+            channel.Closed += Channel_FaultedOrClosed;
+        }
 
         public void Connect(string username, string matchId)
         {
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(matchId))
-            {
-                _log.Warn("GameService: Connect attempt with empty username or matchId.");
-                return;
-            }
-
             try
             {
-                var callback = OperationContext.Current.GetCallbackChannel<IGameServiceCallback>();
-                GameLogic.Instance.ConnectPlayer(username, matchId, callback);
+                _connectedUsername = username;
+                _connectedMatchId = matchId;
+                // Usamos la propiedad Logic
+                Logic.ConnectPlayer(username, matchId, _callback);
             }
-            catch (Exception ex)
-            {
-                _log.Error($"Error connecting player '{username}' to match '{matchId}'", ex);
-            }
+            catch (Exception ex) { _log.Error($"Error connecting player", ex); }
         }
 
         public void Disconnect(string username, string matchId)
         {
-            try
-            {
-                if (string.IsNullOrEmpty(username)) return;
-                GameLogic.Instance.DisconnectPlayer(username, matchId);
-            }
-            catch (Exception ex)
-            {
-                _log.Warn($"Error disconnecting player '{username}' from match '{matchId}'", ex);
-            }
+            if (ValidateSession(username)) PerformDisconnect();
         }
 
         public void SelectWord(string username, string matchId, string selectedWord)
         {
-            try
-            {
-                GameLogic.Instance.RegisterSelectedWord(username, matchId, selectedWord);
-            }
-            catch (Exception ex)
-            {
-                _log.Error($"Error registering word selection for '{username}' in match '{matchId}'", ex);
-            }
+            if (ValidateSession(username))
+                Logic.RegisterSelectedWord(username, matchId, selectedWord);
         }
 
         public async Task<List<WordDto>> GetRandomWordsAsync()
         {
             try
             {
-                return await GameLogic.Instance.GetRandomWordsAsync();
-            }
-            catch (EntityException ex)
-            {
-                _log.Fatal("Database unavailable when retrieving random words.", ex);
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.DatabaseError, Lang.Error_DatabaseConnectionError),
-                    new FaultReason("Database Unavailable"));
+                return await Logic.GetRandomWordsAsync();
             }
             catch (Exception ex)
             {
-                _log.Error("Critical error retrieving random words.", ex);
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.Unknown, Lang.Error_GameWordsFailed),
-                    new FaultReason("Server Error"));
+                _log.Error("Error retrieving words.", ex);
+                throw new FaultException<ServiceFaultDto>(new ServiceFaultDto(ServiceErrorType.DatabaseError, Lang.Error_GameWordsFailed));
             }
         }
 
         public void SubmitDrawing(string username, string matchId, byte[] drawingData)
         {
-            try
-            {
-                GameLogic.Instance.AddDrawing(username, matchId, drawingData);
-            }
-            catch (Exception ex)
-            {
-                _log.Error($"Error submitting drawing for '{username}' in match '{matchId}'", ex);
-            }
+            if (ValidateSession(username))
+                Logic.AddDrawing(username, matchId, drawingData);
         }
 
         public void SubmitGuess(string username, string matchId, int drawingId, string guess)
         {
-            try
-            {
-                GameLogic.Instance.ProcessGuess(username, matchId, drawingId, guess);
-            }
-            catch (Exception ex)
-            {
-                _log.Error($"Error processing guess from '{username}' in match '{matchId}'", ex);
-            }
+            if (ValidateSession(username))
+                Logic.ProcessGuess(username, matchId, drawingId, guess);
         }
 
         public void SendInGameChatMessage(string username, string matchId, string message)
         {
-            try
-            {
-                GameLogic.Instance.BroadcastChatMessage(username, matchId, message);
-            }
-            catch (Exception ex)
-            {
-                _log.Warn($"Error sending in-game chat message from '{username}' in match '{matchId}'", ex);
-            }
+            if (ValidateSession(username))
+                Logic.BroadcastChatMessage(username, matchId, message);
         }
 
-        public void StartGame(string matchId, int totalRounds, List<string> playerUsernames)
+        public async void StartGame(string matchId, int totalRounds, List<string> playerUsernames)
         {
             try
             {
-                GameLogic.Instance.StartGame(matchId, totalRounds, playerUsernames);
+                await Logic.StartGameAsync(matchId, totalRounds, playerUsernames);
             }
-            catch (Exception ex)
+            catch (Exception ex) { _log.Error($"Error starting game", ex); }
+        }
+
+        private bool ValidateSession(string username) => _connectedUsername == username;
+
+        private void PerformDisconnect()
+        {
+            if (!string.IsNullOrEmpty(_connectedUsername))
             {
-                _log.Error($"Error starting game for match '{matchId}'", ex);
+                // Usamos Logic para desconectar
+                Logic.DisconnectPlayer(_connectedUsername, _connectedMatchId);
+                _connectedUsername = null;
             }
+        }
+
+        private void Channel_FaultedOrClosed(object sender, EventArgs e)
+        {
+            PerformDisconnect();
         }
     }
 }

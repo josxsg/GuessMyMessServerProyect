@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.Entity.Core; 
-using System.Data.Entity.Infrastructure; 
 using System.Linq;
+using System.ServiceModel;
 using System.Threading.Tasks;
 using GuessMyMessServer.Contracts.DataContracts;
 using GuessMyMessServer.DataAccess;
-using GuessMyMessServer.Utilities.Email;
+using GuessMyMessServer.DataAccess.Abstractions;
+using GuessMyMessServer.Utilities;
 using log4net;
 
 namespace GuessMyMessServer.BusinessLogic
@@ -15,426 +14,350 @@ namespace GuessMyMessServer.BusinessLogic
     public class SocialLogic
     {
         private static readonly ILog _log = LogManager.GetLogger(typeof(SocialLogic));
-        private readonly IEmailService _emailService;
+        private readonly ISocialRepository _socialRepository;
+        private readonly IPlayerRepository _playerRepository;
+        private const int StatusAccepted = 2;
+        private const int StatusPending = 1;
+        private const string OnlineStatusString = "Online";
 
-        public SocialLogic(IEmailService emailService)
+        public SocialLogic(ISocialRepository socialRepository, IPlayerRepository playerRepository)
         {
-            _emailService = emailService;
+            _socialRepository = socialRepository;
+            _playerRepository = playerRepository;
         }
 
         public async Task<List<FriendDto>> GetFriendsListAsync(string username)
         {
+            var user = await _playerRepository.GetPlayerByUsernameAsync(username);
+            if (user == null)
+            {
+                _log.Warn($"GetFriendsList failed: User '{username}' not found.");
+                ThrowServiceFault(ServiceErrorType.NotFound, "User not found.");
+            }
+
             try
             {
-                using (var context = new GuessMyMessDBEntities())
+                var friendships = await _socialRepository.GetFriendsListAsync(user.idPlayer);
+                return friendships.Select(f =>
                 {
-                    var player = await context.Player.FirstOrDefaultAsync(p => p.username == username);
-                    if (player == null)
+                    var friendEntity = f.Player_idPlayer1 == user.idPlayer ? f.Player1 : f.Player;
+                    return new FriendDto
                     {
-                        _log.Warn($"GetFriendsList failed: User '{username}' not found.");
-                        throw new InvalidOperationException("User not found.");
-                    }
-
-                    const string AcceptedStatus = "Accepted";
-                    const string OnlineStatus = "Online";
-
-                    var friendships = await context.Friendship
-                        .Where(f => (f.Player_idPlayer1 == player.idPlayer || f.Player_idPlayer2 == player.idPlayer)
-                                     && f.FriendShipStatus.status == AcceptedStatus)
-                        .Select(f => f.Player_idPlayer1 == player.idPlayer ? f.Player1 : f.Player)
-                        .Select(p => new
-                        {
-                            p.username,
-                            Status = p.UserStatus.status
-                        })
-                        .ToListAsync();
-
-                    return friendships.Select(f => new FriendDto
-                    {
-                        Username = f.username,
-                        IsOnline = f.Status == OnlineStatus
-                    }).ToList();
-                }
+                        Username = friendEntity.username,
+                        IsOnline = friendEntity.UserStatus?.status == OnlineStatusString
+                    };
+                }).ToList();
             }
-            catch (EntityException ex)
+            catch (Exception ex)
             {
-                _log.Error($"Database connection error retrieving friends list for '{username}'.", ex);
-                throw;
+                _log.Error($"Error retrieving friends list for '{username}'.", ex);
+                ThrowServiceFault(ServiceErrorType.DatabaseError, "Could not retrieve friends list.");
+                return null;
             }
         }
 
         public async Task<List<FriendRequestInfoDto>> GetFriendRequestsAsync(string username)
         {
+            var user = await _playerRepository.GetPlayerByUsernameAsync(username);
+            if (user == null)
+            {
+                return new List<FriendRequestInfoDto>();
+            }
+
             try
             {
-                using (var context = new GuessMyMessDBEntities())
+                var requests = await _socialRepository.GetPendingRequestsAsync(user.idPlayer);
+                return requests.Select(f => new FriendRequestInfoDto
                 {
-                    var player = await context.Player.FirstOrDefaultAsync(p => p.username == username);
-                    if (player == null)
-                    {
-                        _log.Warn($"GetFriendRequests failed: User '{username}' not found.");
-                        return new List<FriendRequestInfoDto>();
-                    }
-
-                    const string PendingStatus = "Pending";
-
-                    return await context.Friendship
-                        .Where(f => f.Player_idPlayer2 == player.idPlayer && f.FriendShipStatus.status == PendingStatus)
-                        .Select(f => new FriendRequestInfoDto
-                        {
-                            RequesterUsername = f.Player.username
-                        }).ToListAsync();
-                }
+                    RequesterUsername = f.Player.username
+                }).ToList();
             }
-            catch (EntityException ex)
+            catch (Exception ex)
             {
-                _log.Error($"Database error retrieving friend requests for '{username}'.", ex);
-                throw;
+                _log.Error($"Error retrieving friend requests for '{username}'.", ex);
+                ThrowServiceFault(ServiceErrorType.DatabaseError, "Could not retrieve friend requests.");
+                return null;
             }
         }
 
         public async Task<List<UserProfileDto>> SearchUsersAsync(string searchUsername, string requesterUsername)
         {
+            var requester = await _playerRepository.GetPlayerByUsernameAsync(requesterUsername);
+            if (requester == null)
+            {
+                _log.Warn($"SearchUsers failed: Requester '{requesterUsername}' not found.");
+                ThrowServiceFault(ServiceErrorType.NotFound, "Requester user not found.");
+            }
+
             try
             {
-                using (var context = new GuessMyMessDBEntities())
+                var players = await _playerRepository.SearchPlayersNotFriendsAsync(searchUsername, requester.idPlayer);
+                return players.Select(p => new UserProfileDto
                 {
-                    var requester = await context.Player.FirstOrDefaultAsync(p => p.username == requesterUsername);
-                    if (requester == null)
-                    {
-                        _log.Warn($"SearchUsers failed: Requester '{requesterUsername}' not found.");
-                        throw new InvalidOperationException("User not found.");
-                    }
-
-                    var requesterId = requester.idPlayer;
-
-                    var existingRelationshipsPlayerIds = await context.Friendship
-                        .Where(f => f.Player_idPlayer1 == requesterId || f.Player_idPlayer2 == requesterId)
-                        .Select(f => f.Player_idPlayer1 == requesterId ? f.Player_idPlayer2 : f.Player_idPlayer1)
-                        .Distinct()
-                        .ToListAsync();
-
-                    existingRelationshipsPlayerIds.Add(requesterId);
-
-                    return await context.Player
-                        .Where(p => p.username.Contains(searchUsername) &&
-                                    !existingRelationshipsPlayerIds.Contains(p.idPlayer))
-                        .Select(p => new UserProfileDto
-                        {
-                            Username = p.username
-                        }).ToListAsync();
-                }
+                    Username = p.username
+                }).ToList();
             }
-            catch (EntityException ex)
+            catch (Exception ex)
             {
-                _log.Error($"Database error searching users for '{requesterUsername}' with query '{searchUsername}'.", ex);
-                throw;
+                _log.Error($"Error searching users for '{requesterUsername}'.", ex);
+                ThrowServiceFault(ServiceErrorType.DatabaseError, "Search operation failed.");
+                return null;
             }
         }
 
-        public async Task SendFriendRequestAsync(string requesterUsername, string targetUsername)
+        public async Task<OperationResultDto> SendFriendRequestAsync(string requesterUsername, string targetUsername)
         {
-            using (var context = new GuessMyMessDBEntities())
+            if (requesterUsername == targetUsername)
             {
-                var requester = await context.Player.FirstOrDefaultAsync(p => p.username == requesterUsername);
-                var target = await context.Player.FirstOrDefaultAsync(p => p.username == targetUsername);
+                ThrowServiceFault(ServiceErrorType.OperationFailed, "You cannot send a friend request to yourself.");
+            }
 
-                if (requester == null || target == null)
-                {
-                    _log.Warn($"SendFriendRequest failed: One or both users not found ({requesterUsername} -> {targetUsername}).");
-                    throw new InvalidOperationException("Requester or target user is invalid.");
-                }
+            var requester = await _playerRepository.GetPlayerByUsernameAsync(requesterUsername);
+            var target = await _playerRepository.GetPlayerByUsernameAsync(targetUsername);
 
-                if (requester.idPlayer == target.idPlayer)
-                {
-                    throw new ArgumentException("You cannot send a friend request to yourself.");
-                }
+            if (requester == null || target == null)
+            {
+                ThrowServiceFault(ServiceErrorType.NotFound, "One or both users not found.");
+            }
 
-                var existing = await context.Friendship.FirstOrDefaultAsync(f =>
-                    (f.Player_idPlayer1 == requester.idPlayer && f.Player_idPlayer2 == target.idPlayer) ||
-                    (f.Player_idPlayer1 == target.idPlayer && f.Player_idPlayer2 == requester.idPlayer));
+            var existing = await _socialRepository.GetFriendshipAsync(requester.idPlayer, target.idPlayer);
+            if (existing != null)
+            {
+                string msg = existing.FriendShipStatus_idFriendShipStatus == StatusAccepted
+                    ? "You are already friends."
+                    : "A request is already pending.";
 
-                if (existing != null)
-                {
-                    _log.Info($"Friend request redundant: Relationship already exists between '{requesterUsername}' and '{targetUsername}'.");
-                    throw new InvalidOperationException("A relationship or pending request already exists between these users.");
-                }
+                _log.Info($"Friend request redundant: {msg}");
+                ThrowServiceFault(ServiceErrorType.OperationFailed, msg);
+            }
 
-                const string PendingStatus = "Pending";
-                var pendingStatusEntity = await context.FriendShipStatus.FirstOrDefaultAsync(fs => fs.status == PendingStatus);
-                if (pendingStatusEntity == null)
-                {
-                    _log.Error("Critical: 'Pending' status missing in database configuration.");
-                    throw new InvalidOperationException("Internal error: 'Pending' friendship status is not configured.");
-                }
+            var friendship = new Friendship
+            {
+                Player_idPlayer1 = requester.idPlayer,
+                Player_idPlayer2 = target.idPlayer,
+                FriendShipStatus_idFriendShipStatus = StatusPending
+            };
 
-                var friendship = new Friendship
-                {
-                    Player_idPlayer1 = requester.idPlayer,
-                    Player_idPlayer2 = target.idPlayer,
-                    FriendShipStatus_idFriendShipStatus = pendingStatusEntity.idFriendShipStatus
-                };
-                context.Friendship.Add(friendship);
+            _socialRepository.AddFriendship(friendship);
 
-                try
-                {
-                    await context.SaveChangesAsync();
-                    _log.Info($"Friend request sent from '{requesterUsername}' to '{targetUsername}'.");
-                }
-                catch (DbUpdateException dbEx)
-                {
-                    _log.Error($"Database error saving friend request from '{requesterUsername}' to '{targetUsername}'.", dbEx);
-                    throw new InvalidOperationException("Could not send friend request due to a database error.", dbEx);
-                }
+            try
+            {
+                await _socialRepository.SaveChangesAsync();
+                _log.Info($"Friend request sent: '{requesterUsername}' -> '{targetUsername}'.");
+                return new OperationResultDto { Success = true, Message = "Friend request sent." };
+            }
+            catch (Exception ex)
+            {
+                _log.Error($"Database error sending request to '{targetUsername}'.", ex);
+                ThrowServiceFault(ServiceErrorType.DatabaseError, "Could not send friend request.");
+                return null;
             }
         }
 
-        public async Task RespondToFriendRequestAsync(string targetUsername, string requesterUsername, bool accepted)
+        public async Task<OperationResultDto> RespondToFriendRequestAsync(string targetUsername, string requesterUsername, bool accepted)
         {
-            using (var context = new GuessMyMessDBEntities())
+            var target = await _playerRepository.GetPlayerByUsernameAsync(targetUsername);
+            var requester = await _playerRepository.GetPlayerByUsernameAsync(requesterUsername);
+
+            if (target == null || requester == null)
             {
-                var target = await context.Player.FirstOrDefaultAsync(p => p.username == targetUsername);
-                var requester = await context.Player.FirstOrDefaultAsync(p => p.username == requesterUsername);
+                ThrowServiceFault(ServiceErrorType.NotFound, "Users not found.");
+            }
 
-                if (target == null || requester == null)
-                {
-                    _log.Warn($"RespondToFriendRequest failed: Users not found.");
-                    return;
-                }
+            var friendship = await _socialRepository.GetFriendshipAsync(requester.idPlayer, target.idPlayer);
+            if (friendship == null)
+            {
+                ThrowServiceFault(ServiceErrorType.NotFound, "Friend request not found.");
+            }
 
-                const string PendingStatus = "Pending";
-                var friendship = await context.Friendship
-                    .Include(f => f.FriendShipStatus)
-                    .FirstOrDefaultAsync(f => f.Player_idPlayer1 == requester.idPlayer &&
-                                              f.Player_idPlayer2 == target.idPlayer &&
-                                              f.FriendShipStatus.status == PendingStatus);
+            if (friendship.FriendShipStatus_idFriendShipStatus != StatusPending)
+            {
+                ThrowServiceFault(ServiceErrorType.NotFound, "Friend request not found (Status mismatch).");
+            }
 
-                if (friendship == null)
-                {
-                    _log.Warn($"RespondToFriendRequest: No pending request found from '{requesterUsername}' to '{targetUsername}'.");
-                    throw new InvalidOperationException("A valid pending friend request was not found.");
-                }
+            if (friendship.Player_idPlayer2 != target.idPlayer)
+            {
+                ThrowServiceFault(ServiceErrorType.OperationFailed, "You cannot respond to this request.");
+            }
 
-                if (accepted)
-                {
-                    const string AcceptedStatus = "Accepted";
-                    var acceptedStatusEntity = await context.FriendShipStatus.FirstOrDefaultAsync(fs => fs.status == AcceptedStatus);
-                    if (acceptedStatusEntity == null)
-                    {
-                        _log.Error("Critical: 'Accepted' status missing in database configuration.");
-                        throw new InvalidOperationException("Internal error: 'Accepted' friendship status is not configured.");
-                    }
-                    friendship.FriendShipStatus_idFriendShipStatus = acceptedStatusEntity.idFriendShipStatus;
-                    _log.Info($"Friend request accepted by '{targetUsername}'. New friendship established.");
-                }
-                else
-                {
-                    context.Friendship.Remove(friendship);
-                    _log.Info($"Friend request rejected by '{targetUsername}'. Request removed.");
-                }
+            if (accepted)
+            {
+                friendship.FriendShipStatus_idFriendShipStatus = StatusAccepted;
+                _log.Info($"Friend request accepted by '{targetUsername}'.");
+            }
+            else
+            {
+                _socialRepository.RemoveFriendship(friendship);
+                _log.Info($"Friend request rejected by '{targetUsername}'.");
+            }
 
-                try
-                {
-                    await context.SaveChangesAsync();
-                }
-                catch (DbUpdateException dbEx)
-                {
-                    _log.Error($"Database error updating friend request response for '{targetUsername}'.", dbEx);
-                    throw new InvalidOperationException("Could not process friend response due to a database error.", dbEx);
-                }
+            try
+            {
+                await _socialRepository.SaveChangesAsync();
+                return new OperationResultDto { Success = true, Message = accepted ? "Request Accepted" : "Request Rejected" };
+            }
+            catch (Exception ex)
+            {
+                _log.Error($"Error responding to request for '{targetUsername}'.", ex);
+                ThrowServiceFault(ServiceErrorType.DatabaseError, "Could not process response.");
+                return null;
             }
         }
 
         public async Task RemoveFriendAsync(string username, string friendToRemove)
         {
-            using (var context = new GuessMyMessDBEntities())
+            var player = await _playerRepository.GetPlayerByUsernameAsync(username);
+            var friend = await _playerRepository.GetPlayerByUsernameAsync(friendToRemove);
+
+            if (player == null || friend == null)
             {
-                var player = await context.Player.FirstOrDefaultAsync(p => p.username == username);
-                var friend = await context.Player.FirstOrDefaultAsync(p => p.username == friendToRemove);
+                return;
+            }
 
-                if (player == null || friend == null)
+            var friendship = await _socialRepository.GetFriendshipAsync(player.idPlayer, friend.idPlayer);
+
+            if (friendship != null)
+            {
+                _socialRepository.RemoveFriendship(friendship);
+                try
                 {
-                    _log.Warn($"RemoveFriend failed: User or friend not found.");
-                    return;
+                    await _socialRepository.SaveChangesAsync();
+                    _log.Info($"Friendship removed between '{username}' and '{friendToRemove}'.");
                 }
-
-                var friendship = await context.Friendship.FirstOrDefaultAsync(f =>
-                    (f.Player_idPlayer1 == player.idPlayer && f.Player_idPlayer2 == friend.idPlayer) ||
-                    (f.Player_idPlayer1 == friend.idPlayer && f.Player_idPlayer2 == player.idPlayer));
-
-                if (friendship != null)
+                catch (Exception ex)
                 {
-                    context.Friendship.Remove(friendship);
-                    try
-                    {
-                        await context.SaveChangesAsync();
-                        _log.Info($"Friendship removed between '{username}' and '{friendToRemove}'.");
-                    }
-                    catch (DbUpdateException dbEx)
-                    {
-                        _log.Error($"Database error removing friendship between '{username}' and '{friendToRemove}'.", dbEx);
-                        throw;
-                    }
-                }
-                else
-                {
-                    _log.Info($"RemoveFriend: No friendship found to remove between '{username}' and '{friendToRemove}'.");
+                    _log.Error("Error removing friendship.", ex);
+                    ThrowServiceFault(ServiceErrorType.DatabaseError, "Could not remove friend.");
                 }
             }
         }
 
         public async Task UpdatePlayerStatusAsync(string username, string status)
         {
-            using (var context = new GuessMyMessDBEntities())
+            var player = await _playerRepository.GetPlayerByUsernameAsync(username);
+            if (player == null)
             {
-                var player = await context.Player.FirstOrDefaultAsync(p => p.username == username);
-                if (player == null)
-                {
-                    _log.Warn($"UpdatePlayerStatus failed: User '{username}' not found.");
-                    throw new InvalidOperationException($"User '{username}' not found to update status.");
-                }
+                _log.Warn($"UpdateStatus: User '{username}' not found.");
+                return;
+            }
 
-                var userStatus = await context.UserStatus.FirstOrDefaultAsync(s => s.status == status);
-                if (userStatus == null)
-                {
-                    _log.Error($"UpdatePlayerStatus failed: Invalid status '{status}' requested.");
-                    throw new InvalidOperationException($"User status '{status}' is not valid.");
-                }
+            var statusId = await _playerRepository.GetUserStatusIdAsync(status);
+            if (statusId == null)
+            {
+                _log.Warn($"UpdateStatus: Invalid status '{status}'.");
+                return;
+            }
 
-                if (player.UserStatus_idUserStatus != userStatus.idUserStatus)
+            if (player.UserStatus_idUserStatus != statusId)
+            {
+                player.UserStatus_idUserStatus = statusId;
+                try
                 {
-                    player.UserStatus_idUserStatus = userStatus.idUserStatus;
-                    try
-                    {
-                        await context.SaveChangesAsync();
-                        _log.Debug($"User '{username}' status updated to '{status}'.");
-                    }
-                    catch (DbUpdateException dbEx)
-                    {
-                        _log.Error($"Database error updating status for user '{username}'.", dbEx);
-                        throw;
-                    }
+                    await _playerRepository.SaveChangesAsync();
+                    _log.Debug($"User '{username}' status updated to '{status}'.");
+                }
+                catch (Exception ex)
+                {
+                    _log.Error($"Error updating status for '{username}'.", ex);
                 }
             }
         }
 
         public async Task SendDirectMessageAsync(DirectMessageDto message)
         {
-            if (message == null || string.IsNullOrWhiteSpace(message.SenderUsername) ||
-                string.IsNullOrWhiteSpace(message.RecipientUsername) || string.IsNullOrWhiteSpace(message.Content))
+            if (message == null || string.IsNullOrWhiteSpace(message.Content))
             {
-                _log.Warn("SendDirectMessage failed: Invalid message data.");
-                throw new ArgumentException("The direct message contains invalid data.");
+                ThrowServiceFault(ServiceErrorType.OperationFailed, "Invalid message.");
             }
 
-            using (var dbContext = new GuessMyMessDBEntities())
+            var sender = await _playerRepository.GetPlayerByUsernameAsync(message.SenderUsername);
+            var recipient = await _playerRepository.GetPlayerByUsernameAsync(message.RecipientUsername);
+
+            if (sender == null || recipient == null)
             {
-                var sender = await dbContext.Player.FirstOrDefaultAsync(p => p.username == message.SenderUsername);
-                var recipient = await dbContext.Player.FirstOrDefaultAsync(p => p.username == message.RecipientUsername);
+                ThrowServiceFault(ServiceErrorType.NotFound, "Sender or recipient not found.");
+            }
 
-                if (sender == null || recipient == null)
-                {
-                    _log.Warn($"SendDirectMessage failed: Sender or recipient not found.");
-                    throw new InvalidOperationException("The sender or recipient of the message does not exist.");
-                }
+            var dbMessage = new DirectMessages
+            {
+                SenderPlayerID = sender.idPlayer,
+                RecipientPlayerID = recipient.idPlayer,
+                MessageContent = message.Content,
+                Timestamp = DateTime.UtcNow
+            };
 
-                var dbMessage = new DirectMessages
-                {
-                    SenderPlayerID = sender.idPlayer,
-                    RecipientPlayerID = recipient.idPlayer,
-                    MessageContent = message.Content,
-                    Timestamp = DateTime.UtcNow
-                };
+            _socialRepository.AddDirectMessage(dbMessage);
 
-                dbContext.DirectMessages.Add(dbMessage);
-
-                try
-                {
-                    await dbContext.SaveChangesAsync();
-                    message.Timestamp = dbMessage.Timestamp;
-                }
-                catch (DbUpdateException dbEx)
-                {
-                    _log.Error($"Database error saving direct message from '{message.SenderUsername}'.", dbEx);
-                    throw new InvalidOperationException("Failed to send message due to a storage error.", dbEx);
-                }
+            try
+            {
+                await _socialRepository.SaveChangesAsync();
+                message.Timestamp = dbMessage.Timestamp;
+            }
+            catch (Exception ex)
+            {
+                _log.Error($"Error sending message from '{message.SenderUsername}'.", ex);
+                ThrowServiceFault(ServiceErrorType.DatabaseError, "Could not send message.");
             }
         }
 
         public async Task<List<FriendDto>> GetConversationsAsync(string username)
         {
+            var user = await _playerRepository.GetPlayerByUsernameAsync(username);
+            if (user == null)
+            {
+                ThrowServiceFault(ServiceErrorType.NotFound, "User not found.");
+            }
+
             try
             {
-                using (var dbContext = new GuessMyMessDBEntities())
+                var usersWithChat = await _socialRepository.GetUsersWithConversationAsync(user.idPlayer);
+                return usersWithChat.Select(p => new FriendDto
                 {
-                    var user = await dbContext.Player.FirstOrDefaultAsync(p => p.username == username);
-                    if (user == null)
-                    {
-                        _log.Warn($"GetConversations failed: User '{username}' not found.");
-                        return new List<FriendDto>();
-                    }
-
-                    var userId = user.idPlayer;
-
-                    var counterpartIds = await dbContext.DirectMessages
-                        .Where(m => m.SenderPlayerID == userId || m.RecipientPlayerID == userId)
-                        .Select(m => m.SenderPlayerID == userId ? m.RecipientPlayerID : m.SenderPlayerID)
-                        .Distinct()
-                        .ToListAsync();
-
-                    const string OnlineStatus = "Online";
-
-                    return await dbContext.Player
-                        .Where(p => counterpartIds.Contains(p.idPlayer))
-                        .Select(p => new FriendDto
-                        {
-                            Username = p.username,
-                            IsOnline = p.UserStatus.status == OnlineStatus
-                        })
-                        .ToListAsync();
-                }
+                    Username = p.username,
+                    IsOnline = p.UserStatus?.status == OnlineStatusString
+                }).ToList();
             }
-            catch (EntityException ex)
+            catch (Exception ex)
             {
-                _log.Error($"Database error retrieving conversations for '{username}'.", ex);
-                throw;
+                _log.Error($"Error getting conversations for '{username}'.", ex);
+                ThrowServiceFault(ServiceErrorType.DatabaseError, "Could not retrieve conversations.");
+                return null;
             }
         }
 
         public async Task<List<DirectMessageDto>> GetConversationHistoryAsync(string user1, string user2)
         {
+            var p1 = await _playerRepository.GetPlayerByUsernameAsync(user1);
+            var p2 = await _playerRepository.GetPlayerByUsernameAsync(user2);
+
+            if (p1 == null || p2 == null)
+            {
+                return new List<DirectMessageDto>();
+            }
+
             try
             {
-                using (var dbContext = new GuessMyMessDBEntities())
+                var messages = await _socialRepository.GetConversationHistoryAsync(p1.idPlayer, p2.idPlayer);
+                return messages.Select(m => new DirectMessageDto
                 {
-                    var player1 = await dbContext.Player.FirstOrDefaultAsync(p => p.username == user1);
-                    var player2 = await dbContext.Player.FirstOrDefaultAsync(p => p.username == user2);
-
-                    if (player1 == null || player2 == null)
-                    {
-                        _log.Warn($"GetConversationHistory failed: One or both users not found.");
-                        return new List<DirectMessageDto>();
-                    }
-
-                    return await dbContext.DirectMessages
-                        .Where(m => (m.SenderPlayerID == player1.idPlayer && m.RecipientPlayerID == player2.idPlayer) ||
-                                    (m.SenderPlayerID == player2.idPlayer && m.RecipientPlayerID == player1.idPlayer))
-                        .OrderBy(m => m.Timestamp)
-                        .Select(m => new DirectMessageDto
-                        {
-                            SenderUsername = m.Player1.username,
-                            RecipientUsername = m.Player.username,
-                            Content = m.MessageContent,
-                            Timestamp = m.Timestamp
-                        })
-                        .ToListAsync();
-                }
+                    SenderUsername = m.Player1.username,
+                    RecipientUsername = m.Player.username,
+                    Content = m.MessageContent,
+                    Timestamp = m.Timestamp
+                }).ToList();
             }
-            catch (EntityException ex)
+            catch (Exception ex)
             {
-                _log.Error($"Database error retrieving history between '{user1}' and '{user2}'.", ex);
-                throw;
+                _log.Error("Error retrieving chat history.", ex);
+                ThrowServiceFault(ServiceErrorType.DatabaseError, "Could not retrieve chat history.");
+                return null;
             }
+        }
+
+        private void ThrowServiceFault(ServiceErrorType type, string message)
+        {
+            var fault = new ServiceFaultDto(type, message);
+            throw new FaultException<ServiceFaultDto>(fault, new FaultReason(message));
         }
     }
 }

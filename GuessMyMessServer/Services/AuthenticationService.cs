@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Data.Entity.Core;
 using System.ServiceModel;
 using System.Threading.Tasks;
+using Autofac; // Necesario para .Resolve
+using GuessMyMessServer.AppStart; // Necesario para Bootstrapper
 using GuessMyMessServer.BusinessLogic;
 using GuessMyMessServer.Contracts.DataContracts;
 using GuessMyMessServer.Contracts.ServiceContracts;
-using GuessMyMessServer.DataAccess;
-using GuessMyMessServer.Properties;
-using GuessMyMessServer.Properties.Langs;
-using GuessMyMessServer.Utilities;
-using GuessMyMessServer.Utilities.Email;
 using log4net;
 
 namespace GuessMyMessServer.Services
@@ -19,223 +15,45 @@ namespace GuessMyMessServer.Services
     {
         private static readonly ILog _log = LogManager.GetLogger(typeof(AuthenticationService));
 
+        // CAMBIO CLAVE: Usamos una propiedad para resolver una nueva instancia de la lógica
+        // (y un nuevo DbContext) cada vez que se accede. Esto evita problemas de concurrencia.
+        private AuthenticationLogic Logic => Bootstrapper.Container.Resolve<AuthenticationLogic>();
+
+        public AuthenticationService()
+        {
+            // Aseguramos que el contenedor esté inicializado al crear el servicio
+            Bootstrapper.Init();
+        }
+
         public async Task<OperationResultDto> LoginAsync(string emailOrUsername, string password)
         {
-            if (string.IsNullOrWhiteSpace(emailOrUsername) || string.IsNullOrWhiteSpace(password))
-            {
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.OperationFailed, Lang.Error_FieldsRequired),
-                    new FaultReason("Empty Credentials"));
-            }
-            try
-            {
-                using (var context = new GuessMyMessDBEntities())
-                {
-                    var emailService = new SmtpEmailService();
-                    var logic = new AuthenticationLogic(emailService, context);
-
-                    _log.Info($"Login attempt for: {emailOrUsername}");
-                    return await logic.LoginAsync(emailOrUsername, password);
-                }
-            }
-            catch (InvalidOperationException ex)
-            {
-                ServiceErrorType errorType = ServiceErrorType.OperationFailed;
-                string userMessage = Lang.Error_InvalidCredentials;
-
-                if (ex.Message.Contains("verified"))
-                {
-                    errorType = ServiceErrorType.AccountNotVerified;
-                    userMessage = Lang.Error_AccountNotVerified;
-                }
-                else if (ex.Message.Contains("credentials"))
-                {
-                    errorType = ServiceErrorType.InvalidCredentials;
-                    userMessage = Lang.Error_InvalidCredentials;
-                }
-
-                _log.Info($"Login logic rejection for '{emailOrUsername}': {ex.Message}");
-
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(errorType, userMessage),
-                    new FaultReason(userMessage));
-            }
-            catch (ArgumentException ex)
-            {
-                _log.Info($"Login validation failed: {ex.Message}");
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.OperationFailed, Lang.Error_FieldsRequired),
-                    new FaultReason("Validation Error"));
-            }
-            catch (EntityException ex)
-            {
-                _log.Fatal($"Database unavailable during login for '{emailOrUsername}'", ex);
-
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.DatabaseError, Lang.Error_DatabaseConnectionError),
-                    new FaultReason("Database Unavailable"));
-            }
-            catch (TimeoutException ex)
-            {
-                _log.Error($"Timeout during login for '{emailOrUsername}'", ex);
-
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.ConnectionTimeout, Lang.Error_ServerGeneric),
-                    new FaultReason("Service Timeout"));
-            }
-            catch (Exception ex)
-            {
-                _log.Fatal($"Unhandled exception in LoginAsync for '{emailOrUsername}'", ex);
-
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.Unknown, Lang.Error_ServerGeneric),
-                    new FaultReason("Internal Server Error"));
-            }
+            _log.Info($"Login request received for: {emailOrUsername}");
+            return await Logic.LoginAsync(emailOrUsername, password);
         }
 
         public async Task<OperationResultDto> RegisterAsync(UserProfileDto userProfile, string password)
         {
-            string usernameLog = userProfile?.Username ?? "Unknown";
-            if (userProfile == null)
-            {
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.OperationFailed, Lang.Error_FieldsRequired),
-                    new FaultReason("User profile is null"));
-            }
-            if (!InputValidator.IsValidEmail(userProfile.Email) ||
-                !InputValidator.IsPasswordSecure(password) ||
-                string.IsNullOrWhiteSpace(userProfile.Username))
-            {
-                _log.Warn($"Registration attempt with invalid data: {usernameLog}");
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.OperationFailed, Lang.Error_InvalidDataFormat), 
-                    new FaultReason("Invalid data (Email or Insecure Password)"));
-            }
-            try
-            {
-                using (var context = new GuessMyMessDBEntities())
-                {
-                    var emailService = new SmtpEmailService();
-                    var logic = new AuthenticationLogic(emailService, context);
-
-                    _log.Info($"Register attempt for user: {usernameLog}");
-                    return await logic.RegisterPlayerAsync(userProfile, password);
-                }
-            }
-            catch (InvalidOperationException ex)
-            {
-                ServiceErrorType errorType = ServiceErrorType.OperationFailed;
-                string userMessage = ex.Message;
-
-                if (ex.Message.Contains("username"))
-                {
-                    errorType = ServiceErrorType.UserAlreadyExists;
-                    userMessage = Lang.Error_UserAlreadyExists;
-                }
-                else if (ex.Message.Contains("email"))
-                {
-                    errorType = ServiceErrorType.EmailAlreadyRegistered;
-                    userMessage = Lang.Error_EmailAlreadyRegistered;
-                }
-
-                _log.Info($"Registration logic rejection for '{usernameLog}': {ex.Message}");
-
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(errorType, userMessage),
-                    new FaultReason(userMessage));
-            }
-            catch (ArgumentException ex)
-            {
-                _log.Info($"Registration validation failed: {ex.Message}");
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.OperationFailed, Lang.Error_FieldsRequired),
-                    new FaultReason("Validation Error"));
-            }
-            catch (EntityException ex)
-            {
-                _log.Fatal($"Database unavailable during registration for '{usernameLog}'", ex);
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.DatabaseError, Lang.Error_DatabaseConnectionError),
-                    new FaultReason("Database Unavailable"));
-            }
-            catch (Exception ex)
-            {
-                _log.Fatal($"Unhandled exception in RegisterAsync for '{usernameLog}'", ex);
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.Unknown, Lang.Error_ServerGeneric),
-                    new FaultReason("Internal Server Error"));
-            }
+            _log.Info($"Registration request received for: {userProfile?.Username ?? "Unknown"}");
+            return await Logic.RegisterPlayerAsync(userProfile, password);
         }
 
         public async Task<OperationResultDto> VerifyAccountAsync(string email, string verificationCode)
         {
-            try
-            {
-                using (var context = new GuessMyMessDBEntities())
-                {
-                    var emailService = new SmtpEmailService();
-                    var logic = new AuthenticationLogic(emailService, context);
-
-                    return await logic.VerifyAccountAsync(email, verificationCode);
-                }
-            }
-            catch (InvalidOperationException ex)
-            {
-                _log.Info($"Verification logic rejection for '{email}': {ex.Message}");
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.OperationFailed, Lang.Error_InvalidOrExpiredCode),
-                    new FaultReason("Verification Failed"));
-            }
-            catch (EntityException ex)
-            {
-                _log.Fatal($"Database unavailable during verification for '{email}'", ex);
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.DatabaseError, Lang.Error_DatabaseConnectionError),
-                    new FaultReason("Database Unavailable"));
-            }
-            catch (Exception ex)
-            {
-                _log.Fatal($"Unhandled exception in VerifyAccountAsync for '{email}'", ex);
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.Unknown, Lang.Error_ServerGeneric),
-                    new FaultReason("Internal Server Error"));
-            }
+            _log.Info($"Account verification request for: {email}");
+            return await Logic.VerifyAccountAsync(email, verificationCode);
         }
 
-        public void LogOut(string username)
+        public async Task<OperationResultDto> LoginAsGuestAsync(string email, string code)
         {
-            try
-            {
-                using (var context = new GuessMyMessDBEntities())
-                {
-                    var emailService = new SmtpEmailService();
-                    var logic = new AuthenticationLogic(emailService, context);
-                    logic.LogOut(username);
-                    _log.Info($"User {username} logged out successfully.");
-                }
-            }
-            catch (Exception ex)
-            {
-                _log.Warn($"Error in LogOut (OneWay) for user '{username}': {ex.Message}", ex);
-            }
+            _log.Info($"Guest login request for match code: {code}");
+            return await Logic.LoginAsGuestAsync(email, code);
         }
 
-        public Task<OperationResultDto> LoginAsGuestAsync(string email, string code) 
+        public async void LogOut(string username)
         {
-            try
-            {
-                var logic = new AuthenticationLogic(new SmtpEmailService(), null);
-                var result = logic.LoginAsGuest(email, code);
-                _log.Info($"Guest logged in: {email}");
-                return Task.FromResult(result);
-            }
-            catch (Exception ex)
-            {
-                _log.Warn($"Guest login failed: {ex.Message}");
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.InvalidCredentials, Lang.Error_InvalidInviteCode),
-                    new FaultReason("Guest Login Failed"));
-            }
+            // Nota: LogOut suele ser void/OneWay, así que usamos async void y capturamos excepciones internamente si fuera necesario,
+            // pero AuthenticationLogic.LogOutAsync ya maneja excepciones internamente.
+            await Logic.LogOutAsync(username);
         }
 
         public Task<OperationResultDto> SendPasswordRecoveryCodeAsync(string email)

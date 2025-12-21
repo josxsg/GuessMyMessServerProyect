@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity.Core;
+﻿using System.Collections.Generic;
 using System.ServiceModel;
 using System.Threading.Tasks;
+using Autofac;
+using GuessMyMessServer.AppStart;
 using GuessMyMessServer.BusinessLogic;
 using GuessMyMessServer.Contracts.DataContracts;
 using GuessMyMessServer.Contracts.ServiceContracts;
-using GuessMyMessServer.DataAccess;
-using GuessMyMessServer.Properties;
-using GuessMyMessServer.Properties.Langs;
-using GuessMyMessServer.Utilities.Email;
 using log4net;
 
 namespace GuessMyMessServer.Services
@@ -19,267 +15,66 @@ namespace GuessMyMessServer.Services
     {
         private static readonly ILog _log = LogManager.GetLogger(typeof(UserProfileService));
 
+        // Propiedad para resolver la lógica bajo demanda (Nuevo DbContext por llamada)
+        private UserProfileLogic Logic => Bootstrapper.Container.Resolve<UserProfileLogic>();
+
+        // Constructor para WCF
         public UserProfileService()
         {
+            Bootstrapper.Init();
+        }
+
+        // Constructor para Inyección
+        public UserProfileService(UserProfileLogic profileLogic)
+        {
+            // No asignamos nada para forzar el uso de la propiedad Logic y el contenedor
         }
 
         public async Task<UserProfileDto> GetUserProfileAsync(string username)
         {
-            try
-            {
-                using (var context = new GuessMyMessDBEntities())
-                {
-                    var emailService = new SmtpEmailService();
-                    var logic = new UserProfileLogic(emailService, context);
-                    return await logic.GetUserProfileAsync(username);
-                }
-            }
-            catch (InvalidOperationException)
-            {
-                _log.Warn($"GetUserProfileAsync: User '{username}' not found.");
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.NotFound, Lang.Error_UserNotFound),
-                    new FaultReason(Lang.Error_UserNotFound));
-            }
-            catch (Exception ex)
-            {
-                _log.Error($"Error getting user profile for '{username}'", ex);
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.Unknown, Lang.Error_ServerGeneric),
-                    new FaultReason("Server Error"));
-            }
+            _log.Info($"Request GetUserProfile for: {username}");
+            return await Logic.GetUserProfileAsync(username);
         }
 
         public async Task<OperationResultDto> UpdateProfileAsync(string username, UserProfileDto profileData)
         {
-            try
-            {
-                using (var context = new GuessMyMessDBEntities())
-                {
-                    var emailService = new SmtpEmailService();
-                    var logic = new UserProfileLogic(emailService, context);
-                    return await logic.UpdateProfileAsync(username, profileData);
-                }
-            }
-            catch (ArgumentNullException)
-            {
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.OperationFailed, Lang.Error_FieldsRequired),
-                    new FaultReason("Validation Error"));
-            }
-            catch (InvalidOperationException ex)
-            {
-                _log.Warn($"UpdateProfileAsync failed for '{username}': {ex.Message}");
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.NotFound, Lang.Error_UserNotFound),
-                    new FaultReason("User Not Found"));
-            }
-            catch (Exception ex)
-            {
-                _log.Error($"Error updating profile for '{username}'", ex);
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.Unknown, Lang.Error_ServerGeneric),
-                    new FaultReason("Server Error"));
-            }
+            _log.Info($"Request UpdateProfile for: {username}");
+            return await Logic.UpdateProfileAsync(username, profileData);
         }
 
         public async Task<OperationResultDto> AddOrUpdateSocialNetworkAsync(string username, SocialNetworkDto socialNetwork)
         {
-            try
-            {
-                using (var context = new GuessMyMessDBEntities())
-                {
-                    var emailService = new SmtpEmailService(); 
-                    var logic = new UserProfileLogic(emailService, context);
-                    return await logic.AddOrUpdateSocialNetworkAsync(username, socialNetwork);
-                }
-            }
-            catch (InvalidOperationException ex)
-            {
-                ServiceErrorType type = ex.Message.Contains("no es válida")
-                    ? ServiceErrorType.OperationFailed
-                    : ServiceErrorType.NotFound;
-
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(type, ex.Message),
-                    new FaultReason(ex.Message));
-            }
-            catch (Exception ex)
-            {
-                _log.Error($"Error en AddOrUpdateSocialNetworkAsync para {username}", ex);
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.Unknown, Lang.Error_ServerGeneric),
-                    new FaultReason("Error interno del servidor."));
-            }
-        }
-
-        public async Task<OperationResultDto> RequestChangeEmailAsync(string username, string newEmail)
-        {
-            try
-            {
-                using (var context = new GuessMyMessDBEntities())
-                {
-                    var emailService = new SmtpEmailService();
-                    var logic = new UserProfileLogic(emailService, context);
-                    return await logic.RequestChangeEmailAsync(username, newEmail);
-                }
-            }
-            catch (ArgumentException)
-            {
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.OperationFailed, Lang.Error_EmailFormat),
-                    new FaultReason("Invalid Email"));
-            }
-            catch (InvalidOperationException ex)
-            {
-                ServiceErrorType errorType = ServiceErrorType.OperationFailed;
-                string message = ex.Message;
-
-                if (ex.Message.Contains("registered"))
-                {
-                    errorType = ServiceErrorType.EmailAlreadyRegistered;
-                    message = Lang.Error_EmailAlreadyRegistered;
-                }
-                else
-                {
-                    errorType = ServiceErrorType.NotFound;
-                    message = Lang.Error_UserNotFound;
-                }
-
-                _log.Info($"RequestChangeEmail denied for '{username}': {ex.Message}");
-
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(errorType, message),
-                    new FaultReason(message));
-            }
-            catch (Exception ex)
-            {
-                _log.Error($"Error requesting email change for '{username}'", ex);
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.Unknown, Lang.Error_EmailSendFailed),
-                    new FaultReason("Server Error"));
-            }
-        }
-
-        public async Task<OperationResultDto> ConfirmChangeEmailAsync(string username, string verificationCode)
-        {
-            try
-            {
-                using (var context = new GuessMyMessDBEntities())
-                {
-                    var emailService = new SmtpEmailService();
-                    var logic = new UserProfileLogic(emailService, context);
-                    return await logic.ConfirmChangeEmailAsync(username, verificationCode);
-                }
-            }
-            catch (InvalidOperationException ex)
-            {
-                string message = Lang.Error_InvalidOrExpiredCode;
-                if (ex.Message.Contains("taken") || ex.Message.Contains("registered"))
-                {
-                    message = Lang.Error_EmailAlreadyRegistered;
-                }
-
-                _log.Info($"ConfirmChangeEmail failed for '{username}': {ex.Message}");
-
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.OperationFailed, message),
-                    new FaultReason("Operation Failed"));
-            }
-            catch (Exception ex)
-            {
-                _log.Error($"Error confirming email change for '{username}'", ex);
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.Unknown, Lang.Error_ServerGeneric),
-                    new FaultReason("Server Error"));
-            }
-        }
-
-        public async Task<OperationResultDto> RequestChangePasswordAsync(string username)
-        {
-            try
-            {
-                using (var context = new GuessMyMessDBEntities())
-                {
-                    var emailService = new SmtpEmailService();
-                    var logic = new UserProfileLogic(emailService, context);
-                    return await logic.RequestChangePasswordAsync(username);
-                }
-            }
-            catch (InvalidOperationException ex)
-            {
-                _log.Warn($"RequestChangePassword failed: {ex.Message}");
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.NotFound, Lang.Error_UserNotFound),
-                    new FaultReason("User Not Found"));
-            }
-            catch (Exception ex)
-            {
-                _log.Error($"Error requesting password change for '{username}'", ex);
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.Unknown, Lang.Error_EmailSendFailed),
-                    new FaultReason("Server Error"));
-            }
-        }
-
-        public async Task<OperationResultDto> ConfirmChangePasswordAsync(string username, string newPassword, string verificationCode)
-        {
-            try
-            {
-                using (var context = new GuessMyMessDBEntities())
-                {
-                    var emailService = new SmtpEmailService();
-                    var logic = new UserProfileLogic(emailService, context);
-                    return await logic.ConfirmChangePasswordAsync(username, newPassword, verificationCode);
-                }
-            }
-            catch (ArgumentException)
-            {
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.OperationFailed, Lang.Error_PasswordInsecure),
-                    new FaultReason("Validation Error"));
-            }
-            catch (InvalidOperationException ex)
-            {
-                string message = Lang.Error_InvalidOrExpiredCode;
-                if (ex.Message.Contains("found"))
-                {
-                    message = Lang.Error_UserNotFound;
-                }
-
-                _log.Info($"ConfirmChangePassword failed for '{username}': {ex.Message}");
-
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.OperationFailed, message),
-                    new FaultReason("Operation Failed"));
-            }
-            catch (Exception ex)
-            {
-                _log.Error($"Error confirming password change for '{username}'", ex);
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.Unknown, Lang.Error_ServerGeneric),
-                    new FaultReason("Server Error"));
-            }
+            _log.Info($"Request Add/Update SocialNetwork ({socialNetwork?.NetworkType}) for: {username}");
+            return await Logic.AddOrUpdateSocialNetworkAsync(username, socialNetwork);
         }
 
         public async Task<List<AvatarDto>> GetAvailableAvatarsAsync()
         {
-            try
-            {
-                using (var context = new GuessMyMessDBEntities())
-                {
-                    var emailService = new SmtpEmailService();
-                    var logic = new UserProfileLogic(emailService, context);
-                    return await logic.GetAvailableAvatarsAsync();
-                }
-            }
-            catch (Exception ex)
-            {
-                _log.Error("Error getting available avatars.", ex);
-                throw new FaultException<ServiceFaultDto>(
-                    new ServiceFaultDto(ServiceErrorType.Unknown, Lang.Error_ServerGeneric),
-                    new FaultReason("Server Error"));
-            }
+            return await Logic.GetAvailableAvatarsAsync();
+        }
+
+        public async Task<OperationResultDto> RequestChangeEmailAsync(string username, string newEmail)
+        {
+            _log.Info($"Request ChangeEmail for: {username}");
+            return await Logic.RequestChangeEmailAsync(username, newEmail);
+        }
+
+        public async Task<OperationResultDto> ConfirmChangeEmailAsync(string username, string verificationCode)
+        {
+            _log.Info($"Request ConfirmChangeEmail for: {username}");
+            return await Logic.ConfirmChangeEmailAsync(username, verificationCode);
+        }
+
+        public async Task<OperationResultDto> RequestChangePasswordAsync(string username)
+        {
+            _log.Info($"Request ChangePassword for: {username}");
+            return await Logic.RequestChangePasswordAsync(username);
+        }
+
+        public async Task<OperationResultDto> ConfirmChangePasswordAsync(string username, string newPassword, string verificationCode)
+        {
+            _log.Info($"Request ConfirmChangePassword for: {username}");
+            return await Logic.ConfirmChangePasswordAsync(username, newPassword, verificationCode);
         }
     }
 }
