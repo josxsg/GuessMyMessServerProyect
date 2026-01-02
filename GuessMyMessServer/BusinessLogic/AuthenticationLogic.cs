@@ -66,6 +66,13 @@ namespace GuessMyMessServer.BusinessLogic
             }
 
             const int StatusOnline = 2;
+            const int StatusInGame = 3;
+
+            if (player.UserStatus_idUserStatus == StatusOnline || player.UserStatus_idUserStatus == StatusInGame)
+            {
+                _log.Warn($"Login denied: User '{player.username}' is already logged in.");
+                return new OperationResultDto { Success = false, Message = "UserAlreadyLoggedIn" };
+            }
             player.UserStatus_idUserStatus = StatusOnline;
 
             try

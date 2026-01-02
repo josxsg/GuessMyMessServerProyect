@@ -18,14 +18,11 @@ namespace GuessMyMessServer.Services
         private static readonly ILog _log = LogManager.GetLogger(typeof(GameService));
         private readonly IGameServiceCallback _callback;
 
-        // Variables de sesión
         private string _connectedUsername;
         private string _connectedMatchId;
 
-        // Propiedad para resolver la lógica bajo demanda
         private GameLogic Logic => Bootstrapper.Container.Resolve<GameLogic>();
 
-        // Constructor WCF (Predeterminado)
         public GameService()
         {
             Bootstrapper.Init();
@@ -46,7 +43,6 @@ namespace GuessMyMessServer.Services
             {
                 _connectedUsername = username;
                 _connectedMatchId = matchId;
-                // Usamos la propiedad Logic
                 Logic.ConnectPlayer(username, matchId, _callback);
             }
             catch (Exception ex) { _log.Error($"Error connecting player", ex); }
@@ -54,13 +50,18 @@ namespace GuessMyMessServer.Services
 
         public void Disconnect(string username, string matchId)
         {
-            if (ValidateSession(username)) PerformDisconnect();
+            if (ValidateSession(username))
+            {
+                PerformDisconnect(isCrash: false);
+            }
         }
 
         public void SelectWord(string username, string matchId, string selectedWord)
         {
             if (ValidateSession(username))
+            {
                 Logic.RegisterSelectedWord(username, matchId, selectedWord);
+            }
         }
 
         public async Task<List<WordDto>> GetRandomWordsAsync()
@@ -105,19 +106,26 @@ namespace GuessMyMessServer.Services
 
         private bool ValidateSession(string username) => _connectedUsername == username;
 
-        private void PerformDisconnect()
+        private void PerformDisconnect(bool isCrash)
         {
             if (!string.IsNullOrEmpty(_connectedUsername))
             {
-                // Usamos Logic para desconectar
-                Logic.DisconnectPlayer(_connectedUsername, _connectedMatchId);
+                if (isCrash)
+                {
+                    Logic.ForceDisconnection(_connectedUsername, _connectedMatchId);
+                }
+                else
+                {
+                    Logic.DisconnectPlayer(_connectedUsername, _connectedMatchId);
+                }
+
                 _connectedUsername = null;
             }
         }
 
         private void Channel_FaultedOrClosed(object sender, EventArgs e)
         {
-            PerformDisconnect();
+            PerformDisconnect(isCrash: true);
         }
     }
 }

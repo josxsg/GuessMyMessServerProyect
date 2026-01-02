@@ -90,16 +90,39 @@ namespace GuessMyMessServer.BusinessLogic
         public void DisconnectPlayer(string username, string matchId)
         {
             _connectedPlayers.TryRemove(username, out _);
-
+            bool shouldEndMatch = false;
             bool shouldClear = false;
             lock (_gameStateLock)
             {
                 if (matchId != null && _matches.TryGetValue(matchId, out var match))
                 {
-                    match.Players.Remove(username);
-                    if (match.Players.Count == 0)
+
+                    if (match.Players.Contains(username))
                     {
-                        shouldClear = true;
+                        match.Players.Remove(username);
+                        match.Scores.RemoveAll(s => s.Username == username);
+                        if (match.PlayerSelectedWords.ContainsKey(username))
+                        {
+                            match.PlayerSelectedWords.Remove(username);
+                        }
+
+                        if (match.Players.Count > 0)
+                        {
+                            BroadcastToMatch(matchId, c => c.OnInGameMessageReceived("SYSTEM", $"SYSTEM_LEAVE|{username}"));
+                        }
+
+                        if (match.Players.Count == 0)
+                        {
+                            shouldClear = true;
+                        }
+                        else if (match.Players.Count < 2 && match.Phase != MatchPhase.Finished && match.Phase != MatchPhase.NotStarted)
+                        {
+                            shouldEndMatch = true;
+                        }
+                        else
+                        {
+                            CheckPhaseProgressionAfterDisconnect(match, username);
+                        }
                     }
                 }
             }
@@ -113,6 +136,72 @@ namespace GuessMyMessServer.BusinessLogic
                 }
                 _log.Info($"GameLogic: Match {matchId} removed from memory (empty).");
             }
+            else if (shouldEndMatch)
+            {
+                Task.Run(async () =>
+                {
+                    BroadcastToMatch(matchId, c => c.OnInGameMessageReceived("SYSTEM", "SYSTEM_NOT_ENOUGH_PLAYERS"));
+                    await NotifyGameEndAsync(matchId);
+                });
+            }
+        }
+
+        private void CheckPhaseProgressionAfterDisconnect(MatchState match, string leaverUsername)
+        {
+            if (match.Phase == MatchPhase.Drawing)
+            {
+                int validDrawings = match.Drawings.Count(d => match.Players.Contains(d.OwnerUsername));
+
+                if (validDrawings >= match.Players.Count && match.Players.Count > 0)
+                {
+                    _log.Info($"Disconnect triggered end of Drawing phase in match {match.MatchId}");
+                    NotifyGuessingPhaseStart(match.MatchId);
+                }
+            }
+            else if (match.Phase == MatchPhase.Guessing)
+            {
+                if (match.CurrentDrawingIndex < match.Drawings.Count)
+                {
+                    var currentDrawing = match.Drawings[match.CurrentDrawingIndex];
+
+                    if (currentDrawing.OwnerUsername == leaverUsername)
+                    {
+                        _log.Info($"Artist left in match {match.MatchId}. Skipping drawing.");
+                        Task.Run(() => GoToNextDrawingOrAnswersPhase(match.MatchId));
+                    }
+                    else
+                    {
+                        CheckDrawingCompletion(match, currentDrawing.DrawingId);
+                    }
+                }
+            }
+        }
+
+        public void ForceDisconnection(string username, string matchId)
+        {
+            const int StatusOffline = 1;
+            DisconnectPlayer(username, matchId);
+            UpdateUserStatus(username, StatusOffline); 
+        }
+
+        private void UpdateUserStatus(string username, int statusId)
+        {
+            Task.Run(async () =>
+            {
+                try
+                {
+                    var player = await _playerRepository.GetPlayerByUsernameAsync(username);
+                    if (player != null)
+                    {
+                        player.UserStatus_idUserStatus = statusId;
+                        await _playerRepository.SaveChangesAsync();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _log.Error($"Error updating status for {username} to {statusId}", ex);
+                }
+            });
         }
 
         public async Task StartGameAsync(string matchId, int totalRounds, List<string> playersFromLobby)
@@ -223,7 +312,8 @@ namespace GuessMyMessServer.BusinessLogic
                     });
                 }
 
-                if (match.Drawings.Count >= match.Players.Count && match.Players.Count > 0)
+                int validDrawings = match.Drawings.Count(d => match.Players.Contains(d.OwnerUsername));
+                if (validDrawings >= match.Players.Count && match.Players.Count > 0)
                 {
                     allDrawingsReceived = true;
                 }
@@ -250,12 +340,16 @@ namespace GuessMyMessServer.BusinessLogic
                 match.CurrentDrawingIndex = 0;
                 match.Guesses.Clear();
 
-                firstDrawing = match.Drawings.FirstOrDefault();
+                firstDrawing = match.Drawings.FirstOrDefault(d => match.Players.Contains(d.OwnerUsername));
             }
 
             if (firstDrawing != null)
             {
                 BroadcastToMatch(matchId, c => c.OnGuessingPhaseStart(firstDrawing));
+            }
+            else
+            {
+                Task.Run(() => GoToNextDrawingOrAnswersPhase(matchId));
             }
         }
 
@@ -331,7 +425,7 @@ namespace GuessMyMessServer.BusinessLogic
             }
 
             int totalPlayers = match.Players.Count;
-            int guessesForThisDrawing = match.Guesses.Count(g => g.DrawingId == currentDrawingId);
+            int guessesForThisDrawing = match.Guesses.Count(g => g.DrawingId == currentDrawingId && match.Players.Contains(g.GuesserUsername));
 
             if (guessesForThisDrawing >= (totalPlayers - 1))
             {
@@ -358,11 +452,18 @@ namespace GuessMyMessServer.BusinessLogic
 
                 match.CurrentDrawingIndex++;
 
-                if (match.CurrentDrawingIndex < match.Drawings.Count)
+                while (match.CurrentDrawingIndex < match.Drawings.Count)
                 {
-                    nextDrawing = match.Drawings[match.CurrentDrawingIndex];
+                    var candidate = match.Drawings[match.CurrentDrawingIndex];
+                    if (match.Players.Contains(candidate.OwnerUsername))
+                    {
+                        nextDrawing = candidate;
+                        break;
+                    }
+                    match.CurrentDrawingIndex++;
                 }
-                else
+
+                if (nextDrawing == null)
                 {
                     shouldStartAnswers = true;
                 }
@@ -380,6 +481,8 @@ namespace GuessMyMessServer.BusinessLogic
 
         private void StartAnswersPhase(string matchId)
         {
+            const int FiveSeconds = 5;
+            const int FifteenSeconds = 15;
             MatchState snapshot;
             lock (_gameStateLock)
             {
@@ -389,11 +492,20 @@ namespace GuessMyMessServer.BusinessLogic
                 }
                 match.Phase = MatchPhase.Answers;
 
+                var activeDrawings = match.Drawings
+                    .Where(d => match.Players.Contains(d.OwnerUsername))
+                    .ToList();
+
+                var activeGuesses = match.Guesses
+                    .Where(g => match.Players.Contains(g.GuesserUsername) &&
+                                activeDrawings.Any(d => d.DrawingId == g.DrawingId))
+                    .ToList();
+
                 snapshot = new MatchState
                 {
-                    Drawings = new List<DrawingDto>(match.Drawings),
-                    Guesses = new List<GuessDto>(match.Guesses),
-                    Scores = new List<PlayerScoreDto>(match.Scores),
+                    Drawings = activeDrawings, 
+                    Guesses = activeGuesses,   
+                    Scores = new List<PlayerScoreDto>(match.Scores), 
                     CurrentRound = match.CurrentRound
                 };
             }
@@ -404,7 +516,7 @@ namespace GuessMyMessServer.BusinessLogic
                 snapshot.Scores.ToArray()));
 
             int totalItems = snapshot.Drawings.Count + snapshot.Guesses.Count;
-            int delaySeconds = (totalItems * 5) + 15;
+            int delaySeconds = (totalItems * FiveSeconds) + FifteenSeconds;
 
             StartTimer(matchId, TimerCallback, new Tuple<string, int>(matchId, snapshot.CurrentRound), delaySeconds);
         }
@@ -588,12 +700,13 @@ namespace GuessMyMessServer.BusinessLogic
 
         private void StartTimer(string matchId, TimerCallback callback, object state, int delaySeconds)
         {
+            const int OneThousand = 1000;
             lock (_gameStateLock)
             {
                 if (_matches.TryGetValue(matchId, out var match))
                 {
                     match.DisposeTimer();
-                    match.GameTimer = new Timer(callback, state, delaySeconds * 1000, Timeout.Infinite);
+                    match.GameTimer = new Timer(callback, state, delaySeconds * OneThousand, Timeout.Infinite);
                 }
             }
         }

@@ -6,6 +6,7 @@ using GuessMyMessServer.DataAccess.Repositories;
 using GuessMyMessServer.Services; 
 using GuessMyMessServer.Utilities.Email;
 using System;
+using System.Linq;
 
 namespace GuessMyMessServer.AppStart
 {
@@ -30,8 +31,8 @@ namespace GuessMyMessServer.AppStart
                     RegisterDataAccess(builder);
                     RegisterUtilities(builder);
                     RegisterBusinessLogic(builder);
-                    RegisterServices(builder); 
-
+                    RegisterServices(builder);
+                    ResetAllUsersToOffline();
                     Container = builder.Build();
                     _isInitialized = true;
                 }
@@ -89,6 +90,28 @@ namespace GuessMyMessServer.AppStart
 
             builder.RegisterType<GameService>()
                 .As<Contracts.ServiceContracts.IGameService>();
+        }
+
+        private static void ResetAllUsersToOffline()
+        {
+            using (var context = new GuessMyMessDBEntities())
+            {
+                const int StatusOffline = 1;
+
+                var onlineUsers = context.Player
+                    .Where(p => p.UserStatus_idUserStatus != StatusOffline)
+                    .ToList();
+
+                if (onlineUsers.Any())
+                {
+                    foreach (var user in onlineUsers)
+                    {
+                        user.UserStatus_idUserStatus = StatusOffline;
+                    }
+
+                    context.SaveChanges();
+                }
+            }
         }
     }
 }
