@@ -1,5 +1,7 @@
-﻿C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\BusinessLogic\AuthenticationLogic.cs
+﻿C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\AppStart\Bootstrapper.cs
+C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\BusinessLogic\AuthenticationLogic.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\BusinessLogic\GameLogic.cs
+C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\BusinessLogic\GuestInvite.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\BusinessLogic\LobbyLogic.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\BusinessLogic\MatchmakingLogic.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\BusinessLogic\SocialLogic.cs
@@ -9,6 +11,7 @@ C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\Gue
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\DirectMessageDto.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\DrawingDto.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\FriendDto.cs
+C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\FriendProfileDto.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\FriendRequestInfoDto.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\GuessDto.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\LobbySettingsDto.cs
@@ -16,6 +19,8 @@ C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\Gue
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\MatchInfoDto.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\OperationResultDto.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\PlayerScoreDto.cs
+C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\Shared\ServiceErrorType.cs
+C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\Shared\ServiceFaultDto.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\SocialNetworkDto.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\UserProfileDto.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\WordDto.cs
@@ -25,6 +30,12 @@ C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\Gue
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\ServiceContracts\IMatchmakingService.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\ServiceContracts\ISocialService.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\ServiceContracts\IUserProfileService.cs
+C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Abstractions\IAvatarRepository.cs
+C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Abstractions\IMatchRepository.cs
+C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Abstractions\IPlayerRepository.cs
+C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Abstractions\ISocialNetworkRepository.cs
+C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Abstractions\ISocialRepository.cs
+C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Abstractions\IWordRepository.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Avatar.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\DirectMessages.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Drawing.cs
@@ -36,6 +47,12 @@ C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\Gue
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\MatchDifficulty.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\MatchHistory.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Player.cs
+C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Repositories\AvatarRepository.cs
+C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Repositories\MatchRepository.cs
+C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Repositories\PlayerRepository.cs
+C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Repositories\SocialNetworkRepository.cs
+C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Repositories\SocialRepository.cs
+C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Repositories\WordRepository.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\SocialNetwork.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\TypeSocialNetwork.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\UserStatus.cs
@@ -50,10 +67,12 @@ C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\Gue
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Services\MatchmakingService.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Services\SocialService.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Services\UserProfileService.cs
+C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\BadWordValidator.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\Email\IEmailService.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\Email\IEmailTemplate.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\Email\SmtpEmailService.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\Email\Templates\EmailChangeVerificationEmailTemplate.cs
+C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\Email\Templates\InvitationForMatchEmailTemplate.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\Email\Templates\PasswordChangeVerificationEmailTemplate.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\Email\Templates\VerificationEmailTemplate.cs
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\InputValidator.cs
@@ -68,7 +87,10 @@ C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\Gue
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Resources\Images\Avatars\Shark.png
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Resources\Images\Avatars\Toucan.png
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Resources\Images\Avatars\Zebra.png
+C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Properties\Langs\Lang.resx
+C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Properties\Langs\Lang.es.resx
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\GuessMyMessDB.edmx
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\App.config
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\GuessMyMessDB.edmx.diagram
 C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\packages.config
+C:\Users\Gabriela\Desktop\Rodrigo\5°Semestre\TecnologíasParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Properties\Settings.settings

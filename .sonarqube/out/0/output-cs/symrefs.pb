@@ -1,190 +1,63 @@
-ã
-ÆC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\Email\Templates\VerificationEmailTemplate.cs
+∫
 
-		 *
+èC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Services\GameService.cs
+ H S(
+% )00# 'KK hh# '
+. 7 ..7 @F
+ ),, "kk9 Koo& 8ss- ?ww+ =zz "(
+ (-- !ssA Rww? Pd
+ .. ?? GG "SS YY __ ff ss ww 
+!! - $
+## #$$ %% 
 
- 
-  
-0 8T \
-A QZ jñ
-πC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\Email\Templates\EmailChangeVerificationEmailTemplate.cs
+(( 
+((# +,,% -..$ ,
+((4 ;--$ +... 5
 
-		 5
+33 
+33& .55  (
 
- 
-  
-; C: B
-L \Z j¿
-ôC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\Email\IEmailTemplate.cs
+337 >
 
-		 #
+;; 
+;;& .==  (??+ 3
+;;7 >??5 <
+;;G S??> J
 
- 
+CC) <
+CCD LGG7 ?
 
- Û
-ëC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Services\SocialService.cs
+PP !
+PP) 1RR  (SS! )
+PP: ASS+ 2
+PPJ USS4 ?
 
- †
-% 1 $ 0}} &
-óó &
-•• )
-±± )
-ΩΩ )
-…… "
-‹‹ "
-ˇˇ "
-ëë "
-§§ )
-∞∞ )ﬁ
-K [)) "-- (<<E U?? $mm "oo %qq $uu $
-éé "
-êê  
-ÃÃ &
-ŒŒ $
-ﬂﬂ &
-·· $
-ÎÎ *
-ÌÌ, <
-ÓÓ) 9
-îî &
-ññ $ 
- 3~~ 2
-òò 2(
-; CE M//Z b88M U
-L R//d j
- ( ++/ >
- " )
-1 26 7
-'' (33 +<</ >
---M U//@ H
-// $11 $
-DD -//' ?
-DDE MII P
-DDV dHH/ =JJ: HOO5 CSS5 CWW5 C[[7 E__= K
-DDm {HHF TII4 B 
+VV 
+VV' /XX  (YY# +
+VV8 ?YY- 4
+VVE NYY6 ?
+VVW \YYA F
 
-DDÑ äHHX ^IID J
+\\ )
+\\1 9^^  (__+ 3
+\\B I__5 <
+\\R Y__> E
 
-ee F
-ee# +gg% -oo2 :qq) 1uu% -}}? G~~3 ;
-ll qq3 ;uu1 9
+bb #
+bb+ 2ff+ 2
+bb8 Cff4 ?
+bbR affA P<
+kk $55 == RR XX ^^ 
+kk, 4kkO W 
+mm &77 !
+ÄÄ *
+mm, 377" )qq 
+ÄÄ %
+~~ ,$$ 6%% 5
 
-áá <
+~~4 :
 
-áá& .
-ââ% -
-êê( 0
-óó? G
-òò3 ;
-
-°°+ >
-
-°°F N
-••> F
-
-≠≠6 L
-
-≠≠T \
-±±A I
-
-ππ0 @
-
-ππH V
-ΩΩ; I
-
-ππ_ p
-ΩΩK \
-
-≈≈ +$
-
-≈≈3 D
-……: K
-––. ?$
-
-≈≈M [
-……M [
-ŒŒ1 ?$
-
-ÀÀ' /
-ŒŒE M
-–– 
-
-ÿÿ 0<
-
-ÿÿ8 F
-‹‹? M
-„„8 F
-ÓÓF T
-ÒÒA O<
-
-ÿÿO `
-‹‹O `
-··1 B
-ÌÌI Z
-ÚÚ> O0
-
-ÿÿg o
-‹‹b j
-„„H P
-ÂÂ 0
-
-ﬁﬁ' 8
-··H Y
-„„ !
-ÒÒ %$
-
-ÁÁ *
-ÌÌ )
-ÚÚQ b$
-
-ËË '
-ÓÓ &
-ÒÒQ _$
-
-ÈÈ+ 9
-ÓÓZ h
-ÚÚ "
-
-˚˚ &
-
-˚˚. 6
-ˇˇ5 =
-
-˚˚? M
-ˇˇ? M
-
-áá +H
-
-áá= D
-ââ 
-ââ8 ?
-ëë: A
-ññ1 8
-òò0 7$
-
-ìì' /
-ññP X
-òò 
-
-††+ @
-
-††H P
-§§@ H
-
-¨¨2 M
-
-¨¨U Z
-∞∞F K
-
-¨¨c h
-∞∞M R
-
-∏∏( F
-
-∏∏N Z
-
-∏∏c n
-∏∏w Ä◊
+~~F G◊
 òC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\Email\IEmailService.cs
 
 		 "
@@ -195,7 +68,116 @@
 
 : G
 
-X `ô
+X `ÿ
+ñC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Services\UserProfileService.cs
+ #H ZZ
+% )## )) // :: @@ FF LL RR d
+! &$$ ** 00 55 ;; AA GG MM SS 
+
+3 ?
+
+!!* =
+!!E M##5 =$$3 ;
+
+''. @
+''H P))4 <**2 :
+''a l**< G
+
+--. K
+--S [//^ f00= E
+--n {//; H00G T
+
+33+ C
+
+88. E
+88M U::2 :;;7 ?
+88^ f;;A I
+
+>>. E
+>>M U@@9 AAA7 ?
+>>^ nAAA Q
+
+DD. H
+DDP XFF5 =GG: B
+
+JJ. H
+JJP XLL< DMM: B
+JJa lMMD O
+	JJu ÖMMQ a
+
+PP0 EÛ
+
+£C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Repositories\SocialRepository.cs
+
+		 !Ç
+/ 7  ! !** !33 :: FF !NN !SS XX !ee' /ll !
+6 = 
+
+& 8
+= D+ 2L S
+J QL S+ 22
+% & 6 7 6 7
+
+, ?
+D J!!3 9!!S Y
+ $""H V
+  
+      (
+!! !! !!= >""  
+
+&&  /
+&&4 ;,,, 3--M T
+&&A H,,M T--, 3
+(( $..@ N<
+++ ,, ,,7 8-- --7 8.. 
+
+11 !
+11- 733$ .
+
+66 $
+660 :88 ::+ 5
+
+>>, C
+>>H NHH2 8
+AA #HHe r
+GG GG 
+HH HH HH< =
+
+LL /
+
+QQ $
+QQ4 ;SS( /
+
+VV0 K
+VVP W\\1 8]]S Z
+VV] d\\S Z]]1 8
+ZZ ZZ 
+[[ [[ 2
+\\ \\ \\< =]] ]]< =
+^^ ^^ 
+
+bb( E(
+bbJ Pff0 6ffQ Wgg1 7
+ee nn *
+ff ff ff: ;(
+gg gg gg: ;ggP Q
+nn nn4 5
+oo oo ˚
+¥C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\Email\Templates\InvitationForMatchEmailTemplate.cs
+
+		 0
+
+ 
+  
+6 FZ jã
+ÆC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\Email\Templates\VerificationEmailTemplate.cs
+
+		 *
+
+ 
+  
+0 8T \
+A QZ jô
 ºC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\Email\Templates\PasswordChangeVerificationEmailTemplate.cs
 
 		 8
@@ -203,7 +185,285 @@
  
   
 > F: B
-O _Z j¸
+O _Z j“
+õC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\Email\SmtpEmailService.cs
+
+ !(
+  % % *33* /
+ " 331 62
+  % D I''= B44/ 4(
+  % c h446 ;
+  + ''0 ;
+
+$$ (
+$$0 >((= K
+$$G T((. ;
+$$e m)) &-- #<
+&& '' (( )) // 55' .
+++ // &2
+11 33 44 55 66 ß
+ñC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Services\MatchmakingService.cs
+ #H Z~
+% )55 :: BB# 'HH `` ee mm uu# '
+ÇÇ 
+ää 
+óóC Gh
+ )44 "
+ÅÅ "
+ÇÇ7 I
+áá& 8
+ââ% 7
+ääD V
+ãã "
+óój |>
+, 5** \\ aa ff 
+êê \
+! &66 II OO( -[[# (nn tt {{ 
+ââ 
+
+##3 C
+(( ' %% 
+++ #,, -- 
+
+00 2
+00# +44% -557 ?66" *::5 =
+
+>> 
+>>& .@@  (BBT \
+
+EE. 9(
+EEA MGG  ,HH3 ?II0 <
+EE` hII> F
+
+LL. >
+
+RR )
+RR1 9TT  ([[> F
+RRB I[[H OeeC J
+[[ \\& ,\\> D
+
+jj. >(
+jjF Nll  (mm8 @nn5 =
+jjW `mmI Rnn? H
+
+qq !
+qq) 8ss  /tt& 5
+qqA Ptt7 Fuu? N
+qqY `ttH O
+
+xx ,
+xx4 Czz  /{{0 ?
+xxL W{{A L
+xx` g{{N UF
+ #@@ GG TT ll ss zz "
++ 3
+ÅÅ& .
+ÇÇ^ f0
+
+ÖÖ &AA #
+ññC TóóÉ î
+
+éé (VV #
+
+éé0 7
+êê/ 6*
+
+íí &GG/ @ll+ <zz2 C
+
+ññ $,, .
+
+ññ, 2
+
+ññ> ?
+
+óó $-- .
+
+óó, 2
+
+óó> ?ñ
+πC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\Email\Templates\EmailChangeVerificationEmailTemplate.cs
+
+		 5
+
+ 
+  
+; C: B
+L \Z j÷
+ëC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Services\SocialService.cs
+ H Uh
+% )11 88# 'AA HH# 'bb# 'mm# '~~ 
+íí 
+¢¢ ó
+ !44 DD MM  %XXg l	YY{ Ä__ ii tt# (
+àà- 2
+óó[ `
+òòs x
+ûû "
+ØØ  %v
+K [.. (..@ P// )@@) 9@@Q aRR (
+∂∂, <
+∂∂Y i
+øø! 1
+√√- =L
+' 2,, !@@ !NN 
+∂∂ 
+øø 
+√√ )
+
+!!) 4
+
+&& Z
+&&# +((* 2..5 =..Q Y//. 6112 :448 @553 ;88H P
+++ ..] e//8 @
+
+;; P
+;;& .==* 2@@F N@@i qAA2 :DD8 @EE3 ;HHJ R
+
+KK+ >
+KKF NMM: B
+MM PP' .UU 
+
+XX6 L
+XXT \
+XXÑ å
+
+YY0 @
+YYH V
+YYí †
+YY_ p
+YY¢ ≥
+
+[[ +
+[[3 D__3 D``O `
+[[M [__F T``" 0
+``2 4``8 :
+
+ee 0(
+ee8 Fii8 FjjS akk> L(
+eeO `iiH Yjj" 3kkN _(
+eeg oii[ cjjc kkk 
+jj5 7jj; =
+
+pp. ?
+ppG Ott; CxxS [
+ppX fttE Sxx& 4
+tt vv zz 
+xx6 8xx< >
+
+ÉÉ, B$
+
+ÉÉT [
+ààJ Q
+ãã" )$
+
+àà $
+ãã\ l
+éé '
+
+ãã= ?
+ããC E
+
+óó+ @
+
+óóH P
+óów 
+
+òò2 M
+
+òòU Zòòï ö
+
+òòc hòòú °
+
+öö, A$
+
+ööI Q
+ûû9 A
+¢¢8 @
+
+ßß( F
+
+ßßN Z
+
+ßßc n
+ßßw Ä
+
+©© 
+™™6 ; 
+
+≠≠ 355 2EE 2$
+
+≠≠; C
+ØØ: B
+∞∞r z
+
+≠≠L R∞∞| Ç
+
+ØØ 
+∞∞# *
+
+∞∞O Q
+∞∞U W
+
+≥≥ 4kk$ =0
+
+≥≥< >
+∂∂v x
+∑∑  
+∏∏E G0
+
+≥≥G I
+∂∂I K
+∑∑E G
+∏∏  $
+
+µµ 
+∂∂! )
+∑∑I Q$
+
+µµ# +
+∂∂N V
+∏∏I Q
+
+∑∑" $
+∑∑( *
+
+∏∏" $
+∏∏( *Z
+
+ºº &`` !jj !xx %
+ãã !
+∞∞, =
+∑∑ 
+∏∏ $
+
+ºº. 4
+øø> D
+√√E K
+
+ººU [
+¬¬ 0
+
+ææ# %
+øøJ L
+¿¿ 
+¬¬ ∆
+ïC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\BadWordValidator.cs
+
+ (
+0 <""$ 0
+
+ '(
+/ 6* 1; B  & -(
+   #((  ((1 A// #
+&& ((C J
+((L Q+++ 0¿
+ôC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\Email\IEmailTemplate.cs
+
+		 #
+
+ 
+
+ ¸
 ìC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\PasswordHasher.cs
 
 		 &
@@ -213,77 +473,7 @@
 
  )
 1 9, 4
-B L6 @“
-õC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\Email\SmtpEmailService.cs
-
- !(
-  % % *22* /
- " 221 62
-  % D I&&= B33/ 4(
-  % c h336 ;
-  + &&0 ;
-
-## (
-##0 >''= K
-##G T''. ;
-##e m(( &,, #<
-%% && '' (( .. 44' .
-** .. &2
-00 22 33 44 55 ›
-ñC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Services\MatchmakingService.cs
-
- #2
-5 > 113 <KK ^^ Z
- )''& 8))0 B** "00 #@@  2II .SS .\\# 52
- 0BBK ^KK, ?UUK ^^^, ?
- $8 G
-
-, 2
-
-> ?
-   $8 G
-
-  , 2
-
-  > ?(
-%% # "" 66 
-
-.. 
-..# +00& .11) 1
-
-44 
-
-44& .
-
-99" 2
-
->>" -
->>5 A@@ DD0 <
->>T \DD> F
-
-GG #
-GG+ 3II NN- 5
-GG< CNN7 >
-
-QQ" 2
-QQ: BSS WW5 =
-QQK TWW? H
-
-ZZ !
-ZZ) 8\\ aa+ :
-ZZA Paa< K
-ZZY `aaM TÙ
-ÉC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Service1.cs
-
-
-
- 
-
- 
-" '5 :
-
- 52
-D M    ¬
+B L6 @¬
 ìC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Utilities\InputValidator.cs
 
 
@@ -291,581 +481,108 @@
  &
 
  '
-/ 4* /% *
-  
+/ 4* /% *
+  
 
- +P
-3 ;* 2!! $$ '' ** -- 00 Ê
-ôC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Services\AuthenticationService.cs
+ +P
+3 ;  * 2%% ** // 44 99 >> ì	
+êC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Services\LobbyService.cs
+ H T
+% )11 44# '<
+ )// "RRI [VV& 8YY! 3ZZ "(
+ (00 !RRk |YY5 F<
+  22 :: @@ LL YY 
 
- &
+' 1
+$$ - $!! $
+&& #'' (( 
 
-. 8
-@ O2 A
-X `C K
- "F M
- $8 D
- ! &
+++ (2
+++0 8//% -11< D22) 144C K(
+++A H00$ +11R Y223 :
 
-''. ;
-''K V//; F
-''_ g//H P
-++ "..F M
--- $..8 D
-.. //! &
+77 $
+77, :99  .::" 0
+77C J990 7::2 9
+77S Z::; B
 
-88. @
-88H M@@: ?
-88V f@@A Q
-<< "??F M
->> $??8 D
-?? @@! &
+== 
+==% 1??  ,@@  ,
+==: A??. 5@@. 5
 
-II 
-II" *QQ! )
-MM "PPF M
-OO $PP8 D
-PP QQ 
+CC 
+CC& .EE  (
+CC7 >EE* 1
 
-ZZ( 9
+II 
+II& 2KK  ,LL! -
+II; OLL/ C
+IIX _KK. 5LLE L
 
-ZZA I
+OO !
 
-ZZR \
+OO) *
 
-[[( E
+OO3 4
 
-[[M R
+OO= >
 
-\\( B
+PP "
 
-\\J O
+PP* +
 
-\\X \
+PP4 5
 
-\\e pƒ
-ñC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Services\UserProfileService.cs
+PP> ?
 
- #
+PPF G2
+RR $99 ?? EE KK 
+RR, 4RR_ g
+RR= D
+RRÄ á
+TT &FF !^^K \
+^^ ,'' 6(( 5
 
-* =
-E M; C
- "C J
- $5 A
- ! &
+^^4 :
 
-&&. @
-&&H P..: B
-&&a l..D O
-** "--C J
-,, $--5 A
--- ..! &
+^^F G¬
+ôC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Services\AuthenticationService.cs
+ &H ]2
+% ) $$ ** 00 <
+$ ) %% ++ 11 88 
 
-77. E
-77M U??? G
-77^ f??I Q
-;; ">>C J
-== $>>5 A
->> ??! &
+. 8
+@ O5 D* 9
+X `; C
 
-HH. E
-HHM UPP? G
-HH^ nPPI Y
-LL "OOC J
-NN $OO5 A
-OO PP! &
+"". ;
+""K V$$< G%%3 >
+""_ g%%@ H
 
-YY. H
-YYP XaaB J
-]] "``C J
-__ $``5 A
-`` aa! &
+((. @
+((H M**; @++2 7
+((V f++9 I
 
-jj. H
-jjP XrrB J
-jja lrrL W
-	jju ÖrrY i
-nn "qqC J
-pp $qq5 A
-qq rr! &
+... ?
+..G L111 6
+..U Y00= A118 <
 
-{{+ C
- "
-ÇÇC J
+44  
+44( 088$ ,
 
-ÅÅ $
-ÇÇ5 A
+;;( E
 
-ÇÇ 
-ÉÉ! &‘
+;;M R
+== >>6 ;
 
-êC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Services\LobbyService.cs
+AA( B
 
-		 
-/ 8 3 <d
-$ /  ## ++ 77 ?? GG OO XX å
- ) !! ")) "11 "33 055 "== "EE "MM "UUI [VV& 8XX' 9YY "ç
- ( !!8 I))6 G112 C44 066 !==6 GEE7 HMM7 H	UUu ÜVVS dXX; LZZ !
+AAJ O
 
- "
-* 2! )  (
-; B  '* 1
+AAX \
 
- $
-, :!!& 4##( 6
-C J!!M T##8 ?
-S Z##A H
-
-'' 
-''% 1))& 2++& 2
-'': A))K R++4 ;
-
-// 
-//& .11& .
-//7 >11G N
-33 77' +
-44 77- 2
-
-;; 
-;;& 2==& 2??' 3
-;;; O??5 I
-;;X _==K R??K R
-
-CC !
-CC) 6EE& 3GG* 7
-CC? MGG9 G
-CCV ]EEL SGGI P
-
-KK "
-KK* 7MM& 3OO+ 8
-KK@ NOO: H
-KKW ^MML SOOJ Q
-KKe iOOS W2
-SS ,8 O7 N^^# :__" 9
-SS4 :\\ 
-
-SSF G
-\\* 1^^ __ ≈%
-èC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Services\GameService.cs
-
- Ê
-I Y "    55 "77  
-õõ &
-ùù (
-üü' 7
-úú *
-ûû ,
-¢¢  0
-øø *
-¡¡ ,
-≈≈  0
-˜˜ &
-˘˘ (
-˝˝ ,
-⁄⁄ &
-‹‹ (
-ﬁﬁ' 7P
-; O:: &<< $PP &RR $mm *oo ,qq% 9ﬁ
-E S}} $ '
-ÅÅ &
-ÉÉ+ 9
-ÑÑ "
-∞∞  
-≤≤ "
-¥¥% 3
-ää  
-åå )
-åå  
-åå$ 2
-††  
-¢¢ "
-££$ 2
-ºº  
-ææ #
-øø )»
-A N## %% "'' !)) "++ !?? AA' 4CC !EE %
-ìì 
-ïï "
-ññ2 ?
-ÈÈ 
-ÎÎ "
-ÏÏ! .
-êê 
-íí2 ?
-ÔÔ 
-ÒÒ "
-ÚÚ2 ?
-çç 
-çç# 0
-öö 
-úú !
-ùù# 0
-∂∂ 
-∏∏ "
-ππ2 ?æ
-C P
-…… 
-ÀÀ "
-ÕÕ !
-œœ 
-–– 
-ÒÒ 
-ÛÛ !
-ıı, 9
-¥¥ #
-∂∂! .
-∂∂Y f
-éé 
-éé# 0
-ÃÃ 
-ŒŒ ^
-8 Q
-ÉÉ +
-ÖÖ )
-ÜÜ# <
-èè +
-èè/ H
-¬¬ +
-ƒƒ )ö
-I U
-”” 
-’’$ 0
-€€ )
-∏∏ "
-∫∫= I
-‰‰ 
-ÊÊ !
-ÎÎ *
-êê 
-êê" .
-∆∆ 
-»» 
- )
-””7 F
-
- <
-# +% -  ! )))5 =++/ 7..@ HF
-4 ;G N%%/ 6''" )))# *++" )..T [
-   - 5
-
-11 <
-11& .33% -77( 0<<, 4CC2 :KKC K<
-117 >AA AAA HCC" )EE& -GG' .
-
-NN 
-NN& .RR% -TT5 =
-NN7 >TTc j
-NNG SRR1 =TTJ V
-
-WW) <
-[[ "]]. 5
-]] ^^! &
-
-hh !4
-hh) 1oo9 Aqq: Bww$ ,
-ááY aP
-hh: A4 ;
-ÅÅ' .
-ÉÉ: A
-ÑÑ# *
-ááH O
-àà* 1
-hhJ Uxx" -*
-ll !qq "yy (
-áák u"
-uu 
-ÉÉ 
-ÑÑ0 :
-
-êê )
-
-êê1 9
-¢¢= E$
-
-êêB I
-ïï/ 6
-ññ@ G
-
-êêR Y
-¢¢G N$
-
-íí '
-ññ 
-ôô+ 9
-
-üü $
-¢¢ $
-
-≠≠ 0
-
-≠≠' /
-¬¬" *
-œœK S
-’’\ dÑ
-
-≠≠8 ?
-≤≤/ 6
-¥¥4 ;
-∫∫b i
-ÀÀ/ 6
-ÕÕ" )
-œœ %
-–– %
-’’1 8
-€€* 1
-‚‚4 ;<
-
-≠≠E N
-¥¥` i
-∫∫C L
-√√ %
-œœf o$
-
-≠≠W \
-ææ+ 0
-ƒƒ !T
-
-ØØ %
-¥¥ "
-∏∏ 
-ææ2 @
-∆∆ (
-€€U c
-‚‚= K
-
-¥¥L M
-¥¥Q R0
-
-ææ 
-≈≈ %
-÷÷- 6
-‹‹& /
-
-¿¿ 
-––+ 3$
-
-œœ1 2
-œœ6 7
-œœW X$
-
-’’ !
-÷÷ !
-ÿÿ !
-
-’’I J
-’’N O$
-
-€€ 
-‹‹ 
-ﬁﬁ 
-
-€€B C
-€€G H
-
-ÂÂ <
-‚‚ 3T
-
-ÂÂD K
-ÎÎ/ 6
-ÏÏ/ 6
-ÛÛ. 5
-ıı: A
-˚˚+ 2
-¸¸. 5$
-
-ÂÂX f
-ıı] k
-˚˚W e$
-
-ÁÁ 
-ÌÌ 
-˘˘* 6$
-
-ËË '
-ÏÏ 
-ÌÌ -$
-
- %
-ıı )
-˘˘ %
-
-ııI J
-ııN O
-
-ÄÄ 2
-¸¸ -ê
-
-ÄÄ: A
-ÖÖ* 1
-ÜÜ= D
-åå* 1
-íí@ G
-òò+ 2
-ÆÆ+ 2
-∂∂; B
-∂∂g n
-∫∫J Q
-’’+ 2
-ŸŸ" )0
-
-ÇÇ  
-ÜÜ  
-ïï  
-óó2 B<
-
-ââ %
-åå 
-ïï# +
-óó) 1
-∞∞/ 70
-
-èè '
-íí 
-öö/ =
-ΩΩ/ =0
-
-óó &
-òòM X
-òòf q
-¢¢S ^$
-
-∞∞! ,
-∆∆$ /
-““' 20
-
-±± )
-∂∂ 
-««$ .
-““; E$
-
-≤≤% 2
-∫∫ !
-»»$ 1
-
-““ $
-””$ 4$
-
-””  
-’’M Y
-◊◊0 <
-
-◊◊L M
-
-ﬁﬁ "
-ŸŸ !`
-
-ﬁﬁ* 1
-‡‡' .
-ÊÊ. 5
-ËË/ 6
-ÎÎ+ 2
-ÒÒ/ 6
-ÚÚ@ G
-áá "$
-
-‚‚! ,
-ÎÎ 
-˝˝G R
-
-ÎÎF G
-ÎÎK L$
-
-ÓÓ '
-ÚÚ 
-ıı+ 9"
-
-ää #GG &
-áá T
-
-ää+ 2
-åå: A
-çç8 ?
-éé8 ?
-èèP W
-êê6 =
-íí7 >
-
-ïï .
-àà )`
-
-ïï6 =
-úú. 5
-ùù1 8
-¢¢/ 6
-££3 :
-®®+ 2
-©©) 0
-≠≠+ 2<
-
-óó 
-ùù  
-¶¶ 
-¶¶5 A
-≠≠[ g0
-
-òò 
-££ !
-¶¶$ 1
-≠≠K X
-
-±± -
-©© (l
-
-±±5 <
-∏∏/ 6
-ππ@ G
-ææ0 7
-øø* 1
-ƒƒ* 1
-»» $
-ŒŒ% ,
-‘‘e l0
-
-≥≥ '
-ππ 
-»»( 6
-ÿÿ% 3$
-
-¥¥ %
-øø 
-——& .
-
-…… $
-……H P$
-
-—— #
-““ 
-··: F
-
-ﬁﬁ $
-·· $Ñ
-°C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\UserProfileDto.cs
-
- 
-
-# +
-
-# ,
-
-# +
-
-# (
-
- 
-
- 
-
-& 4ï
-íC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Properties\AssemblyInfo.csœ
-úC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\AvatarDto.cs
-
- 
-
- 
-
-  
-
-  ˚
+AAe p
+CC DD6 ;˚
 ÑC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\IService1.cs
 
  
@@ -881,563 +598,901 @@
 
  
 
- ! 
+ !Ù
+ÉC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Service1.cs
+
+
+
+ 
+
+ 
+" '5 :
+
+ 52
+D M    ¿
+°C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Repositories\WordRepository.cs
+
+
+
+ 
+/ 7  !
+4 ; 
+
+& 9
+> C 
+I UA M
+  
+
+ £
+™C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Repositories\SocialNetworkRepository.cs
+
+		 (F
+/ 7  ! !!! && !++ !
+= D 
+
+- ?
+G O4 <
+% &* +
+
+) D
+I Q? G
+W ]U [
+% &* +* +
+
+ $
+3 @!!' 4
+
+$$ /
+
+))/ E
+))J R--1 9
+,, ,, 
+-- -- ï
+íC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Properties\AssemblyInfo.cs¬	
+£C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Repositories\PlayerRepository.cs
+
+ !x
+/ 7  !&& !00 55 !<< !FF" *NN !WW ']]  (__ 
+6 = 
+
+" :
+B J* 28 @
+% &* +
+
+" 7
+? D!!* /''5 :
+''% &''* +
+
+** (
+**% +,, ..7 =00  &
+
+33 /
+
+88" ;
+88C K::* 2AA8 @
+>> >> 
+?? ?? 
+@@ @@ 
+@@5 7@@; =
+AA% &AA* +
+
+DD( D
+DDL VPP0 :2
+DD\ gGG2 =GGW bHH3 >LL %
+FF LL QQ &
+GG GG GGA B(
+HH HH HHA BHHV W
+PP PP QQ0 1
+
+UU  4
+UU< FWWX b
+WW XX 
+WWG HWWL M
+
+[[0 E
+]] kk %
+`` `` $
+aa aa "
+bb dd# )
+bb $ee% ,
+ee1 2ee< =
+hh# $hh( )
+kk rr 
+kk. 2nn oo 
+kk4 9mm †	
+¢C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Repositories\MatchRepository.cs
+
+		  ñ
+/ 7  ! !!!& .// !44 %;; !BB GG !LL &WW !\\ aa !hh !
+5 < 
+
+! 2
+7 >2 9
+
+! 4
+< @P T
+< =A B
+
+! 6
+> F$$1 9
+!! ))  
+"" "" 
+## ## 
+$$ $$ 
+%%# $%%( )
+
+,,  4
+,,< @//E I
+//1 2//6 7//M N
+
+22" 8
+22= I44@ L
+44 55 
+
+88' C
+<< << <<0 1
+
+@@ 
+@@# (BB $
+
+EE /
+
+JJ  3
+JJ8 ?NN7 >
+LL RR RR$ )
+MM MM# $MM. /
+NN% &NN* +
+
+UU  <
+UUA HWWP W
+UUN VWWp x
+WW8 9WW= >WW[ \
+
+ZZ #
+ZZ1 8\\& -
+
+__. K
+__P Wbb/ 6
+bb bb 
+
+ff( A
+ffF Mii= D
+ffS [ii] e
+ii% &ii* +iiH I†
+£C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Repositories\AvatarRepository.cs
+
+ !(
+
+
+/ 7  ! !
+6 = 
+
+( :
+
+" 4
+9 ;3 5¿
+©C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\ServiceContracts\IUserProfileService.cs
+
+		 (
+
+ 0
+
+8 @
+
+! 3
+
+; C
+
+T _
+
+! >
+
+F N
+
+a n
+
+! 8
+
+@ H
+
+Q Y
+
+! 8
+
+@ H
+
+Q a
+
+!!! ;
+
+!!C K
+
+%%! ;
+
+%%C K
+
+%%T _
+
+%%h x
+
+)) 6
+
+--# 8≤
+´C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Abstractions\ISocialNetworkRepository.cs
+
+ -
+
+		  2
+
+		: B
+
+
+
+ 7
+
+
+
+< D
+
+
+
+J P
+
+ 
+
+, 9
+
+ "
+
+" 8
+
+= E’
+¢C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Abstractions\IWordRepository.cs
+
+ $
+
+		 ,
+
+		1 6
+
+		< Hú
+£C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\ServiceContracts\ILobbyService.cs
+
+ "
+
+
+
+ 
+
+
+
+# +
+
+
+
+4 ;
+
+ 
+
+% 3
+
+< C
+
+L S
+
+ 
+
+ *
+
+3 :
+
+ 
+
+ '
+
+0 7
+
+ 
+
+ +
+
+4 H
+
+Q X
+
+ 
+
+" /
+
+8 F
+
+O V
+
+ 
+
+# 0
+
+9 G
+
+P W
+
+^ b
+   */ D
+
+## 
+
+##, 9
+
+&&  
+
+&&0 :
+
+)) 
+
+))  0
+
+,, 
+
+// 
+
+//$ *
+
+22 
+
+22# 1
+
+227 C
+
+22I TÍ
+£C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Abstractions\IMatchRepository.cs
+
+ %
+
+		 %
+
+		* 1
+
+
+
+ 
+
+
+
+ !
+
+ "
+
+ '
+
+/ 3
+
+ )
+
+1 9
+
+ '
+
+/ 3
+
+ +
+
+0 <
+
+ 6
+
+ &
+
++ 2
+
+ /
+
+4 ;
+
+A I
+
+ 
+
+* 1
+
+! >
+
+C J
+
+ 4
+
+9 @
+
+F N◊
+§C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Abstractions\IAvatarRepository.cs
+
+ &
+
+		 -
+
+
+
+ '
+
+
+
+, . 
 £C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\SocialNetworkDto.cs
 
  !
 
  !
 
- ê
-©C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\ServiceContracts\IUserProfileService.cs
+ Ê
+©C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\ServiceContracts\IMatchmakingService.cs
 
- (
+		 (
 
- 0
+ 
 
-8 @
+ $
 
-! 3
+ 
 
-; C
+ '
 
-T _
+! 1
 
-! 8
+! ,
 
-@ H
+4 @
 
-Q Y
+S [
 
-! 8
+ 
 
-@ H
+$ ,
 
-Q a
+5 <
 
-  ! ;
+! 1
 
-  C K
+9 A
 
-$$! ;
+J S
 
-$$C K
+!! 
 
-$$T _
+!!" 1
 
-$$h x
+!!: I
 
-(( 6ø
-¢C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\ServiceContracts\IGameService.cs
+!!R Y
 
- !
+%% 
 
- 
+%%' 6
 
- $
+%%? J
 
-- 4
+%%S Z
+)) 0/ J
 
- 
+,, 
 
- '
+,,' 3
 
-0 7
+,,< C
 
- 
+// 
 
- '
+//& /
 
-0 7
+22 
 
-@ L
+22  '
 
- /
+22< B
 
- 
+55 
 
-" *
+55& ,
 
-3 :
+88 %
 
-C N
+889 F¡
+öC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\WordDto.cs
 
- 
+ 
 
-  (
+		 
 
-1 8
+ ª
+§C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Abstractions\ISocialRepository.cs
 
-> G
+ &
 
-P U
+		 +
 
-!! "
+		0 7
 
-!!* 2
+		= D
 
-!!; B
+
+
+ 2
 
-!!K R
-%% )/ C
+
+
+7 =
 
-(( 
+ "
 
-(( )
-
-((8 C
-
-++  
-
-++% 4
-
-.. !
-
-..- 4
-
-11 $
-
-11, 2
-
-11; B
-
-44  
-
-44. 9
-
-44F P
-
-44c p
-
-77 
-
-77* 5
-
-:: 
-
-::, 7√
-úC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\FriendDto.cs
-
- 
-
- 
-
- ú
-£C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\ServiceContracts\ILobbyService.cs
-
- "
-
- 
-
-# +
-
-4 ;
-
- 
-
-% 3
-
-< C
-
-L S
-
- 
-
- *
-
-3 :
-
- 
-
- '
-
-0 7
-
- 
-
- +
-
-4 H
-
-Q X
-
- 
-
-" /
-
-8 F
-
-O V
-
-!! 
-
-!!# 0
-
-!!9 G
-
-!!P W
-
-!!^ b
-%% */ D
-
-(( 
-
-((, 9
-
-++  
-
-++0 :
-
-.. 
-
-..  0
-
-11 
-
-44 
-
-44$ *
-
-77 
-
-77# 1
-
-777 C
-
-77I T‘
-°C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\PlayerScoreDto.cs
-
- 
-
- 
-
- 
-
- É
-†C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\LobbyStateDto.cs
-
- 
-
- 
-
- "
-
-  
-
- !
-
- 
-
- 
-
-   +Ë
-ùC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\DrawingDto.cs
-
- 
-
-		 
-
- !
-
- #
-
- 
-
- ”
-ôC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\BusinessLogic\MatchmakingLogic.cs
-
- (
- /;;f xII& 8X
-Z i    zz 
-££ 
-¬¬ 
-££) 8
-µµ #V
-I W"" &WW "rr !}} 
-üü &
-   
-ÿÿ "
-
- &
-. 6# +
-T \- 5
-
- )(
-1 9  & .""U ]%%" *
-"" ## %%, 1
-""= >""B C
-
-))) 4(
-))< H//V bRRF RVV& 2Z
-))[ c661 988  CC$ ,DD% -FF& .KK< DRRT \YY !2
--- "//% ,;; &NN OO 
-// "00 "JJ( 2
-//C D//H IF
-55 ':: $;;E Q== (HH$ 0RR8 Dee+ 7
-66 'GG$ 2
-;;1 2;;6 7;;U V
-AA  NN& .QQ% -(
-QQ "RR/ 6WW* 1dd) 0
-RR VV WW3 8
-pp) 9
-¢¢  0
-ss ss ss5 6
-tt tt 
-
-xx * 
-xx2 :zz( 0
-ää" * 
-xxC J}}+ 2
-éé% ,D
-zz: B{{ 
-ÅÅ 
-ÜÜ 
-éé 
-îî Z
-}}< A , 1
-ÑÑ 
-ää 
-ãã 
-åå& +
-èè% *
-
-òò) 9$
-
-òòA I
-££, 4
-ÆÆ" *$
-
-òòR [
-öö* 3
-üüQ Zl
-
-üü 
-°° 
-©© 
-©©, 1
-ÆÆ 
-ØØ 
-∞∞& +
-±±% *
-∑∑I N$
-
-üü= >
-üüB C
-üü^ _
-
-££> F
-§§ 
-
-¿¿ (
-
-¿¿0 ?
-ƒƒ, ;
-
-¿¿H W
-¬¬, ;
-
-¿¿` g
-ƒƒ= D
-
-¬¬E M
-ƒƒ 
-
-»» ,%% !0
-
-»»4 <
-ÃÃ: B
-““C K
-’’F NT
-
-»»E L
-  + 2
-——* 1
-““a h
-◊◊B I
-ÿÿ- 4
-ŸŸ* 1l
-
-  < A
-ÃÃ% *
-–– 
-““w |
-’’ 
-’’0 5
-€€ 
-‚‚) .
-„„ $
-
-ÃÃ "
-ŒŒ !
-‡‡ &0
-
-ÎÎ 1
-åå %
-∞∞ %
-—— )$
-
-ÎÎ9 @
-ÛÛ) 0
-ÅÅW ^
-
-ÎÎF L
-¯¯8 >$
-
-ÒÒ &
-ıı( /
-˙˙  '
-
-ÛÛ: <
-ıı; =<
-
-ıı  %
-ˆˆ  %
-¯¯  %
-˘˘$ )
-˘˘> C
-
-ÜÜ 1
-ŸŸ )$
-
-ÜÜ9 @
-éé) 0
-õõW ^
-
-ÜÜI O
-ìì4 :$
-
-åå &
-êê( /
-îî  '
-
-éé: <
-êê; =$
-
-êê  %
-ëë  %
-ìì  %:
-
-†† 4[[ 0
-êê (
-›› 0
-ÂÂ 0
-
-¢¢ 
-ßß: G0
-
-∞∞ 0
-èè $
-±± $
-‚‚ ($
-
-∞∞< A
-≤≤ !
-≥≥' ,
-
-≤≤ 
-ππ- 6
-
-µµD L
-ππ   
-
-√√ /::' 8==+ <$
-
-√√4 :
-»»$ *
-……/ 5$
-
-≈≈ 
-ÕÕ" '
-ÕÕ, 1
-
-∆∆ 
-   $
-
-»» 
-    $
-ÀÀ# '$
-
-…… 
-ÕÕ 
-œœ ,
-
-‘‘ = G- 7
-∞∞1 ;^
-
-÷÷ %%2 9
-åå, 3
-∞∞, 3
-∑∑O V
-‡‡ 
-¯¯U \
-¸¸ &$
-
-◊◊ 
-üüD M
-·· 0
-
-ÿÿ "
-’’6 B
-‚‚ 
-˛˛$ 0t
-
-ŸŸ  (ss '2 :
-©©2 :
-€€ '
-„„ '
-„„ 
-ÒÒK S
-˝˝! )
-ÄÄ" *h
-
-⁄⁄ #""D KVV !
-ää 
-ÆÆ 
-ÃÃ+ 2
-’’ !
-≥≥- 4
-‰‰ :
-
-€€ ss7 =
-ÑÑ  
-üü` f
-ÂÂ u
-
-‹‹ !TT & (
-ãã $
-©© (
-ØØ $
-–– (““} ã
-ÊÊ 
-ˇˇ& 4
-
-ﬁﬁ! (
-‡‡ 
-
-ﬁﬁ1 :
-·· !
-
-ﬁﬁC O
-‚‚ '
-
-ﬁﬁb j
-„„ "
-
-ÈÈ *tt -
-≤≤" 0$
-
-ÎÎ !
- "
-ÅÅ! /
-
-ÓÓ "
-% ,
-
-ÒÒ/ 0
-ÒÒ4 5
-
-ÚÚ0 1
-ÚÚ5 6¡
+' .
+
+4 ;
+
+ 
+
+& 0
+
+ 
+
+) 3
+
+ 6
+
+; A
+
+ "
+
+ 
+
+- 4
+
+# >
+
+C J
+
+P W
+
+ 8
+
+= Cπ
+îC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\BusinessLogic\SocialLogic.cs
+ H S
+% )%% 88 PP [[ ii 
+ÖÖ 
+ïï 
+öö 
+ΩΩ 
+¬¬ 
+ÃÃ 
+ËË 
+ÛÛ 
+ûû 
+•• 
+ØØ 
+≥≥ 
+ﬂﬂ 
+¯¯ 
+ïï ¬
++ < ++( 9HH% 6~~! 2
+êê 
+îî '
+™™# 4
+¡¡ !
+«« '
+ﬂﬂ# 4
+„„ !
+ÊÊ /
+‘‘ 
+ÿÿ '
+ÔÔ* ;
+ää% 6Ï
++ < "" .@@ .XX" 3aa$ 5vv" 3ww 0
+¢¢ 0
+££" 3
+÷÷ 0
+◊◊ 0
+ÅÅ 0
+õõ 0
+¢¢! 2
+ÆÆ +
+√√ 0
+ƒƒ" 3
+ÁÁ .
+ÄÄ ,
+ÅÅ , 
+2 J $
+áá' ?"
+ (
+ÅÅM [
+ººA O"
+ '
+çç6 C
+∞∞B O 
+ /22F X
+ÛÛ7 I
+- =  0
+Q a  0
+	| ì' >
+
+  + >(
+  F N""H P%%: B88A I(
+"" ## ++N R..= A
+++ ,, "(
+,,* +..' (..M N..Y Z
+.. $11# /22# /
+
+>>6 L
+>>T \@@H PPPD L
+@@ AA HHO S
+HH II 
+II' (KK( )
+
+VV0 @
+VVH VaaS a(
+VV_ pXXM ^[[< Mii9 J
+XX YY aac l
+aa bb 
+bb& 'dd  
+
+oo. D*
+ooL ]qq !vvM ^
+ïï3 D6
+oof tqq% 3wwJ X
+ïïL Z
+ööA O*
+vv yy ~~F O
+ãã# ,*
+ww yy% +~~Z `
+åå# ) 
+~~  
+ÅÅ %$
+
+ÅÅ 
+ÖÖ7 :
+ÜÜD G
+
+ââ 
+êê, 6
+
+††. I<
+
+††Q _
+¢¢J X
+ΩΩ9 G
+¬¬9 G
+ÃÃ? M
+
+††h y
+££M ^&
+††Ä à
+∫∫ 
+»»J R0
+
+¢¢ 
+•• 
+™™\ b
+µµ/ 5$
+
+££ 
+••" +
+™™H QH
+
+™™ 
+´´ 
+∞∞ 
+µµ 
+ºº 
+¡¡3 =
+
+““. ?$
+
+““G O
+÷÷J R
+ËËA I$
+
+““X f
+◊◊J X
+ËËR ``
+
+‘‘ 
+€€ 
+‹‹ 
+ÈÈ 
+ÍÍ 
+ÓÓ 
+˘˘ 
+¸¸ $
+
+÷÷ 
+ŸŸ 
+ﬂﬂH N$
+
+◊◊ 
+ŸŸ" (
+ﬂﬂY _$
+
+ﬂﬂ 
+·· 
+„„3 =
+
+ˇˇ, A
+
+ˇˇI Q
+ÅÅJ RT
+
+ÅÅ 
+ÇÇ 
+ááW ]
+ãã "
+åå !
+çç 
+éé !
+
+áá 
+èè! /
+
+ââ 
+ññ $
+
+èè7 9
+ëë" $
+íí !
+
+ôô 1<
+
+ôô9 A
+õõJ R
+ûû1 9
+ØØ( 0
+≥≥= E0
+
+ôôJ P
+¢¢H N
+••; A
+ØØG M0
+
+õõ 
+úú 
+©© 
+´´ 0
+
+¢¢ 
+££ 
+©©2 :
+´´1 9
+
+∏∏, BÑ
+
+∏∏T [
+∫∫ 
+∫∫= D
+¿¿> E
+¡¡ 
+√√J Q
+ƒƒM T
+––! (
+ŸŸ 
+€€ 
+ﬂﬂ: A
+
+¿¿ 
+¡¡ *$
+
+√√ 
+∆∆ 
+ŒŒ! '$
+
+ƒƒ 
+∆∆" +
+œœ$ -$
+
+ÃÃ 
+‘‘/ 8
+ŸŸ$ -
+
+ÂÂ+ @$
+
+ÂÂH P
+ÁÁH P
+¯¯? G$
+
+ÁÁ 
+ËË 
+ÔÔZ ^
+
+ÔÔ !
+ $$
+
+, -
+ÚÚ  
+ÛÛ  
+
+˛˛2 M
+
+˛˛U Z
+ÄÄF K
+
+˛˛c h
+ÅÅF K$
+
+ÄÄ 
+ÉÉ 
+ääS U$
+
+ÅÅ 
+ÉÉ  
+ää` b
+
+ää 
+ãã <
+
+ãã' (
+çç% &
+éé( )
+èè 
+êê  !Ü
+
+õõ &&& !99 !QQ !\\ !jj !ss !{{ !
+ÜÜ !
+õõ !
+ßß !
+≠≠ !
+≤≤ !
+∑∑ !
+ÕÕ !
+ÙÙ %
+ÑÑ !
+ºº !
+»» !
+‡‡ !
+ÍÍ !
+˘˘ !
+ññ !
+
+õõ8 <
+ùù, 0$
+
+õõE L
+ùù2 9
+ûûM T
+
+ùù 
+ûû6 ;Á
+§C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\DataAccess\Abstractions\IPlayerRepository.cs
+
+ &
+
+
+
+ -
+
+
+
+5 =
+
+ *
+
+2 7
+
+ 
+
+ $
+
+ "
+
+ .
+
+6 >
+
+ 7
+
+? I
+
+O Z
+
+ '
+
+/ 9
+
+# 8Ò
 §C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\ServiceContracts\ISocialService.cs
 
 		 #
@@ -1474,480 +1529,451 @@
 
 Z b
 
-!! 
+""! 2
 
-!!! )
+"": B
 
-!!2 @
+""K Y
 
-%%! ?
+&&! ?
 
-%%G S
+&&G S
 
-%%\ g
+&&\ g
 
-%%p y
+&&p y
 
-(( 
+)) 5
 
-((0 7
+))G N
 
-,, 3
+-- 3
 
-,,; C
+--; C
 
-00% @
+11% @
 
-00H M
+11H M
 
-00V [
+11V [
 
-33 
+44 
 
-33 '
-77 +/ E
+44 '
 
-::  
+88 4
 
-::( 4
+88< D
+<< +/ E
 
-== !
+??  
 
-==) 5
+??( 4
 
-==< D
+BB !
 
-@@ &
+BB) 5
 
-@@. <
+BB< D
 
-@@E K
+EE &
 
-CC "
+EE. <
 
-CC4 ;∂
-©C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\ServiceContracts\IMatchmakingService.cs
+EEE K
 
- (
+HH "
 
- 
+HH4 ;
 
- $
+KK  
+
+KK( 9˚
+¢C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\ServiceContracts\IGameService.cs
+
+		 !
+
+ 
+
+ $
+
+- 4
+
+ 
+
+ '
+
+0 7
 
  
 
  '
 
- +
+0 7
 
- &
+@ L
 
-. :
+ /
 
-M U
+7 ?
 
- 
+ 
 
-$ ,
+" *
 
-5 <
+3 :
 
- +
+C N
 
-3 ;
+ 
 
-D M
+  (
 
-!! 
+1 8
 
-!!" 1
+> G
 
-!!: I
+P U
 
-!!R Y
-%% 0/ J
+ "
 
-(( 
+* 2
 
-((' 3
+; B
 
-((< C
+K R
 
-++ 
+"" 
 
-++& /
+"" %
 
-.. 
+""+ 6
 
-..  '
+""E T
+&& )/ C
 
-..< B
+)) 
 
-11 
+)) )
 
-11& ,
+))8 C
 
-44 %
+,,  
 
-449 FŒ
-ßC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\FriendRequestInfoDto.cs
+,,% 4
 
- %
+// !
 
- '
+//- 4
 
- #‚
-£C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\DirectMessageDto.cs
+22 $
 
- !
+22, 2
 
-
-
- $
+22; B
 
- '
+55  
 
- 
+55. 9
 
- !Ê
-õC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\GuessDto.cs
+55F P
 
- 
+55c p
 
- %
+88 
 
- 
+88* 5
 
- 
+;; 
 
- 
-
- ‘
-îC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\BusinessLogic\SocialLogic.cs
-
- 
-' 4 
-) 5 (
-
-+ >
-F NY a
- # *""( /2
-  ##7 =##` f%%7 =
-F GK L
- +$$A O
-   )00+ 7
-"" -- "(
-## ##! "##J K$$$ %(
-%% %%! "%%I J%%U V
-&& (( ))! "
---* +//  00  
-
-556 L
-55T \99Y a
-77 99# *AA $
-99 :: BB6 <
-99F G99K L
-?? *BBf s
-BB BB  !BBI J
-CC EE, -
-
-JJ0 @
-JJH V__4 B
-JJ_ pNN\ m(
-LL NN& -VV; B^^ $
-NN OO TT" +
-NNI JNNN O2
-TT WW6 AWW[ fXX7 B\\3 >
-VV 2\\ .``! ?
-WW WW  !WWE F(
-XX XX! "XXE FXXZ [
-__ __  !``I J
-aa cc# $
-
-hh 0
-hh8 Ill\ m
-hhR `mmY gL
-jj ll& -mm# *yy% ,
-ÉÉ0 7
-èè 
-êê >
-ll oo tt zz+ 4{{T ]
-ãã' 0
-llI JllN O>
-mm oo) /tt* 0zzW ]{{+ 1
-åå' -
-mmF GmmK L
-yy }} 2
-yyL Mzz zzA B{{ {{> ?
-
-ÇÇ *
-ÉÉp }$
-
-ÉÉ '
-ÑÑ '
-çç: M
-
-ÉÉ] _
-ÉÉc e
-
-ââ 
-èè' 1
-
-îî 5
-
-îî= K
-òòY g
-
-îîT e
-ôô\ m
-
-îîl t
-≠≠ T
-
-ññ 
-òò# *
-ôô& -
-¢¢' .
-∞∞5 <
-ππ 
-ªª $
-
-òò 
-õõ 
-••F L
-
-òòF G
-òòK L$
-
-ôô 
-õõ& /
-§§D M
-
-ôôI J
-ôôN O
-
-°° *
-¶¶M Z0
-
-¢¢ 
-®® 
-µµ 
-ππ. 8
-
-££ 
-££" #0
-
-§§) *
-§§. /
-••0 1
-¶¶0 1
-
-ØØ! /∞∞u É$
-
-∞∞ ,
-±± ,
-µµE Y
-
-∞∞b d
-∞∞h j
-
-øø +$
-
-øø3 ;
-√√Y a
-◊◊[ c$
-
-øøD R
-ƒƒY g
-◊◊j xH
-
-¡¡ 
-√√# *
-ƒƒ# *
-ÃÃ' .
-““ 
-”” !0
-
-√√ 
-∆∆ 
-ÕÕ+ 1
-ŒŒT Z
-
-√√F G
-√√K L0
-
-ƒƒ 
-∆∆& ,
-ÕÕT Z
-ŒŒ+ 1
-
-ƒƒF G
-ƒƒK L$
-
-ÃÃ 
-–– 
-““. 8<
-
-ÃÃN O
-ÕÕ 
-ÕÕ> ?
-ŒŒ 
-ŒŒ> ?
-
-‹‹ 1$
-
-‹‹9 A
-‡‡Y a
-„„A I$
-
-‹‹J P
-ÊÊ_ e
-ÈÈH N0
-
-ﬁﬁ 
-‡‡# *
-ÊÊ' .
-ÔÔ !0
-
-‡‡ 
-·· 
-ÏÏ 
-ÓÓ 
-
-‡‡F G
-‡‡K L0
-
-ÊÊ 
-ÁÁ 
-ÏÏ6 @
-ÓÓ5 ?
-
-ÊÊN O
-ÊÊS T
-
-ÙÙ 0l
-
-ÙÙB I
-ˆˆ 
-ˆˆ= D
-˜˜* 1
-˜˜b i
-˛˛[ b
-ˇˇ^ e
-ää% ,
-ëë <
-
-¸¸  
-˛˛# ,
-ˇˇ& /
-éé 
-èè $
-
-˛˛ 
-ÅÅ 
-àà% +
-
-˛˛H I
-˛˛M N$
-
-ˇˇ 
-ÅÅ& /
-ââ( 1
-
-ˇˇK L
-ˇˇP Q$
-
-ÜÜ 
-éé- 6
-ëë$ -
-
-ïï+ @
-
-ïïH P
-ôôY a0
-
-óó  
-ôô! *
-°°+ 4
-©© &$
-
-ôô 
-öö 
-üü !
-
-ôôF G
-ôôK L0
-
-üü 
-¢¢4 :
-¢¢U [
-££5 ;
-
-°° "
-™™  .$
-
-¢¢ 
-¢¢  !
-¢¢> ?0
-
-££ 
-££! "
-££> ?
-££T U
-
-ßß )
-ÆÆ: F
-
-™™ 
-™™8 9$
-
-´´ 
-≠≠# $
-ÆÆ# $
-
-¥¥2 M
-
-¥¥U Z
-∏∏\ a
-
-¥¥c h
-ππ\ a0
-
-∂∂  
-∏∏$ -
-ππ$ -
-¿¿ &0
-
-∏∏ 
-ªª 
-¡¡5 <
-¬¬` g
-
-∏∏I J
-∏∏N O0
-
-ππ 
-ªª' .
-¡¡` g
-¬¬5 <
-
-ππI J
-ππN O<
-
-¡¡ 
-¡¡! "
-¡¡I J
-¬¬! "
-¬¬I J
-
-√√ 
-√√" #<
-
-ƒƒ 
-∆∆) *
-««, -
-»»" #
-……$ %Ó
+;;, 7Ì
+ôC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\BusinessLogic\UserProfileLogic.cs
+ !H Xí
+% )11 HH qq vv 
+ßß 
+…… 
+ÁÁ 
+ää 
+≥≥ 
+·· 
+ÔÔ 
+áá 
+' .'') 0Œ
++ <!! --# 4^^' 8pp '
+ÉÉ 0
+““ 0
+ﬁﬁ '
+ÙÙ 0
+ÖÖ '
+óó 0
+ùù% 6
+™™ '
+ªª 0
+ÀÀ& 7
+–– '
+‹‹ '
+ÎÎ .*
++ <"" WW# 4
+¥¥* ;D
+2 C## 
+ââ$ 5
+èè' 8
+ùù !
+¢¢ ',
+' 4$$ 
+·· #
+≠≠ #
+ .!!  0
+ .""  0
+% 5##  0
+ &$$ ("
+'' #
+ÿÿ &
+££ &
+
+))* =(
+))E M--O W11> FHH< DZ
+-- // 55) /== %>>  &?? %@@ "AA %BB %
+55 &CC% 7
+55E G77" $88 !
+
+NN. @(
+NNH P^^R ZqqD LvvC KZ
+NNa lPP UU WWH See" -ff& 1gg- 8ii kk1 <
+WW XX <
+^^ `` ee ff gg kk 
+
+||. K"
+||S [
+ÉÉJ R
+ßß? GN
+||n ~~~  ~~F V
+ââI Y
+ååd t
+ìì* :
+õõ /0
+
+ÉÉ 
+ÑÑ 
+èèU [
+ôô& ,0
+
+ââ 
+ää 
+èèf q
+öö< G$
+
+èè 
+ëë 
+ìì 
+
+óó 
+ùù3 <
+
+≠≠+ C$
+
+ØØ 
+øø "
+ÕÕ !
+
+∞∞ 
+ªª7 ?
+
+¥¥ !
+∂∂- :$
+
+∏∏ $
+ºº !
+√√% .
+
+ªª '
+ºº8 @
+
+––. H$
+
+––P X
+““J R
+ÁÁB JT
+
+““ 
+”” 
+ŸŸ 
+⁄⁄ 
+‡‡P V
+··3 9
+··A G$
+
+ÿÿ 
+ŸŸ #
+‡‡a e
+
+‡‡ !
+··R _
+
+ÌÌ. H$
+
+ÌÌP X
+ÙÙJ R
+ääD L$
+
+ÌÌa l
+ÔÔ1 <
+ˇˇ: E
+ÌÌu Ö
+˙˙$ 4T
+
+ÙÙ 
+ıı 
+˙˙ 
+˙˙8 >
+ˇˇ 
+ÄÄ 
+ÅÅ 
+
+êê. E$
+
+êêM U
+óóJ R
+≥≥A I0
+
+êê^ f
+íí- 5
+ùùM U
+¶¶' /`
+
+óó 
+òò 
+§§ 
+•• 
+¶¶ 
+¨¨M S
+≠≠3 9
+≠≠A G
+
+ùù 
+ûû $
+
+££ 
+§§ #
+¨¨^ b
+
+¨¨ !
+≠≠R _
+
+ππ. E$
+
+ππM U
+ªªJ R
+··A I
+
+ππ^ n
+∆∆$ 4®
+
+ªª 
+ºº 
+¡¡% +
+∆∆ 
+∆∆8 >
+ÀÀN T
+ÃÃC I
+ŒŒ 
+œœ 
+’’ 
+’’ !
+÷÷ 
+◊◊ 
+ÿÿ $
+
+ÀÀ 
+ÃÃ 
+ÃÃ) 6
+
+ÁÁ0 E
+
+ıı# 0
+ºº* 70
+
+ıı8 @
+˜˜ %
+˛˛: B
+áá0 8$
+
+˛˛" (
+ÄÄ- 3
+ÅÅ  0
+
+ÄÄ !
+ÅÅ+ 1
+ÅÅ6 <
+ÇÇ !ƒ
+
+åå &22 %II !RR !ZZ %bb !ww !
+ÄÄ !
+ÜÜ !
+åå !
+®® !
+   !
+’’ !
+ËË !
+ÒÒ !
+˜˜ !
+¸¸ !
+ãã !
+îî !
+öö !
+†† !
+¥¥ !
+ææ !
+√√ !
+»» !
+““ !
+‚‚ !
+ !
+
+åå8 <
+éé, 0$
+
+ååE L
+éé2 9
+èèM T
+
+éé 
+èè6 ;‘
+°C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\ChatMessageDto.cs
+
+ 
+
+ $
+
+ $
+
+ !œ
+úC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\AvatarDto.cs
+
+ 
+
+ 
+
+  
+
+  Ñ
+°C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\UserProfileDto.cs
+
+ 
+
+# +
+
+# ,
+
+# +
+
+# (
+
+ 
+
+ 
+
+& 4Ó
 £C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\LobbySettingsDto.cs
 
  !
@@ -1960,14 +1986,57 @@
 
  
 
- ¡
-öC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\WordDto.cs
+ ´
+¨C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\ServiceContracts\IAuthenticationService.cs
 
- 
+ +
 
-		 
+! +
 
- é
+3 B
+
+K S
+
+! .
+
+> I
+
+R Z
+
+! 3
+
+; @
+
+I Y
+
+ 
+
+ #
+
+! 2
+
+: ?
+
+H L
+
+! >
+
+F K
+
+##! ;
+
+##C H
+
+##Q U
+
+##^ i√
+úC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\FriendDto.cs
+
+ 
+
+ 
+
+ é
 üC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\MatchInfoDto.cs
 
  
@@ -1986,59 +2055,958 @@
 
    $
 
-## ‘
-°C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\ChatMessageDto.cs
+## Œ
+ßC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\FriendRequestInfoDto.cs
 
- 
+ %
 
- $
+ '
 
- $
+ #Ê
+õC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\GuessDto.cs
 
- !´
-¨C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\ServiceContracts\IAuthenticationService.cs
+ 
 
- +
+ %
 
-! +
+ 
 
-3 B
+ 
 
-K S
+ 
 
-! .
+ º
+©C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\Shared\ServiceFaultDto.cs
 
-> I
+  
+		  ) 
+  
+  
+0 4 
+= D 
+M S Ë
+ùC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\DrawingDto.cs
 
-R Z
+ 
 
-! 3
+		 
 
-; @
+ !
 
-I Y
+ #
 
- 
+ 
 
- #
+ €O
+íC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\BusinessLogic\GameLogic.cs™
+  0 :xxK Uxxq {
+ôô )
+££$ .
+ﬂﬂ (
+¯¯ (
+∆∆# -
+ÒÒ (
+ãã# -
+ﬁﬁ# -
+ãã (
+ŸŸ" ,p
+ 443 =44a kPP, 6
+óó: D
+ŸŸ, 6
+ÆÆ! +
+ΩΩ, 6
+ÑÑ 
+ññ )\
+ PP9 @
+üüZ a
+††3 :
+´´@ G
+¨¨K R
+ŸŸ9 @
+ŒŒC Jñ
+ xxB Gxxh m
+ôô 
+££  
+ﬂﬂ 
+¯¯ 
+∆∆ 
+ÒÒ 
+ãã 
+ﬁﬁ 
+ãã 
+ŸŸ *
+ ++ ,, 
+êê #j
+ 
+›› "
+˛˛$ 0
+õõ  
+õõ) 5
+ßßX d
+∫∫ &
+øø &
+¡¡ &"
+   
+ﬁﬁ !
+øø/ :Ç
+!! &
+•• -
+ßß> Q
+˘˘ )
+ÚÚ )
+øø )
+ƒƒ% 8
+„„ )
+ÂÂ 0
+ÁÁ9 L
+ÌÌ -ú
+"" #TT "VV !ff %hh %oo" )tt" )xx' .
+õõD K
+ùù+ 2
+ùùB I
+‡‡ 
+‡‡& -
+‰‰) 0
+ŸŸD K
+⁄⁄+ 2
+⁄⁄B I
+ııH O
+……% ,
+  j q
+ËË %
+éé& -
+íí& -
+5 <
+úú5 <N
+##* =jj" 5ll" 5
+¸¸ )
+∂∂ -
+ÀÀ* =
+ÀÀ\ o‚
+$$  (
+õõ* 2
+••6 >
+ßß/ 7
+˙˙ 
+ÕÕ #
+œœ "
+’’* 2
+ŸŸ* 2
+ıı% -
+êê$ ,
+øø3 ;
+ƒƒ 
+ÂÂ9 A
+ÁÁ* 2
+çç+ 3
+òò 
+†† !
+§§& .v
+%% %
+˚˚ 
+ÛÛ 
+óó5 <
+õõ !
+  . 5
+ëë* 1
+ôô 
+°°  
+§§@ Gt
+&&$ *ii $
+‚‚  
+‰‰  
+∞∞% +
+∂∂$ *
+öö 
+öö< B
+¢¢ 
+⁄⁄( .:
+''' 5
+˘˘# 1
+˚˚" 0
+ˇˇ ,
+ÄÄ. <"
+))  
+˛˛ *
+èè &
+00 22H QÄ
+22% )YY 
+ãã 
+üü 
+´´ 
+ÃÃ 
+™™ 
+ÀÀ 
+ÚÚ 
+ÇÇ 
+≥≥ *
+33S dJJ ^^ 
+®® !˛
+44? GNN PP SS $cc' /
+ââ 
+◊◊ 
+ŸŸ 
+‹‹ $
+ÛÛ 
+¥¥ 
+¡¡ 
+ÏÏ 
+ÜÜ 
+ŸŸ 
+áá 
+∂∂ 
+◊◊ 
+ÓÓ 
+˙˙ 
+çç 
+öö “
+55' 5LL  aa  
+áá $
+’’  
+ÒÒ  
+≤≤  
+øø  
+ÍÍ  
+ÑÑ  
+◊◊  
+ÖÖ  
+¥¥  
+’’  
+ÏÏ  
+¯¯  
+ãã  
+òò  
+77 +
+≥≥& 7
+88 6
+ππ% A 
+::) 8CC 
+òò" 1t
+;;* :DD 
+ää) 9
+ØØ" 2
+ππ0 @
+ºº  0
+∆∆ *
+ÿÿ" 2
+››* :
+ÌÌ *D
+<<+ <EE 
+√√' 8
+«« /
+∂∂+ <
+‚‚+ <
+?? *CC ,
+@@ ,DD .
+AA .EE  0
 
-! 2
+HH !2
+HH) 1JJ* 2TT, 4VV& .YY, 4<
+HH: ANN* 1PP $PPC JSS% ,YYK R
+HHX `JJ4 <JJL T
 
-: B
+JJ? B
 
-K U
+JJD G
+SS TT VV 
+\\ $
+ππ Z
+\\, 4^^( 0ff/ 7hh- 5iiB JjjB Jll= Eqqo w~~H Pd
+\\= Dcc cc< Cqq- 4
+ÜÜ &
+ââ$ +
+ãã. 5
+ëë% ,
+íí- 4 
+__ zz *
+çç # 
+`` vv '
+ÑÑ x
+ccM Rff hh ii jj !ll !oo !tt !xx! &xx< Axxb g~~A F
+ii/ 0ii4 5
+qq6 7qq; <
 
-! >
+ëë. /
+ëë3 4
 
-F K
+óó 9~~ @¿
 
-!!! ;
+óóE J
+ôô 
+õõ$ )
+õõ> C
+ùù% *
+ùù< A
+üüT Y
+††- 2
+££ 
+•• 
+••0 5
+ßß) .
+ßß8 =
+´´: ?
+¨¨E J
+∞∞/ 4
 
-!!C H
+óóS a
+©©8 F
 
-!!Q U
+õõ !
+ùù !
 
-!!^ iÿ
+õõ9 :
+õõU V$
+
+ßß &
+©© &
+∞∞6 D
+
+∂∂ &
+èè "$
+
+∂∂. 6
+ππ %
+∫∫ %
+
+∂∂? F
+ππ' .
+
+∏∏ #
+∫∫' 4
+
+ΩΩ %
+∫∫ $
+
+ΩΩ- 5
+√√R Z
+ÃÃ< D$
+
+ΩΩ; C
+∆∆9 A
+ÃÃJ R$
+
+√√ 
+ƒƒ 
+∆∆ 
+
+—— (`
+
+——0 7
+”” "
+◊◊* 1
+ŸŸ $
+ŸŸC J
+‹‹% ,
+ËË* 1
+ÈÈ% ,
+
+——= H
+ﬁﬁ$ /$
+
+——W g
+‡‡4 D
+ËË3 Cl
+
+‹‹ 
+›› 
+ﬁﬁ 
+ﬂﬂ 
+‡‡ 
+‡‡  %
+‚‚ 
+‰‰ 
+‰‰# (
+
+‰‰8 9
+‰‰] ^$
+
+ÏÏ -
+ÈÈ $
+»» (0
+
+ÏÏ5 <
+ÓÓ "
+ÛÛ* 1
+ÅÅ $$
+
+ÔÔ 
+˛˛ 
+ÅÅH ST
+
+ÛÛ; @
+¯¯ 
+˘˘ 
+˙˙ 
+˚˚ 
+¸¸ 
+˛˛ #
+
+ÅÅ& .
+ÅÅ2 :
+
+ÑÑ) <
+
+ÑÑD L
+ääP X$
+
+ää  
+åå  
+ïï# /
+
+ïï  
+òòI U0
+
+òò 
+öö 
+öö% *
+¢¢ $
+
+¢¢$ %
+§§ 
+•• 
+
+∞∞ (
+
+∞∞0 8
+∂∂. 6
+
+∞∞A H
+¥¥) 0
+
+∞∞Q ]
+∂∂: F
+
+¥¥: ?
+∂∂ 
+
+ªª <
+
+ªª& .
+ÀÀJ R
+ÀÀp x
+ÕÕ@ H
+——( 0$
+
+ªª7 >
+¡¡* 1
+‚‚) 0
+
+ªªG R
+““& 1$
+
+ΩΩ $
+‹‹ '
+‡‡ #Ñ
+
+¡¡; @
+∆∆ 
+ÀÀ$ )
+ÀÀV [
+ÕÕ 
+œœ 
+’’$ )
+ŸŸ$ )
+ŸŸ> C
+⁄⁄% *
+⁄⁄< A
+
+ÀÀ !
+””" ,
+
+ÕÕ( )
+ÕÕ- .
+
+ŸŸ !
+⁄⁄ !
+
+ŸŸ9 :
+ŸŸU V$
+
+ÊÊ -
+†† ,
+‚‚ (0
+
+ÊÊ5 <
+ÏÏ* 1
+˙˙! (
+˛˛= D0
+
+ËË #
+ıı 
+¯¯ 
+˙˙F RH
+
+ÏÏ; @
+ÒÒ 
+ÚÚ 
+ÛÛ 
+ıı $
+ııB G
+
+ıı= >
+ııY Z
+
+˙˙* +
+˙˙/ 0
+
+ÇÇ  0
+
+ÇÇ( 0
+óó[ c
+ùù* 2
+¶¶+ 3
+
+ÇÇ9 @
+ÜÜ* 1<
+
+ÇÇF O
+êêP Y
+óóv 
+ûû$ -
+™™. 7$
+
+ÇÇX a
+ññ/ 8
+üü$ -T
+
+ÜÜ; @
+ãã 
+êê #
+óó/ 4
+õõ 
+¶¶$ )
+™™' ,<
+
+êê 
+ëë 
+ññ: A
+°°" )
+¶¶5 <
+
+êê< =
+êêA B$
+
+ññ 
+††$ -
+§§ !
+
+óó ,
+ôô ,2
+
+óóA B
+óóF G
+óóg hóóÉ Ñ
+
+ÆÆ  
+¶¶ #$
+
+ÆÆ, 1
+∞∞ $
+∂∂ #
+
+ÆÆ: A
+∞∞N U
+
+ÆÆJ P
+∂∂M S$
+
+∞∞ 
+±± 
+≥≥ 
+
+∞∞; <
+∞∞@ A$
+
+∂∂ 
+∑∑ 
+ππ 
+
+∂∂: ;
+∂∂? @$
+
+ΩΩ +
+∞∞ .
+™™ &l
+
+ΩΩ7 <
+øø 
+øø- 2
+ƒƒ 
+ƒƒ $
+…… $
+  ( -
+  d i
+ŒŒ= B$
+
+ΩΩB R
+ƒƒG W
+  P `
+
+…… 
+ÃÃ* 6
+
+   %
+ÃÃ %$
+
+  < =
+  A B
+  { |0
+
+““ 2
+¨¨' D
+˛˛ <
+ŒŒ <0
+
+““: A
+ŸŸ* 1
+¯¯! (
+¸¸" )<
+
+‘‘ "
+ÍÍ #
+ 
+ˆˆ 
+¯¯C N$
+
+’’ #
+ÚÚ &
+˙˙ 'l
+
+ŸŸ; @
+ﬁﬁ 
+„„ 
+ÂÂ 
+ÂÂ3 8
+ÁÁ$ )
+ÁÁ3 8
+ËË 
+ÌÌ $
+
+ÁÁ !
+ËË/ 8
+ÍÍ& /
+
+¯¯* +
+¯¯/ 0
+
+ÄÄ &
+¸¸ !<
+
+ÄÄ. 5
+áá* 1
+üü $
+ßß 
+ßßF M
+
+ÇÇ !
+••- 8
+
+ÉÉ $
+••< J`
+
+ÑÑ 
+ññ 
+†† 
+°° 
+¢¢ 
+§§ %
+§§7 ?
+ßßO W`
+
+áá; @
+ãã 
+çç% *
+éé  %
+ëë$ )
+íí  %
+öö6 ;
+õõ# ($
+
+çç "
+ìì  .
+òò -
+
+éé 
+éé7 8
+
+ëë !
+ôô +$
+
+íí 
+íí7 8
+ììG H
+
+ìì3 4
+ìì8 9
+
+üü& '
+üü+ ,
+
+§§ 
+••  *
+
+•• 
+ßßg s
+
+™™ "
+ßß  -
+
+™™* /
+¨¨, 1$
+
+¨¨ 
+≠≠1 6
+≠≠> C
+
+∞∞ 0
+≠≠ 00
+
+∞∞8 ?
+∂∂* 1
+»») 0
+ÃÃ) 0
+
+∞∞E R
+∫∫* 7$
+
+≤≤ 
+¬¬ "
+∆∆ <
+
+∂∂; @
+∫∫ 
+øø 
+øø) .
+¡¡ $
+
+–– -
+íí ,
+ÃÃ (<
+
+––5 <
+““ "
+◊◊) 0
+‡‡, 3
+··! (<
+
+””! ,
+⁄⁄ 
+ﬁﬁ 
+‡‡5 @
+··; F$
+
+◊◊: ?
+ŸŸ 
+⁄⁄" '
+
+⁄⁄A B
+⁄⁄F G
+
+··* +
+··/ 0
+
+ÂÂ (l
+
+ÂÂ0 6
+˘˘> D
+˚˚1 7
+ˇˇ- 3
+ÄÄ= C
+èè# )
+ëëa g
+úú! '
+¢¢C I0
+
+ÂÂ? F
+ÓÓ) 0
+èè+ 2
+ëë! (<
+
+ÂÂO R
+ÍÍ" %
+ÛÛ? B
+ˆˆ( +
+òò$ '0
+
+ÁÁ  
+ 
+ïï 
+††" )$
+
+ËË 
+ÖÖ  
+åå 0
+
+ÈÈ 
+ÄÄ %
+ÉÉ )
+úú] j<
+
+ÍÍ 
+ÛÛ  
+ˆˆ $
+òò  
+¢¢K WH
+
+ÓÓ: ?
+/ 4
+˘˘ "
+˚˚ !
+ˇˇ 
+ÄÄ( -
+
+ëë* +
+ëë/ 0
+
+úú) *
+úú. /
+
+¢¢$ %
+¢¢) *
+
+¶¶ 2
+ËË )
+
+¶¶: D
+®® (
+
+¶¶S b
+¥¥- <<
+
+®®2 9
+ØØE L
+ππ^ e
+ææ4 ;
+ÀÀ? F$
+
+ØØ 
+∞∞ 
+≤≤ 0
+
+∂∂ "
+∑∑ "
+ππg m
+øø6 <
+
+ππ! '
+∫∫! '
+
+œœ 0
+‡‡ +
+
+œœ8 B
+—— ($
+
+œœY d
+ﬂﬂ( 3
+··$ /0
+
+——2 9
+ÿÿE L
+››Y `
+ÚÚ= D$
+
+ÿÿ 
+ŸŸ 
+€€ 
+
+›› !
+ÂÂ( 1<
+
+ﬂﬂ 
+ﬂﬂ$ %
+ﬂﬂ; <
+··0 1
+ÈÈ0 1$
+
+·· !
+‚‚V [
+ËË3 8$
+
+‚‚ "
+„„ "
+ÂÂ[ a0
+
+ÂÂ  %
+ÊÊ  %
+ËË  %
+ÈÈ  %
+
+ÂÂA B
+ÂÂF G<
+
+ˆˆ #
+ÜÜ 
+”” 
+ÓÓ 
+““ $
+
+ˆˆ+ 2
+˙˙) 0
+ÇÇE L
+
+˙˙: ?
+˛˛ 
+
+àà 
+ßß 
+
+àà' .
+çç) 0
+
+àà> F
+êê0 8
+
+ààO T
+êê: ?
+
+ààZ f
+êêA M
+
+ää !
+êêP [$
+
+çç: ?
+èè 
+êê j
+
+ïï %qq ,
+ëë $
+ÅÅ 
+˙˙  
+¯¯  
+üü 
+··  
+ëë  
+
+ïï- 4
+öö) 0
+
+ïïS Y
+¢¢A G0
+
+óó  
+úú 
+†† 
+¢¢% ,
+
+öö: ?
+úú/ 40
+
+¶¶ !
+úú  
+¢¢  
+¢¢. :$
+
+¶¶) 1
+®®. 6
+≥≥8 @
+
+¶¶P V
+¨¨ 
+
+®®@ B
+¨¨ ÿ
 •C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\OperationResultDto.cs
 
  #
@@ -2047,603 +3015,1141 @@
 
  
 
-* .‰
-ôC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\BusinessLogic\UserProfileLogic.cs
+* .Î&
+ôC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\BusinessLogic\MatchmakingLogic.cs
+ !H X™
+% )33 99 GG ss 
+áá 
+ÀÀ 
+‡‡ 
+‰‰ 
+ˆˆ 
+˙˙ 
+àà 
+çç 
+ÕÕ 
+ÁÁ 8
+ /__ 0
+êêA S
+´´j |
+¡¡  2N
+Z i22 88 
+óó  
+›› 
+ÔÔ .
+˙˙ #r
+I W;; &qq 
+èè !
+úú 
+´´ &
+ÅÅ 
+éé "
+ßß 
+±± T
+!!* :** QQ -dd hh &oo- =
+¿¿" 2
+»» **
+""+ <++ DD# 4
+ÍÍ% 6 
+##' 4,, 
+ıı #
+&& ,** .
+'' .++  0
+(( &,, (
 
- !,
-' 4 
-ìì 
-∞∞ ¿
-/ 7  ';;' /FF LL& .
-áá '
-êê 
-üü '
-§§ 
-≠≠ 
-ºº '
-…… 
-–– '
-ﬁﬁ 
-„„ 
-ÎÎ 
-' .) 0
-. : (
-R Y "
- #
-çç &
-©© &
+// 
+//' /22( 033 '
+11 222 :22J R
 
-* =
-E M""8 @P
- $$ ++ !,, "-- !.. // !00 !
-      
-!! !! 
-""% &""* +
+22= @
 
-44. @
-44H P;;^ fP
-44a l66 887 BAA" -BB& 1CC- 8DD- 8DDH SF
-;; << AA BB CC DD DD_ m
-;;K L;;P Q
+22B E
 
-JJ+ C
-LL PP) 6 
-MM {{ 
-ÇÇ !
-NN UU3 ;Z
-RR  ]]  )``8 AaaK Taaf off6 ?hh5 >iiK T! *H
-UU #WW$ ,[[F N
-iiÇ äooK SssT \xxU ]
-[[. 4]]5 ;aa: @
-^^$ -aa( 1cc6 ?Q
-__$ 2``' 5aaV d	aay ácc$ 2ff$ 2hh@ Niim {
+66 "2
+66* 288& .99 ';;U ]>>" *
+;; << >>, 1
+;;= >;;B C
 
-ÖÖ. H
+BB. >H
+BBF RDDN ZGG7 CllB Nmm" .ss9 E
+áá8 Dd
+BBe mLL) 1NN YY $ZZ %\\ &aa4 <llP XooU ]uu 
+DD EE ``  *H
+KK PP QQC OSS  ^^ (ll4 @
+ÅÅ' 3
+LL ]] *
+WW dd& .jj! )4
+jj ll+ 2qq& -ss, 3
+ÄÄ% ,2
+ll mm nn oo qq/ 4
 
-ÖÖP X
-ááV ^T
+çç" 2
+ÓÓ '$
 
-áá 
-àà 
-éé 
-èè 
-ííL R
-ìì/ 5
-ìì= C
+êê 
+êê 
+êê5 6
 
-ááC D
-ááH I$
+ëë 
+ëë 
 
-çç 
-éé #
-íí] a
+ïï. B$
 
-íí 
-ììN [
+ïïJ R
+óó- 5
+°°0 8
 
-òò. E
+ïï[ b
+úú, 3
 
-òòM U
-üüV ^H
+úú= B
+°°: ?
 
-òò^ f
-öö* 2
-ööT \
-úúP X
-§§? G
-¨¨' /l
+§§. C
 
-üü 
-†† 
-™™ 
-´´ 
-¨¨ 
-ØØI O
-∞∞/ 5
-∞∞= C
-≤≤u {
+§§K S
+≤≤0 8$
 
-üüC D
-üüH I
+§§\ e
+¶¶* 3
+´´Q Z$
 
-§§/ 0
-§§4 5$
+´´ 
+≠≠ 
+≤≤: ?$
 
-©© 
-™™ #
-ØØZ ^
+´´= >
+´´B C
+´´^ _$
 
-ØØ 
-∞∞N [
+µµ/ E
+°° /
+≤≤ /0
 
-µµ. H
+µµM U
+∑∑' /
+∆∆ &
+ÀÀ 'û
 
-µµP X
-ººV ^0
+µµb g
+∑∑ ππî ô
+ºº 
+ºº( -
+¡¡ 
+∆∆ 
+«« 
+……- 2
+ÀÀ8 =
+ÕÕ! &
+ŒŒ 
+◊◊E J
 
-µµa l
-∑∑1 <
-ππp {
-∆∆: E
-µµu Ö
-¡¡$ 4T
+€€ !$
 
-ºº 
-ΩΩ 
-¡¡ 
-¡¡8 >
-∆∆ 
-«« 
-»» 
+€€) 8
+ﬂﬂA P
+‡‡* 90
 
-ººC D
-ººH I
+€€A P
+››, ;
+‡‡? N
+‰‰, ;$
 
-ŒŒ. E
+€€Y `
+ﬂﬂR Y
+‡‡X _
 
-ŒŒM U
-––V ^
+››E M
+ﬂﬂ %
 
-ŒŒ^ n
-ŸŸ$ 4¥
+ﬂﬂ' (
+ﬂﬂ, -
 
-–– 
-—— 
-’’% +
-ŸŸ 
-ŸŸ8 >
-ﬁﬁ? E
-ﬁﬁi o
-‡‡ 
-·· 
-‚‚ 
-ÁÁ 
-ÁÁ !
-ËË 
-ÈÈ 
-ÍÍ 
+ËË 1
 
-––C D
-––H I$
+ËË9 HH
 
-ﬁﬁ/ 0
-ﬁﬁ4 5
-ﬁﬁ[ \Ó"
+ËËQ \
+ÍÍM X
+: E
+ıı3 >
+ˆˆ2 =
+˙˙< G
+
+ËËe l
+G N
+
+ÍÍ 
+ÎÎ 
+
+ 
+ÙÙH L
+
+ÙÙ !
+ııS `
+
+ˇˇ %>> !0
+
+ˇˇ- 5
+ÉÉ4 <
+àà( 0
+ããG OT
+
+ˇˇ> E
+ÅÅ+ 2
+áá3 :
+àà8 ?
+çç/ 6
+éé- 4
+íí7 >x
+
+ÅÅ< A
+ÉÉ $
+ÜÜ 
+ãã 
+ãã1 6
+ããS X
+êê 
+ïï 
+úú) .
+ùù $
+
+ÉÉ 
+ÑÑ 
+öö  
+
+•• %$
+
+••- 4
+ßß+ 2
+™™/ 6
+
+ßß< A
+©© 
+
+ØØ &
+
+ØØ. 5
+±±+ 2
+
+±±< A
+≥≥ $
+
+∑∑ 5
+…… ,
+áá 2
+
+∑∑= G
+ππ (
+
+∑∑M S
+√√, 2$
+
+ππ2 9
+¿¿E L
+ÕÕG N<
+
+¿¿ 
+¡¡ 
+√√ 
+ƒƒ 
+∆∆ $
+
+—— 5
+íí 6
+™™ .
+
+——= G
+”” (
+
+——P V
+··, 2$
+
+””2 9
+ﬁﬁB I
+ÁÁE L
+
+ÿÿ 
+‹‹$ )$
+
+‹‹ !
+ﬁﬁ& /
+‚‚ '$
+
+ﬁﬁ 
+ﬂﬂ 
+·· F
+
+ÏÏ -ww ,
+–– (
+óó 0
+üü 0
+´´ (
+
+ÓÓ 
+ÒÒA E
+
+ÒÒ! "
+ÒÒ& '$
+
+ıı )
+ÕÕ  
+úú ($
+
+ıı5 :
+˜˜ 
+¯¯ #
+
+˜˜ 
+¸¸8 <
+
+˙˙; =
+¸¸! #
+
+¸¸% &
+¸¸* +0
+
+ÅÅ !
+ﬂﬂ 
+ÒÒ 
+¸¸  
+
+ÅÅ> F
+ÖÖ 
+
+ÅÅl r
+ÖÖ  
+
+åå (PP 0SS# 4$
+
+åå- 3
+ëë$ *
+ìì/ 5$
+
+éé 
+îî7 <
+îîA F
+
+èè 
+íí $
+
+ëë 
+íí  $
+îî# '$
+
+ìì 
+îî) /
+ïï Ç
+
+ôô &HH !
+àà !
+ôô !
+ûû !
+®® !
+ØØ !
+ææ !
+√√ !
+ÌÌ !
+˚˚ !
+
+ôô8 <
+õõJ N$
+
+ôôE L
+õõP W
+õõj q8
+
+üü = G- 7
+µµW a
+ıı* 4`
+
+°° >>2 9ππö °
+……3 :
+ÀÀ> E
+◊◊K R
+¨¨ 
+∂∂ &$
+
+¢¢ 
+´´D M
+≠≠ 0
+
+££ "
+ãã7 C
+ÆÆ 
+∏∏$ 0l
+
+§§  (
+êê '
+ºº. 6
+ŒŒ 
+ïï '
+ùù '
+ØØ 
+∑∑! )
+∫∫" *\
+
+•• #;;D Kmm 
+∑∑ 
+∆∆ 
+ÉÉ% ,
+ãã !
+¯¯$ +`
+
+¶¶ 
+êê7 =
+´´` f
+¡¡ 
+ããY _
+êê $
+©© 
+≥≥ F
+
+ßß !nn $
+ºº $
+««  
+ÜÜ (
+ππ& 4"
+
+®® $oo $
+ªª& 4
+
+™™! (
+¨¨ 
+
+™™1 :
+≠≠ !
+
+™™C G
+ÆÆ 
+
+™™Z b
+ØØ $
+
+≤≤ *
+ëë -
+˜˜ +‚
+£C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\DirectMessageDto.cs
+
+ !
+
+
+
+ $
+
+ '
+
+ 
+
+ !Ó
+£C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\FriendProfileDto.cs
+
+ !
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+& 4›)
 ìC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\BusinessLogic\LobbyLogic.cs
- WW "Ç
-D L
-ÉÉ 
-ëë 
-ìì 
-«« 
-ÊÊ 
-¯¯ 
-ôô 
-∂∂ 
-’’- 5
-ËË& .
-' ,
-ÅÅ 5
- -$$0 @	$$v Üaa) 9
-ÖÖF V
- " kkN Ví
-) 1 AA' /KK+ 3VV/ 7
-““. 6
-““C K
-ÒÒ& .
-ÒÒ; C
-ãã/ 7
-∞∞" *
-∞∞7 ?
-ÏÏ) 1
-+ 3 #
-K S #Ñ
- "= Bp uss }}  
-öö& +
-««2 7
-ÊÊ2 7
-¯¯2 7
-ôô2 7
-´´0 56
-!! !++ WW/ 6
-¶¶P W
-ÆÆV ]N
-"" &,, 55# /
-ÕÕ. :
-‹‹+ 7
-˙˙/ ;
-õõ/ ;R
-##  )-- 44  )66! *88! *99  )996 ?
-úú- 6¨
-$$B I77% ,::& -cc+ 2
-úú 
-úúL S
-§§ 
-´´ !
-≠≠ !
-…… !
-‹‹f m
+ H Rö
+% )
+üü 
+££ 
+’’ 
+ÂÂ 
+ÙÙ 
+ää 
+åå% )
+…… 
+ÏÏ 
+çç 
+°° 
+∫∫ v
+D L
+õõ 
+ππ 
+—— 
+˛˛ 
+ôô& .
+≥≥ 
+¬¬ 
+»» 
+ØØ 
+' ,
+¿¿ ,
+* : 
+◊◊" 2
+››( 88
+* ; 
+ôô 
+ÚÚ %
+éé %
++ : .
+M ]  0M
+"" -550 @	55v Ü{{) 9
+ùù: J
+ﬂﬂ> N
+D T
+$$ "** Z
+%% %++ OOC N
+üü7 B
+øø9 D
+ŸŸK V
+ÄÄ+ 6
+üüI TÜ
+&&) 1,, XX' /cc3 ;oo7 ?
+¶¶. 6
+¶¶C K
+ÀÀ- 5
+ıı, 4
+ııG O
+ùù) 1
+™™) 1
+((+ 3** #
+((< G++ )
+((_ g,, #ä
+00 "= Bp u
+çç 
+õõ2 7
+ππ2 7
+——2 7
+˛˛2 7
+±±  
+≥≥2 7
+ÒÒ& +
+ßß0 5H
+22 !@@ VV" )nn2 9pp6 =vv+ 2
+ççI PB
+33 &AA JJ# /
+°°. :
+””/ ;
+ÄÄ/ ;R
+44  )BB II  )KK! *MM! *NN  )NN6 ?
+ÛÛ- 6–
+55B ILL% ,OO& -}}+ 2
+ùù !
+∞∞ !
+ΩΩ !
+ŸŸ' .
+›› %
+ !
 ÖÖ !
-°° !
-’’b i
-ÍÍ; BP
-%% )BB GG LL #SS 'TT '[[ '\\ '<
-&& )@@ !AA? PHH !II %KKC T
-''" 1PP (RR '
-))  '++ !
-))0 <,, +
-))K T-- %"
-00! 0
-∞∞Q `
-≠≠ -
->> &
-ßß $
-AA AA" &
-EE &BB, 9
+õõ; B
+ÛÛ 
+ÛÛL S
+˛˛ !
+ãã 
+ùù !
+†† !<
+77 )ZZ ^^ 'dd +kk  /ll  /<
+88 )UU !XX? P__ )aa -ccK \
+99" 1hh! 0jj  /
+:: %<</ <
+<< )
+ÑÑ= O
+>>  '@@ !
+>>0 <AA +
+>>K TBB %"
+EE! 0
+¢¢Q `
+©© -
+OO< =OOA B
+SS &
+åå $(
+SS, /VV nn  #vv 
+SS@ Mpp  -
+XX XX" &
 
-EE. 3
-KK "KK& *
-VV" &VV* .L
-aa !AA KK VV !
-–– '
-ÔÔ 
-ÆÆ 
-aa; Agg 
+ZZ, 1
+cc& *cc. 2
+oo* .oo2 6L
+{{ !XX cc %oo  )
+§§ '
+ÀÀ 
+™™ 
+{{; A
+ÅÅ 
 
-qq 
-qq# +ss4 <zz$ ,
-qq4 ;ss+ 2
-qqS [ss> Fzz. 6
-ss uu zz "
-}} &ss *F
-}}. 5
-ÉÉ) 0
-àà- 4
-èè" )
-ëë% ,
-ìì) 0
-}}> J
-èè+ 7"
-}}b j
-ãã! )
-ãã1 9R
- 
-ÉÉ6 ;
-ÖÖ  
+ää &$
+
+ää. 6
+çç? G
+îî$ ,
+
+ää? F
+çç6 =$
+
+åå 
+ççI Q
+îî. 6$
+
+çç 
 èè 
-ëë. 3
-ìì6 ;
-óó $
+îî "
 
-àà 
-ââ 
-èè9 B
+óó 
+≠≠ 0
 
-öö %zz Ñ
+óó& .
+ôô0 8
+ùù, 4
+°°  T
 
-öö, 1
-úú 
-úú' ,
-úúF K
-§§ 
-¶¶J O
-ßß$ )
-´´ 
-≠≠ 
-ÆÆP U
-∞∞K P`
+óó7 >
+ôô: A
+õõ% ,
+üüQ X
+££A H
+®®$ +
+≤≤  'H
 
-öö: B
-úú` h
-¢¢2 :
-§§% -
-¶¶, 4
-´´. 6
-≠≠, 4
-ÆÆ0 8H
+õõ8 =
+ùù 
+°°( -
+§§ 
+¨¨, 1
+∞∞ 
 
-ööZ b
-ûû %
-ûû- 5
-¢¢< D
-∞∞! )
-∞∞1 9$
+ùùK X
+üü) 6$
 
-¢¢ 
-§§/ 9
-≠≠6 @
+§§( ,
+¶¶) -
+¶¶> B
 
-´´@ R
-≠≠B TT
+∑∑ $
 
-µµ (
-ãã  
-ûû 
-∞∞  
-““ (
-ÒÒ  
-∞∞ 
+∑∑' 5
+ªª+ 9
+ΩΩ. <
 
-µµ? G
-ππ 
+∑∑> E
+ππ% ,
 
-µµP V
-ªª 
+∑∑N \
+¬¬B P$
+
+ππ8 =
+ΩΩ 
+ÀÀ $
+
+ªª (
+øø %
+∆∆% 6
+
+ΩΩF V
+øø( 8
+
+¬¬ #
+««% 1
 
 ƒƒ 
-¯¯ T
+ÀÀJ T
 
-ƒƒ& .
-∆∆/ 7
-……, 4
-ÀÀ0 8
-ÕÕ  
-œœ2 :
-‹‹ `
+ÀÀ  $
+ÀÀ( ,
 
-ƒƒ7 >
-∆∆9 @
-««% ,
-ÀÀS Z
-œœH O
-‘‘$ +
-ﬁﬁ/ 6
-ﬂﬂ  'T
+œœ 0
 
-««8 =
-…… 
-ÕÕ( -
-–– 
-ÿÿ, 1
-‹‹% *
-‹‹` e$
+œœ& 2
+”” !
+’’/ ;
+ÎÎ  <
 
-––( ,
-““) -
-““> B
+œœ; O
+ŸŸ^ r
+››2 F
+ﬂﬂP d
+ÂÂ6 J<
 
-‰‰ 
+œœX _
+——% ,
+’’N U
+ÚÚL S
+ÙÙK RH
 
-‰‰' 5
-ÍÍ% 3
+——8 =
+””) .
+ŸŸ! &
+›› 
+ 
+˜˜( -<
 
-‰‰> E
-ÊÊ% ,
+ŸŸ 
+€€ 
+ﬂﬂ "
+„„ 
+ÈÈ, 6
 
-‰‰N X
-ÎÎ% /
+ŸŸ> ?
+ŸŸC D
 
-ÊÊ8 =
-ÔÔ 
+››P T
+ﬂﬂf j<
 
-ËË 
-ÒÒX b$
+ÈÈ )
+ÎÎ( :
+, >
+ÚÚ8 J
+ÙÙ) ;$
 
-ÔÔ  $
-ÒÒ! %
-ÒÒ6 :
+U _
+ıı! +
+ıı< F
 
-ˆˆ <
+¸¸ 
 
-ˆˆ& 2
-˙˙ !
-¸¸> J
-ÄÄ  
-ààk wH
+¸¸% 1
+ÄÄ !$
 
-ˆˆ; O
-ÄÄ( <
-ÖÖ, @
-áá7 K
-àà0 D
-èèL `<
+¸¸: A
+˛˛% ,
+ää? F0
 
-ˆˆX _
-¯¯% ,
-¸¸f m
-ááM T
-ààY `0
-
-¯¯8 =
-˙˙) .
+˛˛8 =
+ÄÄ) .
 ÖÖ 
-íí( -
+åå $
 
-ÖÖW m
-ãã .
+åå, .
+éé8 :
+èè  "
 
-óó 0
+îî !
 
-óó% 1
-õõ !
-ùùD P
-¶¶* 6<
+îî8 @
+ùù5 =<
 
-óó: A
-ôô% ,
-ùùl s
-££` g
-¶¶Q X0
+ññ 
+üü $
+••  
+´´ 
+≠≠ '0
 
-ôô8 =
-õõ) .
-°° 
-ßß 0
+óó "
+†† '
+´´( 7
+≠≠) 8
 
-´´ /
-ßß #
-ÿÿ +
-íí '$
+±±" 7
+çç  5T
 
-´´6 ;
-≠≠ 
-ÆÆ 
+±±? F
+≥≥% ,
+∏∏4 ;
+¬¬) 0
+««) 0
+»»  '
+……# *
 
-≠≠ 
-∞∞Q V$
+±±O [
+««2 >$
 
-ÆÆ  
-∞∞ !
-∞∞2 6.
+±±s {
+ºº %
+ºº- 50
 
-¥¥ 'WW# .
-‘‘ #
-ﬂﬂ $
+≥≥8 E
+µµ $
+¬¬6 C
+ƒƒ ($
 
-¥¥/ 6
-∂∂# *
-∏∏+ 2
+∏∏ 
+∫∫ 
+««@ I$
 
-ºº )
-àà  ,H
+«« 
+»») 1
+   
 
-ºº1 8
-ææ %
-¿¿5 <
-––& -
-’’B I
-ﬁﬁC J
+ŒŒ) :
+∏∏" 30
 
-ææ/ =
-  : H
+ŒŒB I
+–– %
+·· %
+ÏÏ< C
 
-≈≈ "
-««  '`
+––/ 1
+◊◊E G`
 
-«« 
-ÃÃ 
-——( -
-““( -
-””+ 0
-‘‘- 2
-÷÷) .
-◊◊( -
+◊◊ 
+ÿÿ 
+ÿÿ% *
+››P U
+‚‚  %
+„„  %
+ÊÊ! &
+ÁÁ  %
 
-  ( )
-  - .
+›› 
+ÂÂ% -
 
-’’S X
-’’\ a
+ÒÒ %
+îî ê
 
-„„ !
+ÒÒ, 1
+ÛÛ 
+ÛÛ' ,
+ÛÛF K
+˛˛ 
+ÑÑ7 <
+ãã 
+ççC H
+ôô$ )
+ùù 
+†† 
+¢¢K PÑ
 
-„„8 @
-ÏÏ5 =<
+ÒÒ: B
+ÛÛ` h
+˘˘! )
+¸¸ 
+˛˛. 6
+ââ2 :
+ãã% -
+ùù. 6
+üü7 ?
+††, 4
+°°) 1l
 
-ÂÂ 
-ÓÓ $
-ÛÛ  
-ˆˆ 
-¯¯ '0
+ÒÒZ b
+ıı %
+ıı- 5
+ââI Q
+ëë! )
+ëë1 9
+üüV ^
+¢¢! )
+¢¢1 9H
 
-ÊÊ "
-ÔÔ '
-ˆˆ( 7
-¯¯) 8
+˘˘ 
+ÄÄ 
+ÑÑ 
+ââ< G
+çç% 0
+îîB M$
 
-¸¸ !
+˙˙ 
+ÖÖ 
+èè 
 
-¸¸) 6
-˛˛( 5
+˛˛@ H
+ÄÄ" *
 
-¸¸? M
-˛˛P ^
+ââ 
+ãã/ 9$
 
-¸¸V ]
-˛˛j q
+ùù@ G
+üüA H
+††? F
 
-ÅÅ "
+üü 
+††6 =0
 
-ÅÅ* 7
-ÉÉ( 5
+ßß /
+¨¨ +
+˜˜ '
+ôô #$
 
-ÅÅ@ N
-ÉÉM [
+ßß6 ;
+©© 
+™™ 
 
-ÅÅW ^
-ÉÉg n
+©© 
+™™C H
 
-ÅÅe i
-ÉÉ> B˚
-íC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\BusinessLogic\GameLogic.cs
+™™  
+™™$ (0
 
- 
-/ 7 ! )
-' .'' %
-/ 6 
+≠≠ '
+®® #
+≤≤ 
+èè 
 
-) <
- #!!! .(( #
- !! && &
-   
-&& ++ 
+≠≠/ 6
+ØØ &T
 
-'' Õ
+≤≤ (
+¶¶ (
+ıı  
+ºº 
+ıı 
+ëë  
+¢¢  
 
-úC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\BusinessLogic\AuthenticationLogic.cs
+≤≤? G
 
- $Ä
-/ 7 !! '44 UU YY xx {{ 
-åå' /
-¢¢ 
-™™ !
-ÆÆ 
-' 4 aa #
-' .SS& -
-1 = (
-U \ 
+≤≤P V
+∂∂ 
 
-. 8(
-@ O* 9"" -""< K
-X `X `../ 7
- "33- 9<
-!! $$ )) ..9 ?33 66F L
-!!C D"" ""1 2
+ææ &
 
-99. A»
-99Q \;; ==7 B@@* 5AA* 5BB* 5CC* 5HH- 8UUB MYY? J``B Maa3 >aaF Qkk &ll #nn "oo &pp" -qq" -qq= H(
-99e m;;A IMM1 9mm7 ?
-RR #rr* 7
-SS #``X htt$ 4
-UU/ 0UU4 5
-YY/ 0YY4 5
-`` !aa\ i
-ii xx  )
+ææ8 <
+¿¿, 0$
 
-ÖÖ. @$
+ææE L
+¿¿2 9
+¡¡M T
 
-ÖÖH M
-áá* /
-åå[ `$
+¿¿ 
+¡¡6 ;É
+†C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\LobbyStateDto.cs
 
-ÖÖV Z
-ááN R
-òò4 8l
+ 
 
-åå 
-éé 
-ìì 
-òò 
-òò< J
-ùù 
-ûû 
-üü 
-†† 
+ 
 
-ååK L
-ååP Q
+ "
 
-¶¶ 
+  
 
-¶¶" *
-™™K S
+ !
 
-®® #
-≠≠1 >$
+ 
 
-™™ 
-´´ 
-≠≠ 
+ 
 
-™™8 9
-™™= >
+   +π
+™C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\Shared\ServiceErrorType.cs
+
+  ‘
+°C:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\Contracts\DataContracts\PlayerScoreDto.cs
+
+ 
+
+ 
+
+ 
+
+ §
+úC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\BusinessLogic\AuthenticationLogic.cs
+ $H [ö
+% )44 :: @@ II QQ VV 
+àà 
+çç 
+ºº 
+¡¡ 
+˜˜ 
+ïï 
+ûû 
+' .aa& -ê
++ < ++ 0// 0PP 'oo 0
+áá '
+∑∑# 4
+ªª +
+··% 6
+ÁÁ& 7
+êê 
+îî ' 
+* : 
+úú& 6 
+' 4 
+ÛÛ #
+ .  0
+ , .
+ & (
+
+!!. 8<
+!!@ O##* 9)), ;++G V//J Y449 H
+!!X `##X `>>/ 7ñ
+(( ++ // 22 88 ::1 7>>9 ?@@S YGG GGB HII1 7LL QQ# )RRJ PVVG M
+DD "GG2 >LL- 9
+EE "GGd p
+
+\\. A2
+\\Q \^^& 1__* 5cc- 8ee2 =
+\\e m^^3 ;ee? G
+aa #cc: JeeI Y
+
+hh. @
+hhH Mjj* /ooG L
+hhV ZjjN R{{, 0z
+oo qq vv {{ {{4 :
+ÄÄ 
+ÅÅ 
+ÇÇ 
+ÉÉ 
+àà= C
+çç@ F
+
+ìì. ?
+
+ììG L
+ïï2 7
+
+ììU Y
+ïï9 =$
+
+ïïJ T
+öö! +
+••% /
+
+óó &
+¢¢ -$
+
+òò 
+úú 
+ßß' 0
+
+öö5 <
+úúK R
+
+≤≤ %0
+
+≤≤- 5
+∑∑N V
+ºº' /
+¡¡? G
+
+¥¥ #
+∫∫5 B$
+
+∑∑ 
+∏∏ 
+∫∫ 
+
+≈≈ .^^ %T
+
+≈≈> I
+«« 
+ÃÃ* 5
+ÕÕ* 5
+ŒŒ* 5
+œœ* 5
+‘‘- 8$
+
+≈≈R Z
+««A I
+ŸŸ1 9
+
+ﬂﬂ 2__ )$
+
+ﬂﬂB M
+··P [
+ÁÁN Y
+
+·· 
+‚‚ 
+
+ÁÁ 
+ËË 
+
+ÓÓ 5cc ,<
+
+ÓÓE P
+ÚÚB M
+ÛÛ3 >
+ÛÛF Q
+˜˜6 A
+
+ÓÓY ]
+ÚÚX \
+
+ÚÚ !
+ÛÛ\ i
+
+¸¸/ Gee 1x
+
+¸¸W b
+ÉÉ &
+ÑÑ #
+ÜÜ "
+áá &
+àà" -
+ââ" -
+ââ= H
+ïï3 >
+ûû: E
+
+¸¸k s
+ÖÖ7 ?
+¸¸| Ä
+åå$ (
+
+˛˛ #
+ää* 7
+
+ˇˇ -
+çç> U
+
+ÅÅ 
+êê( 1ﬁ
+
+§§ &%% !55 !;; !AA !WW !ll !ss !xx !}} !
+éé !
+≠≠ !
+…… !
+—— !
+÷÷ !
+€€ !
+‰‰ !
+ÍÍ !
+¯¯ !
+üü !
+
+§§8 <
+¶¶, 0$
+
+§§E L
+¶¶2 9
+ßßM T
+
+¶¶ 
+ßß6 ;î
+îC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\BusinessLogic\GuestInvite.cs)
+ = H	v Å (
+		  
+
+
+  '' 
+  ))% ,
+ " ''2 <
+
+ *(
+J R %% ** 
+
+ )
+1 6 ! &
+? F !
+   
+ ( .: @
+
+1 2
+
+4 5
+
+"" )
+""1 6%%% ***' ,
+""? C''# '
+""P W$$ )) (
+%%4 :'' ''+ 1)) $õ
+êC:\Users\Gabriela\Desktop\Rodrigo\5¬∞Semestre\Tecnolog√≠asParaLaConstruccion\GuessMyMessServerProyect\GuessMyMessServer\AppStart\Bootstrapper.cs
+
+ $
+! *$$ (
+ *  "%% "
+' , 
+
+ <
+ ' .  & -!!* 1""% ,$$  '
+.. . &P
+..@ G00 33 44 55 66 77 88 
+;; -   %
+;;? F== 
+@@ 1!! )F
+@@C JBB CC DD EE FF GG 
+JJ ,"" $F
+JJ> ELL OO RR UU XX [[ 
+__ 2## *
+aa ee" )pp 
+cc 'ff= Jmm7 D
+ee ii kk) 4
+ff ff  !
