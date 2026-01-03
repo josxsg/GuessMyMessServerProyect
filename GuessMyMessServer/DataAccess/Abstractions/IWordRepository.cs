@@ -6,6 +6,6 @@ namespace GuessMyMessServer.DataAccess.Abstractions
 {
     public interface IWordRepository
     {
-        Task<List<Word>> GetRandomWordsAsync(int count);
+        Task<List<Word>> GetRandomWordsAsync(int count, int difficultyId);
     }
 }

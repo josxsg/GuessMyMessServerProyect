@@ -255,12 +255,41 @@ namespace GuessMyMessServer.BusinessLogic
             BroadcastToMatch(matchId, callback => callback.OnRoundStart(roundToSend, new List<string>()));
         }
 
-        public async Task<List<WordDto>> GetRandomWordsAsync()
+        public async Task<List<WordDto>> GetRandomWordsAsync(string username)
         {
             try
             {
-                var words = await _wordRepository.GetRandomWordsAsync(3);
-                return words.Select(w => new WordDto { WordId = w.idWord, WordKey = w.word1 }).ToList();
+                // 2. Buscar la partida activa de ese usuario
+                // Necesitas un método que te diga en qué Match está el usuario
+                var currentMatch = await _matchRepository.GetMatchByPlayerAsync(username);
+
+                if (currentMatch == null)
+                {
+                    throw new FaultException<ServiceFaultDto>(
+                       new ServiceFaultDto(ServiceErrorType.MatchNotFound, "Match not found."),
+                       new FaultReason("Match Not Found"));
+                }
+
+                // 3. Obtener el ID de la dificultad de esa partida
+                // Ajusta el nombre de la propiedad según tu clase 'Match' (ej. idMatchDifficulty o MatchDifficulty_idMatchDifficulty)
+                int difficultyId = currentMatch.MatchDifficulty_idMatchDifficulty ??1 ;
+
+                // 4. Llamar al repositorio pasando la dificultad
+                var words = await _wordRepository.GetRandomWordsAsync(3, difficultyId);
+
+                if (words == null || words.Count == 0)
+                {
+                    throw new FaultException<ServiceFaultDto>(
+                       new ServiceFaultDto(ServiceErrorType.DatabaseError, "No hay palabras para la dificultad."),
+                       new FaultReason("No words found"));
+                }
+
+                // 5. Retornar los DTOs
+                return words.Select(w => new WordDto
+                {
+                    WordId = w.idWord,
+                    WordKey = w.word1 // Asumiendo que 'word1' es la columna del texto
+                }).ToList();
             }
             catch (Exception ex)
             {
@@ -270,7 +299,6 @@ namespace GuessMyMessServer.BusinessLogic
                     new FaultReason("Database Error"));
             }
         }
-
         public void RegisterSelectedWord(string username, string matchId, string selectedWord)
         {
             lock (_gameStateLock)

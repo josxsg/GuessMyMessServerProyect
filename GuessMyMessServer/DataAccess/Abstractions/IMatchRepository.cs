@@ -9,7 +9,8 @@ namespace GuessMyMessServer.DataAccess.Abstractions
         Task<Match> GetMatchByIdAsync(int matchId);
         void AddMatch(Match match);
         Task<int> SaveChangesAsync();
-        Task<Match> GetMatchByCodeAsync(string code); 
+        Task<Match> GetMatchByCodeAsync(string code);
+        Task<Match> GetMatchByPlayerAsync(string username);
         Task<bool> MatchCodeExistsAsync(string code); 
         Task<string> GetDifficultyNameAsync(int difficultyId); 
         Task<List<Match>> GetPublicWaitingMatchesAsync();

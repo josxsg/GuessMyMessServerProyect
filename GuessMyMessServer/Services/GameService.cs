@@ -64,11 +64,11 @@ namespace GuessMyMessServer.Services
             }
         }
 
-        public async Task<List<WordDto>> GetRandomWordsAsync()
+        public async Task<List<WordDto>> GetRandomWordsAsync(string username)
         {
             try
             {
-                return await Logic.GetRandomWordsAsync();
+                return await Logic.GetRandomWordsAsync(username);
             }
             catch (Exception ex)
             {

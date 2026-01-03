@@ -16,9 +16,10 @@ namespace GuessMyMessServer.DataAccess.Repositories
             _context = context;
         }
 
-        public async Task<List<Word>> GetRandomWordsAsync(int count)
+        public async Task<List<Word>> GetRandomWordsAsync(int count, int difficultyId)
         {
             return await _context.Word
+                .Where(w => w.WordDifficulty_idWordDifficulty == difficultyId) 
                 .OrderBy(w => Guid.NewGuid())
                 .Take(count)
                 .ToListAsync();

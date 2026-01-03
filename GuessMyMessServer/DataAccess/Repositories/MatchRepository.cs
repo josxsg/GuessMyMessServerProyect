@@ -25,6 +25,22 @@ namespace GuessMyMessServer.DataAccess.Repositories
             return await _context.Match.FirstOrDefaultAsync(m => m.matchCode == code);
         }
 
+        public async Task<Match> GetMatchByPlayerAsync(string username)
+        {
+            // 1. Buscamos en el historial (MatchHistory)
+            // 2. Filtramos donde el jugador tenga ese gamertag
+            // 3. Y donde la partida asociada siga 'InGame' o 'Waiting'
+            var activeHistory = await _context.MatchHistory
+                .Include(h => h.Match)
+                .Include(h => h.Player)
+                .Where(h => h.Player.username == username)
+                .OrderByDescending(h => h.idMatchHistory) // Por si acaso hay residuos, tomamos el último
+                .FirstOrDefaultAsync();
+
+            // Devolvemos la partida (Match) o null si no se encontró
+            return activeHistory?.Match;
+        }
+
         public async Task<bool> MatchCodeExistsAsync(string code)
         {
             // Verificamos si existe y si está en espera (según tu lógica original)

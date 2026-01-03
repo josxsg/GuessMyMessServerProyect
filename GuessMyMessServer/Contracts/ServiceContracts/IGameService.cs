@@ -19,7 +19,7 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
 
         [OperationContract]
         [FaultContract(typeof(ServiceFaultDto))]
-        Task<List<WordDto>> GetRandomWordsAsync();
+        Task<List<WordDto>> GetRandomWordsAsync(string username);
 
         [OperationContract(IsOneWay = true)]
         void SubmitDrawing(string username, string matchId, byte[] drawingData);
