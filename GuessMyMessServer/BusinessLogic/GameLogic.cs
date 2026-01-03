@@ -10,6 +10,7 @@ using GuessMyMessServer.Contracts.ServiceContracts;
 using GuessMyMessServer.DataAccess;
 using GuessMyMessServer.DataAccess.Abstractions;
 using log4net;
+using GuessMyMessServer.Utilities; 
 
 namespace GuessMyMessServer.BusinessLogic
 {
@@ -35,6 +36,7 @@ namespace GuessMyMessServer.BusinessLogic
         public List<DrawingDto> Drawings { get; set; } = new List<DrawingDto>();
         public List<GuessDto> Guesses { get; set; } = new List<GuessDto>();
         public List<PlayerScoreDto> Scores { get; set; } = new List<PlayerScoreDto>();
+        public Dictionary<string, int> PlayerWarnings { get; set; } = new Dictionary<string, int>();
 
         public void DisposeTimer()
         {
@@ -611,23 +613,68 @@ namespace GuessMyMessServer.BusinessLogic
         public void BroadcastChatMessage(string sender, string matchId, string msg)
         {
             List<string> players = null;
+            bool kick = false;
+            int warningsCount = 0;
+            string cleanMessage = msg;
+
             lock (_gameStateLock)
             {
                 if (_matches.TryGetValue(matchId, out var match))
                 {
                     players = new List<string>(match.Players);
+
+                    // 1. Verificar censura
+                    cleanMessage = BadWordValidator.BanMessage(msg);
+
+                    // Si el mensaje limpio es diferente al original, hubo grosería
+                    if (cleanMessage != msg)
+                    {
+                        // Inicializar contador si no existe
+                        if (!match.PlayerWarnings.ContainsKey(sender))
+                        {
+                            match.PlayerWarnings[sender] = 0;
+                        }
+
+                        // Aumentar advertencia
+                        match.PlayerWarnings[sender]++;
+                        warningsCount = match.PlayerWarnings[sender];
+
+                        // Regla de los 3 strikes
+                        if (warningsCount >= 3)
+                        {
+                            kick = true;
+                        }
+                    }
                 }
+            }
+
+            // Lógica fuera del lock para evitar bloqueos
+            if (kick)
+            {
+                // 2. CASO EXPULSIÓN: Si llegó a 3, adiós.
+                ForceDisconnection(sender, matchId);
+                // Opcional: Avisar a los demás que fue expulsado por toxicidad
+                BroadcastToMatch(matchId, c => c.OnInGameMessageReceived("SYSTEM", $"El jugador {sender} ha sido expulsado por conducta inapropiada."));
+                return;
             }
 
             if (players != null)
             {
+                // 3. CASO ADVERTENCIA: Si hubo grosería pero es < 3
+                if (cleanMessage != msg)
+                {
+                    // Enviamos un mensaje especial DE SISTEMA solo al infractor
+                    // Usamos un prefijo "WARNING|" para que el cliente sepa que es una alerta
+                    NotifyPlayer(sender, c => c.OnInGameMessageReceived("SYSTEM", $"WARNING|{warningsCount}"));
+                }
+
+                // 4. Difusión normal (del mensaje censurado) a todos
                 foreach (var u in players)
                 {
-                    NotifyPlayer(u, c => c.OnInGameMessageReceived(sender, msg));
+                    NotifyPlayer(u, c => c.OnInGameMessageReceived(sender, cleanMessage));
                 }
             }
         }
-
         private async Task RegisterMatchStartAsync(string matchIdStr, List<string> playerUsernames)
         {
             if (!int.TryParse(matchIdStr, out int matchId))
