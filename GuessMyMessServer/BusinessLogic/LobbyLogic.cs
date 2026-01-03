@@ -10,6 +10,7 @@ using GuessMyMessServer.Contracts.ServiceContracts;
 using GuessMyMessServer.DataAccess;
 using GuessMyMessServer.DataAccess.Abstractions;
 using GuessMyMessServer.Properties.Langs;
+using GuessMyMessServer.Utilities; 
 using log4net;
 
 namespace GuessMyMessServer.BusinessLogic
@@ -190,10 +191,12 @@ namespace GuessMyMessServer.BusinessLogic
                     senderDisplayName = senderConnection.DisplayName;
                 }
 
+                string cleanMessage = BadWordValidator.BanMessage(messageContent);
+
                 var messageDto = new ChatMessageDto
                 {
                     SenderUsername = senderDisplayName,
-                    MessageContent = messageContent,
+                    MessageContent = cleanMessage,
                     Timestamp = DateTime.UtcNow
                 };
 

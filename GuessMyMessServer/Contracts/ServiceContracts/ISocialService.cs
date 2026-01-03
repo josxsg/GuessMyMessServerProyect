@@ -37,8 +37,8 @@ namespace GuessMyMessServer.Contracts.ServiceContracts
         [FaultContract(typeof(ServiceFaultDto))]
         Task<OperationResultDto> InviteFriendToGameByEmailAsync(string fromUsername, string friendEmail, string matchCode);
 
-        [OperationContract(IsOneWay = true)]
-        void SendDirectMessage(DirectMessageDto message);
+        [OperationContract]
+        Task<DirectMessageDto> SendDirectMessageAsync(DirectMessageDto message);
 
         [OperationContract]
         [FaultContract(typeof(ServiceFaultDto))]

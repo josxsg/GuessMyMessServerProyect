@@ -128,14 +128,24 @@ namespace GuessMyMessServer.Services
             }
         }
 
-        public async void SendDirectMessage(DirectMessageDto message)
+        public async Task<DirectMessageDto> SendDirectMessageAsync(DirectMessageDto message)
         {
             try
             {
-                await Logic.SendDirectMessageAsync(message);
-                NotifyIfConnected(message.RecipientUsername, cb => cb.NotifyMessageReceived(message));
+                // 1. CAPTURAR: Obtenemos el mensaje procesado (ya censurado) de la lógica
+                var processedMessage = await Logic.SendDirectMessageAsync(message);
+
+                // 2. NOTIFICAR: Usamos 'processedMessage' para que al receptor le lleguen los asteriscos
+                NotifyIfConnected(message.RecipientUsername, cb => cb.NotifyMessageReceived(processedMessage));
+
+                // 3. RETORNAR: Devolvemos el mensaje procesado para que el sender también vea los asteriscos
+                return processedMessage;
             }
-            catch (Exception ex) { _log.Error($"Error sending DM", ex); }
+            catch (Exception ex)
+            {
+                _log.Error($"Error sending DM", ex);
+                throw;
+            }
         }
 
         public async Task<List<FriendDto>> GetConversationsAsync(string username) => await Logic.GetConversationsAsync(username);

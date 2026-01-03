@@ -309,12 +309,16 @@ namespace GuessMyMessServer.BusinessLogic
             }
         }
 
-        public async Task SendDirectMessageAsync(DirectMessageDto message)
+        public async Task<DirectMessageDto> SendDirectMessageAsync(DirectMessageDto message)
         {
             if (message == null || string.IsNullOrWhiteSpace(message.Content))
             {
                 ThrowServiceFault(ServiceErrorType.OperationFailed, "Invalid message.");
+                return null;
             }
+
+            string cleanContent = BadWordValidator.BanMessage(message.Content);
+            message.Content = cleanContent;
 
             var sender = await _playerRepository.GetPlayerByUsernameAsync(message.SenderUsername);
             var recipient = await _playerRepository.GetPlayerByUsernameAsync(message.RecipientUsername);
@@ -322,6 +326,7 @@ namespace GuessMyMessServer.BusinessLogic
             if (sender == null || recipient == null)
             {
                 ThrowServiceFault(ServiceErrorType.NotFound, "Sender or recipient not found.");
+                return null;
             }
 
             var dbMessage = new DirectMessages
@@ -338,11 +343,14 @@ namespace GuessMyMessServer.BusinessLogic
             {
                 await _socialRepository.SaveChangesAsync();
                 message.Timestamp = dbMessage.Timestamp;
+
+                return message;
             }
             catch (Exception ex)
             {
                 _log.Error($"Error sending message from '{message.SenderUsername}'.", ex);
                 ThrowServiceFault(ServiceErrorType.DatabaseError, "Could not send message.");
+                return null;
             }
         }
 

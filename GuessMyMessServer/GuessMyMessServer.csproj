@@ -253,6 +253,7 @@
     <Compile Include="Services\MatchmakingService.cs" />
     <Compile Include="Services\SocialService.cs" />
     <Compile Include="Services\UserProfileService.cs" />
+    <Compile Include="Utilities\BadWordValidator.cs" />
     <Compile Include="Utilities\Email\IEmailService.cs" />
     <Compile Include="Utilities\Email\IEmailTemplate.cs" />
     <Compile Include="Utilities\Email\SmtpEmailService.cs" />
