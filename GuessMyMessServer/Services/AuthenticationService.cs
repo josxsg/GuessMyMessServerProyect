@@ -17,7 +17,7 @@ namespace GuessMyMessServer.Services
 
         // CAMBIO CLAVE: Usamos una propiedad para resolver una nueva instancia de la lógica
         // (y un nuevo DbContext) cada vez que se accede. Esto evita problemas de concurrencia.
-        private AuthenticationLogic Logic => Bootstrapper.Container.Resolve<AuthenticationLogic>();
+        private static AuthenticationLogic Logic => Bootstrapper.Container.Resolve<AuthenticationLogic>();
 
         public AuthenticationService()
         {
@@ -27,25 +27,25 @@ namespace GuessMyMessServer.Services
 
         public async Task<OperationResultDto> LoginAsync(string emailOrUsername, string password)
         {
-            _log.Info($"Login request received for: {emailOrUsername}");
+            _log.InfoFormat("Login request received for: {0}", emailOrUsername);
             return await Logic.LoginAsync(emailOrUsername, password);
         }
 
         public async Task<OperationResultDto> RegisterAsync(UserProfileDto userProfile, string password)
         {
-            _log.Info($"Registration request received for: {userProfile?.Username ?? "Unknown"}");
+            _log.InfoFormat("Registration request received for: {0}", userProfile?.Username ?? "Unknown");
             return await Logic.RegisterPlayerAsync(userProfile, password);
         }
 
         public async Task<OperationResultDto> VerifyAccountAsync(string email, string verificationCode)
         {
-            _log.Info($"Account verification request for: {email}");
+            _log.InfoFormat("Account verification request for: {0}", email);
             return await Logic.VerifyAccountAsync(email, verificationCode);
         }
 
         public async Task<OperationResultDto> LoginAsGuestAsync(string email, string code)
         {
-            _log.Info($"Guest login request for match code: {code}");
+            _log.InfoFormat("Guest login request for match code: {0}", code);
             return await Logic.LoginAsGuestAsync(email, code);
         }
 

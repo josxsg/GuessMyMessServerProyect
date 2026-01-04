@@ -21,7 +21,7 @@ namespace GuessMyMessServer.Services
         private string _connectedUsername;
         private string _connectedMatchId;
 
-        private GameLogic Logic => Bootstrapper.Container.Resolve<GameLogic>();
+        private static GameLogic Logic => Bootstrapper.Container.Resolve<GameLogic>();
 
         public GameService()
         {

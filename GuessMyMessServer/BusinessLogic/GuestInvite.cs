@@ -34,15 +34,16 @@ namespace GuessMyMessServer.BusinessLogic
         public static bool ValidateInvite(string email, string code, out string matchId)
         {
             matchId = null;
-            if (_invites.TryGetValue(email, out var invite))
+
+            if (_invites.TryGetValue(email, out var invite) &&
+                invite.Code == code &&
+                invite.Expiration > DateTime.UtcNow)
             {
-                if (invite.Code == code && invite.Expiration > DateTime.UtcNow)
-                {
-                    matchId = invite.MatchId;
-                    _invites.TryRemove(email, out _);
-                    return true;
-                }
+                matchId = invite.MatchId;
+                _invites.TryRemove(email, out _);
+                return true;
             }
+
             return false;
         }
     }

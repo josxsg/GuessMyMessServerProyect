@@ -98,20 +98,18 @@ namespace GuessMyMessServer.DataAccess.Repositories
                     (player, matches) => new
                     {
                         Username = player.username,
-                        TotalScore = matches.Sum(m => (int?)m.finalScore) ?? 0
+                        TotalScore = matches.Sum(m => m.finalScore) ?? 0
                     }
                 )
-                .OrderByDescending(x => x.TotalScore) 
+                .OrderByDescending(x => x.TotalScore)
                 .ToListAsync();
 
-            var rankingList = rawData.Select((item, index) => new PlayerScoreDto
+            return rawData.Select((item, index) => new PlayerScoreDto
             {
                 Rank = index + 1,
                 Username = item.Username,
                 Score = item.TotalScore
             }).ToList();
-
-            return rankingList;
         }
     }
 }

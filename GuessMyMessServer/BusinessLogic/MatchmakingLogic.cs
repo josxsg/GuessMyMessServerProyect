@@ -48,14 +48,13 @@ namespace GuessMyMessServer.BusinessLogic
         {
             var callback = OperationContext.Current.GetCallbackChannel<IMatchmakingServiceCallback>();
             _connectedUsers.AddOrUpdate(username, callback, (key, old) => callback);
-            _log.Info($"User '{username}' connected to Matchmaking.");
+            _log.InfoFormat("User '{0}' connected to Matchmaking.", username);
         }
 
         public void DisconnectUser(string username)
         {
             _connectedUsers.TryRemove(username, out _);
-            _log.Info($"User '{username}' disconnected from Matchmaking.");
-
+            _log.InfoFormat("User '{0}' disconnected from Matchmaking.", username);
             var lobby = _activeLobbies.Values.FirstOrDefault(l => l.Players.Contains(username));
             if (lobby != null)
             {
@@ -68,7 +67,7 @@ namespace GuessMyMessServer.BusinessLogic
             var hostPlayer = await _playerRepository.GetPlayerByUsernameAsync(hostUsername);
             if (hostPlayer == null)
             {
-                _log.Warn($"CreateMatch failed: Host '{hostUsername}' not found.");
+                _log.WarnFormat("CreateMatch failed: Host '{0}' not found.", hostUsername);
                 ThrowServiceFault(ServiceErrorType.NotFound, "Host user not found.");
             }
 
@@ -112,8 +111,7 @@ namespace GuessMyMessServer.BusinessLogic
 
                 _activeLobbies.TryAdd(matchId, lobby);
 
-                _log.Info($"Match created: {matchId} by {hostUsername}");
-
+                _log.InfoFormat("Match created: {0} by {1}", matchId, hostUsername);
                 if (!settings.IsPrivate)
                 {
                     BroadcastPublicMatchList();
@@ -200,7 +198,7 @@ namespace GuessMyMessServer.BusinessLogic
 
             await UpdatePlayerCountInDbAsync(lobby.MatchId, 1);
 
-            _log.Info($"User '{username}' joined match {lobby.MatchId}.");
+            _log.InfoFormat("User '{0}' joined match {1}.", username, lobby.MatchId);
 
             BroadcastLobbyUpdate(lobby);
             if (!lobby.Settings.IsPrivate)
@@ -221,11 +219,14 @@ namespace GuessMyMessServer.BusinessLogic
             if (_connectedUsers.TryGetValue(invitedUsername, out var callback))
             {
                 SafeCallback(callback, c => c.ReceiveMatchInvite(inviterUsername, matchId));
-                _log.Info($"Invite sent: {inviterUsername} -> {invitedUsername} (Match {matchId})");
+                _log.InfoFormat("Invite sent: {0} -> {1} (Match {2})",
+                    inviterUsername,
+                    invitedUsername,
+                    matchId);
             }
             else
             {
-                _log.Info($"Invite failed: {invitedUsername} not connected.");
+                _log.InfoFormat("Invite failed: {0} not connected.", invitedUsername);
             }
         }
 
@@ -243,7 +244,7 @@ namespace GuessMyMessServer.BusinessLogic
             {
                 var emailTemplate = new InvitationForMatchEmailTemplate(code);
                 await _emailService.SendEmailAsync(targetEmail, "Game Invitation", emailTemplate);
-                _log.Info($"Guest invite sent to {targetEmail}");
+                _log.InfoFormat("Guest invite sent to {0}", targetEmail);
             }
             catch (Exception ex)
             {
@@ -300,7 +301,7 @@ namespace GuessMyMessServer.BusinessLogic
             }
         }
 
-        public void SetMatchAsFinished(string matchId)
+        public static void SetMatchAsFinished(string matchId)
         {
             if (_activeLobbies.TryGetValue(matchId, out var lobby))
             {
@@ -334,7 +335,7 @@ namespace GuessMyMessServer.BusinessLogic
             }
         }
 
-        private async Task UpdateMatchStatusInDbAsync(string matchIdStr, string status)
+        private static async Task UpdateMatchStatusInDbAsync(string matchIdStr, string status)
         {
             if (!int.TryParse(matchIdStr, out int matchId))
             {
@@ -382,18 +383,32 @@ namespace GuessMyMessServer.BusinessLogic
             }
         }
 
-        private void SafeCallback(IMatchmakingServiceCallback callback, Action<IMatchmakingServiceCallback> action)
+        private static void SafeCallback(IMatchmakingServiceCallback callback, Action<IMatchmakingServiceCallback> action)
         {
             try
             {
                 action(callback);
             }
-            catch (Exception)
+            catch (CommunicationException ex)
             {
+                // CORRECCIÓN: Registramos como Debug porque es un evento esperado 
+                // cuando un jugador cierra el juego o pierde internet.
+                _log.Debug("Matchmaking callback failed: Client communication lost.", ex);
+            }
+            catch (TimeoutException ex)
+            {
+                // CORRECCIÓN: Los timeouts pueden indicar saturación de red.
+                _log.Warn("Matchmaking callback timed out.", ex);
+            }
+            catch (Exception ex)
+            {
+                // CORRECCIÓN: Cualquier otro error inesperado debe registrarse como Error 
+                // para que sepas si hay un bug en tu lógica.
+                _log.Error("Unexpected error in matchmaking callback.", ex);
             }
         }
 
-        private string GenerateMatchCode(int length)
+        private static string GenerateMatchCode(int length)
         {
             const string chars = "ABCDEFGHIJKLMNPQRSTUVWXYZ123456789";
             using (var crypto = new RNGCryptoServiceProvider())
@@ -406,7 +421,7 @@ namespace GuessMyMessServer.BusinessLogic
             }
         }
 
-        private void ThrowServiceFault(ServiceErrorType type, string message)
+        private static void ThrowServiceFault(ServiceErrorType type, string message)
         {
             throw new FaultException<ServiceFaultDto>(new ServiceFaultDto(type, message), new FaultReason(message));
         }

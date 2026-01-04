@@ -83,8 +83,7 @@ namespace GuessMyMessServer.BusinessLogic
             public void StartCountdown(ILog log, Action<string> onGameStarted)
             {
                 _countdownSeconds = 5;
-                log.Info($"Lobby {MatchId}: Countdown started.");
-
+                log.InfoFormat("Lobby {0}: Countdown started.", MatchId);
                 Broadcast(conn => conn.Callback.OnGameStarting(_countdownSeconds));
 
                 _countdownTimer = new Timer(state =>
@@ -107,8 +106,7 @@ namespace GuessMyMessServer.BusinessLogic
                                 _countdownTimer?.Dispose();
                                 _countdownTimer = null;
 
-                                log.Info($"Lobby {MatchId}: Game started.");
-                                Broadcast(conn => conn.Callback.OnGameStarted());
+                                log.InfoFormat("Lobby {0}: Game started.", MatchId); Broadcast(conn => conn.Callback.OnGameStarted());
                                 onGameStarted?.Invoke(MatchId);
                             }
                         }
@@ -128,8 +126,16 @@ namespace GuessMyMessServer.BusinessLogic
                     {
                         action(playerConn);
                     }
-                    catch
+                    catch (CommunicationException ex)
                     {
+                        // CORRECCIÓN: Registramos el error de comunicación como Debug.
+                        // Es un error "esperado" cuando alguien cierra el juego repentinamente.
+                        _log.DebugFormat("Broadcast failed: Player '{0}' is likely disconnected.", playerConn.Username, ex);
+                    }
+                    catch (Exception ex)
+                    {
+                        // CORRECCIÓN: Errores no relacionados con la red deben ser registrados como Error.
+                        _log.ErrorFormat("Unexpected error during broadcast to player '{0}'.", playerConn.Username, ex);
                     }
                 }
             }
@@ -156,11 +162,10 @@ namespace GuessMyMessServer.BusinessLogic
             {
                 if (lobby.Players.TryRemove(username, out PlayerConnection removedPlayer))
                 {
-                    _log.Info($"Player '{removedPlayer.DisplayName}' left lobby {matchId}.");
-
+                    _log.InfoFormat("Player '{0}' left lobby {1}.", removedPlayer.DisplayName, matchId);
                     if (username.Equals(lobby.HostUsername, StringComparison.OrdinalIgnoreCase))
                     {
-                        _log.Info($"Host left. Disbanding lobby {matchId}.");
+                        _log.InfoFormat("Host left. Disbanding lobby {0}.", matchId);
                         lobby.Broadcast(conn =>
                         {
                             SafeCallback(conn.Callback, () => conn.Callback.KickedFromLobby(Lang.Error_HostLeft));
@@ -206,49 +211,58 @@ namespace GuessMyMessServer.BusinessLogic
 
         public void KickPlayer(string hostUsername, string playerToKickUsername, string matchId)
         {
-            if (_lobbies.TryGetValue(matchId, out Lobby lobby))
+            // Cláusula de Guarda: Si no existe el lobby, salimos de inmediato
+            if (!_lobbies.TryGetValue(matchId, out Lobby lobby))
             {
-                if (!hostUsername.Equals(lobby.HostUsername, StringComparison.OrdinalIgnoreCase))
-                {
-                    _log.Warn($"Kick denied: '{hostUsername}' is not host of {matchId}.");
-                    return;
-                }
+                return;
+            }
 
-                var targetPair = lobby.Players.FirstOrDefault(p => p.Value.DisplayName.Equals(playerToKickUsername, StringComparison.OrdinalIgnoreCase));
+            // Validación de Host: Aplanamos este bloque
+            if (!hostUsername.Equals(lobby.HostUsername, StringComparison.OrdinalIgnoreCase))
+            {
+                _log.WarnFormat("Kick denied: '{0}' is not host of {1}.", hostUsername, matchId);
+                return;
+            }
 
-                if (targetPair.Value == null)
-                {
-                    if (lobby.Players.TryGetValue(playerToKickUsername, out var conn))
-                    {
-                        targetPair = new KeyValuePair<string, PlayerConnection>(playerToKickUsername, conn);
-                    }
-                }
+            // Buscamos al jugador por DisplayName
+            var targetPair = lobby.Players.FirstOrDefault(p =>
+                p.Value.DisplayName.Equals(playerToKickUsername, StringComparison.OrdinalIgnoreCase));
 
-                if (targetPair.Value == null)
-                {
-                    _log.Warn($"Kick failed: Player '{playerToKickUsername}' not found in lobby.");
-                    return;
-                }
+            // CORRECCIÓN S1066: Fusionamos los dos IFs en uno solo usando &&
+            if (targetPair.Value == null && lobby.Players.TryGetValue(playerToKickUsername, out var conn))
+            {
+                targetPair = new KeyValuePair<string, PlayerConnection>(playerToKickUsername, conn);
+            }
 
-                string targetRealUsername = targetPair.Key;
+            // Verificamos si finalmente encontramos al jugador
+            if (targetPair.Value == null)
+            {
+                // CORRECCIÓN S6667: Usamos WarnFormat en lugar de interpolación ($)
+                _log.WarnFormat("Kick failed: Player '{0}' not found in lobby.", playerToKickUsername);
+                return;
+            }
 
-                if (hostUsername.Equals(targetRealUsername, StringComparison.OrdinalIgnoreCase))
-                {
-                    return;
-                }
+            string targetRealUsername = targetPair.Key;
 
-                if (lobby.Players.TryRemove(targetRealUsername, out PlayerConnection kickedConn))
-                {
-                    _matchmakingLogic.HandlePlayerLeave(targetRealUsername, matchId);
+            // No permitimos que el host se expulse a sí mismo
+            if (hostUsername.Equals(targetRealUsername, StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
 
-                    _log.Info($"Player '{targetRealUsername}' kicked from {matchId}.");
-                    SafeCallback(kickedConn.Callback, () => kickedConn.Callback.KickedFromLobby(Lang.Error_KickedByHost));
+            if (lobby.Players.TryRemove(targetRealUsername, out PlayerConnection kickedConn))
+            {
+                _matchmakingLogic.HandlePlayerLeave(targetRealUsername, matchId);
 
-                    BroadcastLobbyState(lobby);
-                }
+                // CORRECCIÓN S6667: Usamos InfoFormat y marcadores {0}, {1}
+                _log.InfoFormat("Player '{0}' kicked from {1}.", targetRealUsername, matchId);
+
+                SafeCallback(kickedConn.Callback, () =>
+                    kickedConn.Callback.KickedFromLobby(Lang.Error_KickedByHost));
+
+                BroadcastLobbyState(lobby);
             }
         }
-
         public void StartGame(string hostUsername, string matchId)
         {
             if (_lobbies.TryGetValue(matchId, out Lobby lobby))
@@ -263,8 +277,7 @@ namespace GuessMyMessServer.BusinessLogic
                     return;
                 }
 
-                _log.Info($"Starting game countdown for match {matchId}.");
-
+                _log.InfoFormat("Starting game countdown for match {0}.", matchId);
                 lobby.StartCountdown(_log, (id) =>
                 {
                     _matchmakingLogic.SetMatchAsPlaying(id);
@@ -326,7 +339,7 @@ namespace GuessMyMessServer.BusinessLogic
 
                 var newLobby = new Lobby(matchId, hostUsername, matchInfo);
                 _lobbies.TryAdd(matchId, newLobby);
-                _log.Info($"Lobby {matchId} initialized in memory.");
+                _log.InfoFormat("Lobby {0} initialized in memory.", matchId);
                 return newLobby;
             }
         }
@@ -394,8 +407,7 @@ namespace GuessMyMessServer.BusinessLogic
 
             if (lobby.Players.TryAdd(username, connection))
             {
-                _log.Info($"Player '{displayName}' added to lobby {lobby.MatchId}.");
-
+                _log.InfoFormat("Player '{0}' added to lobby {1}.", displayName, lobby.MatchId);
                 if (isGuest)
                 {
                     SafeCallback(callback, () => callback.ReceiveLobbyMessage(new ChatMessageDto
@@ -414,7 +426,7 @@ namespace GuessMyMessServer.BusinessLogic
                 {
                     var newConn = new PlayerConnection(username, oldConn.DisplayName, callback);
                     lobby.Players.TryUpdate(username, newConn, oldConn);
-                    _log.Info($"Player '{username}' reconnected to lobby.");
+                    _log.InfoFormat("Player '{0}' reconnected to lobby.", username);
                     SafeCallback(callback, () => callback.UpdateLobbyState(lobby.GetCurrentState()));
                 }
             }
@@ -439,14 +451,8 @@ namespace GuessMyMessServer.BusinessLogic
             }
             catch (Exception ex)
             {
-                _log.Warn("Error in Lobby callback (client likely disconnected).", ex);
+                _log.WarnFormat("Error in callback for channel {0}.", callback.GetHashCode(), ex);
             }
-        }
-
-        private void ThrowServiceFault(ServiceErrorType type, string message)
-        {
-            var fault = new ServiceFaultDto(type, message);
-            throw new FaultException<ServiceFaultDto>(fault, new FaultReason(message));
         }
     }
 }

@@ -49,19 +49,20 @@ namespace GuessMyMessServer.BusinessLogic
 
             if (player == null)
             {
-                _log.Info($"Failed login attempt: User '{emailOrUsername}' not found.");
+                // CORRECCIÓN: Usamos InfoFormat en lugar de Info
+                _log.InfoFormat("Failed login attempt: User '{0}' not found.", emailOrUsername);
                 ThrowServiceFault(ServiceErrorType.InvalidCredentials, "Incorrect credentials.");
             }
 
             if (player.is_verified == 0)
             {
-                _log.Info($"Login denied: User '{player.username}' account is not verified.");
+                _log.InfoFormat("Login denied: User '{0}' account is not verified.", player.username);
                 ThrowServiceFault(ServiceErrorType.AccountNotVerified, "The account has not been verified.");
             }
 
             if (!PasswordHasher.VerifyPassword(password, player.password))
             {
-                _log.Info($"Failed login attempt: Incorrect credentials for user '{player.username}'.");
+                _log.InfoFormat("Failed login attempt: Incorrect credentials for user '{0}'.", player.username);
                 ThrowServiceFault(ServiceErrorType.InvalidCredentials, "Incorrect credentials.");
             }
 
@@ -70,25 +71,30 @@ namespace GuessMyMessServer.BusinessLogic
 
             if (player.UserStatus_idUserStatus == StatusOnline || player.UserStatus_idUserStatus == StatusInGame)
             {
-                _log.Warn($"Login denied: User '{player.username}' is already logged in.");
+                _log.WarnFormat("Login denied: User '{0}' is already logged in.", player.username);
                 return new OperationResultDto { Success = false, Message = "UserAlreadyLoggedIn" };
             }
+
             player.UserStatus_idUserStatus = StatusOnline;
 
             try
             {
                 await _playerRepository.SaveChangesAsync();
-                _log.Info($"User '{player.username}' logged in successfully.");
+                _log.InfoFormat("User '{0}' logged in successfully.", player.username);
                 return new OperationResultDto { Success = true, Message = player.username };
             }
             catch (Exception ex)
             {
-                _log.Error($"Database error updating status for user '{player.username}'", ex);
+                // CORRECCIÓN para Error:
+                // La mayoría de loggers usan: Error(mensaje, excepcion)
+                // Construimos el mensaje formateado y pasamos la excepción al final.
+                string errorMessage = string.Format("Database error updating status for user '{0}'", player.username);
+                _log.Error(errorMessage, ex);
+
                 ThrowServiceFault(ServiceErrorType.DatabaseError, "An error occurred while logging in.");
-                return null; 
+                return null;
             }
         }
-
         public async Task<OperationResultDto> RegisterPlayerAsync(UserProfileDto userProfile, string password)
         {
             ValidateRegistrationInput(userProfile, password);
@@ -133,7 +139,7 @@ namespace GuessMyMessServer.BusinessLogic
             try
             {
                 await _playerRepository.SaveChangesAsync();
-                _log.Info($"Account verified successfully: '{player.username}'.");
+                _log.InfoFormat("Account verified successfully: '{0}'.", player.username);
                 return new OperationResultDto { Success = true, Message = "Account verified successfully. Welcome!" };
             }
             catch (Exception ex)
@@ -185,7 +191,7 @@ namespace GuessMyMessServer.BusinessLogic
                 {
                     player.UserStatus_idUserStatus = StatusOffline;
                     await _playerRepository.SaveChangesAsync();
-                    _log.Info($"User '{username}' logged out.");
+                    _log.InfoFormat("User '{0}' logged out.", username);
                 }
             }
             catch (Exception ex)
@@ -274,7 +280,7 @@ namespace GuessMyMessServer.BusinessLogic
             try
             {
                 await _playerRepository.SaveChangesAsync();
-                _log.Info($"New user registered: '{userProfile.Username}'.");
+                _log.InfoFormat("New user registered: '{0}'.", userProfile.Username);
                 return new OperationResultDto
                 {
                     Success = true,
@@ -289,7 +295,7 @@ namespace GuessMyMessServer.BusinessLogic
             }
         }
 
-        private void ThrowServiceFault(ServiceErrorType type, string message)
+        private static void ThrowServiceFault(ServiceErrorType type, string message)
         {
             var fault = new ServiceFaultDto(type, message);
             throw new FaultException<ServiceFaultDto>(fault, new FaultReason(message));

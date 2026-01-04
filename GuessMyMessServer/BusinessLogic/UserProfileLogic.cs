@@ -24,6 +24,8 @@ namespace GuessMyMessServer.BusinessLogic
         private readonly ISocialNetworkRepository _socialRepository;
         private readonly IEmailService _emailService;
 
+        private const string UserNotFoundMessage = "User not found.";
+
         public UserProfileLogic(
             IPlayerRepository playerRepository,
             IAvatarRepository avatarRepository,
@@ -36,7 +38,7 @@ namespace GuessMyMessServer.BusinessLogic
             _emailService = emailService;
         }
 
-        private string GenerateCode() => _random.Next(100000, 999999).ToString("D6");
+        private static string GenerateCode() => _random.Next(100000, 999999).ToString("D6");
 
         public async Task<UserProfileDto> GetUserProfileAsync(string username)
         {
@@ -46,8 +48,8 @@ namespace GuessMyMessServer.BusinessLogic
 
                 if (player == null)
                 {
-                    _log.Warn($"GetUserProfile failed: User '{username}' not found.");
-                    ThrowServiceFault(ServiceErrorType.NotFound, "User not found.");
+                    _log.WarnFormat("GetUserProfile failed: User '{0}' not found.", username);
+                    ThrowServiceFault(ServiceErrorType.NotFound, UserNotFoundMessage);
                 }
 
                 var socialNetworksList = player.SocialNetwork.Select(sn => new SocialNetworkDto
@@ -95,7 +97,7 @@ namespace GuessMyMessServer.BusinessLogic
 
             if (playerToUpdate == null)
             {
-                ThrowServiceFault(ServiceErrorType.NotFound, "User not found.");
+                ThrowServiceFault(ServiceErrorType.NotFound, UserNotFoundMessage);
             }
 
             playerToUpdate.name = profileData.FirstName;
@@ -110,7 +112,7 @@ namespace GuessMyMessServer.BusinessLogic
             try
             {
                 await _playerRepository.SaveChangesAsync();
-                _log.Info($"Profile updated successfully for user '{username}'.");
+                _log.InfoFormat("Profile updated successfully for user '{0}'.", username);
                 return new OperationResultDto { Success = true, Message = "Profile updated successfully." };
             }
             catch (Exception ex)
@@ -131,7 +133,7 @@ namespace GuessMyMessServer.BusinessLogic
             var player = await _playerRepository.GetPlayerByUsernameAsync(username);
             if (player == null)
             {
-                ThrowServiceFault(ServiceErrorType.NotFound, "User not found.");
+                ThrowServiceFault(ServiceErrorType.NotFound, UserNotFoundMessage);
             }
 
             var networkType = await _socialRepository.GetTypeByNameAsync(socialNetworkDto.NetworkType);
@@ -210,7 +212,7 @@ namespace GuessMyMessServer.BusinessLogic
             var player = await _playerRepository.GetPlayerByUsernameAsync(username);
             if (player == null)
             {
-                ThrowServiceFault(ServiceErrorType.NotFound, "User not found.");
+                ThrowServiceFault(ServiceErrorType.NotFound, UserNotFoundMessage);
             }
 
             string code = GenerateCode();
@@ -244,7 +246,7 @@ namespace GuessMyMessServer.BusinessLogic
             var player = await _playerRepository.GetPlayerByUsernameAsync(username);
             if (player == null)
             {
-                ThrowServiceFault(ServiceErrorType.NotFound, "User not found.");
+                ThrowServiceFault(ServiceErrorType.NotFound, UserNotFoundMessage);
             }
 
             if (player.temp_code != verificationCode || player.temp_code_expiry < DateTime.UtcNow)
@@ -279,7 +281,7 @@ namespace GuessMyMessServer.BusinessLogic
             var player = await _playerRepository.GetPlayerByUsernameAsync(username);
             if (player == null)
             {
-                ThrowServiceFault(ServiceErrorType.NotFound, "User not found.");
+                ThrowServiceFault(ServiceErrorType.NotFound, UserNotFoundMessage);
             }
 
             var existingUser = await _playerRepository.GetPlayerByEmailAsync(newEmail);
@@ -315,7 +317,7 @@ namespace GuessMyMessServer.BusinessLogic
             var player = await _playerRepository.GetPlayerByUsernameAsync(username);
             if (player == null)
             {
-                ThrowServiceFault(ServiceErrorType.NotFound, "User not found.");
+                ThrowServiceFault(ServiceErrorType.NotFound, UserNotFoundMessage);
             }
 
             if (string.IsNullOrEmpty(player.new_email_pending))
@@ -370,7 +372,7 @@ namespace GuessMyMessServer.BusinessLogic
             }
         }
 
-        private async Task<byte[]> ReadFileAsync(string filePath)
+        private static async Task<byte[]> ReadFileAsync(string filePath)
         {
             if (!File.Exists(filePath))
             {
@@ -382,18 +384,29 @@ namespace GuessMyMessServer.BusinessLogic
                 using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true))
                 {
                     byte[] buffer = new byte[stream.Length];
-                    await stream.ReadAsync(buffer, 0, buffer.Length);
-                    return buffer;
+                    int totalBytesRead = 0;
+                    int bytesRead;
+
+                    // CORRECCIÓN: Leemos en un bucle hasta completar el tamaño del archivo
+                    // o hasta que ya no haya más que leer.
+                    while (totalBytesRead < buffer.Length &&
+                           (bytesRead = await stream.ReadAsync(buffer, totalBytesRead, buffer.Length - totalBytesRead)) > 0)
+                    {
+                        totalBytesRead += bytesRead;
+                    }
+
+                    return totalBytesRead == buffer.Length ? buffer : null;
                 }
             }
             catch (Exception ex)
             {
-                _log.Warn($"Error reading file {filePath}", ex);
+                // CORRECCIÓN S6667: Usamos WarnFormat
+                _log.WarnFormat("Error reading file {0}. Exception: {1}", filePath, ex.Message);
                 return null;
             }
         }
 
-        private void ThrowServiceFault(ServiceErrorType type, string message)
+        private static void ThrowServiceFault(ServiceErrorType type, string message)
         {
             var fault = new ServiceFaultDto(type, message);
             throw new FaultException<ServiceFaultDto>(fault, new FaultReason(message));

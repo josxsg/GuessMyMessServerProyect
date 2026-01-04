@@ -34,7 +34,7 @@ namespace GuessMyMessServer.BusinessLogic
             var user = await _playerRepository.GetPlayerByUsernameAsync(username);
             if (user == null)
             {
-                _log.Warn($"GetFriendsList failed: User '{username}' not found.");
+                _log.WarnFormat("GetFriendsList failed: User '{0}' not found.", username);
                 ThrowServiceFault(ServiceErrorType.NotFound, "User not found.");
             }
 
@@ -88,7 +88,7 @@ namespace GuessMyMessServer.BusinessLogic
             var requester = await _playerRepository.GetPlayerByUsernameAsync(requesterUsername);
             if (requester == null)
             {
-                _log.Warn($"SearchUsers failed: Requester '{requesterUsername}' not found.");
+                _log.WarnFormat("SearchUsers failed: Requester '{0}' not found.", requesterUsername);
                 ThrowServiceFault(ServiceErrorType.NotFound, "Requester user not found.");
             }
 
@@ -130,7 +130,7 @@ namespace GuessMyMessServer.BusinessLogic
                     ? "You are already friends."
                     : "A request is already pending.";
 
-                _log.Info($"Friend request redundant: {msg}");
+                _log.InfoFormat("Friend request redundant: {0}", msg);
                 ThrowServiceFault(ServiceErrorType.OperationFailed, msg);
             }
 
@@ -146,7 +146,7 @@ namespace GuessMyMessServer.BusinessLogic
             try
             {
                 await _socialRepository.SaveChangesAsync();
-                _log.Info($"Friend request sent: '{requesterUsername}' -> '{targetUsername}'.");
+                _log.InfoFormat("Friend request sent: '{0}' -> '{1}'.", requesterUsername, targetUsername);
                 return new OperationResultDto { Success = true, Message = "Friend request sent." };
             }
             catch (Exception ex)
@@ -186,12 +186,12 @@ namespace GuessMyMessServer.BusinessLogic
             if (accepted)
             {
                 friendship.FriendShipStatus_idFriendShipStatus = StatusAccepted;
-                _log.Info($"Friend request accepted by '{targetUsername}'.");
+                _log.InfoFormat("Friend request accepted by '{0}'.", targetUsername);
             }
             else
             {
                 _socialRepository.RemoveFriendship(friendship);
-                _log.Info($"Friend request rejected by '{targetUsername}'.");
+                _log.InfoFormat("Friend request rejected by '{0}'.", targetUsername);
             }
 
             try
@@ -229,7 +229,7 @@ namespace GuessMyMessServer.BusinessLogic
                 {
                     if (await _socialRepository.SaveChangesAsync() > 0)
                     {
-                        _log.Info($"Friendship removed between '{username}' and '{friendToRemove}'.");
+                        _log.InfoFormat("Friendship removed between '{0}' and '{1}'.", username, friendToRemove);
                         result.Success = true;
                         result.Message = "Amigo eliminado correctamente.";
                     }
@@ -283,14 +283,14 @@ namespace GuessMyMessServer.BusinessLogic
             var player = await _playerRepository.GetPlayerByUsernameAsync(username);
             if (player == null)
             {
-                _log.Warn($"UpdateStatus: User '{username}' not found.");
+                _log.WarnFormat("UpdateStatus: User '{0}' not found.", username);
                 return;
             }
 
             var statusId = await _playerRepository.GetUserStatusIdAsync(status);
             if (statusId == null)
             {
-                _log.Warn($"UpdateStatus: Invalid status '{status}'.");
+                _log.WarnFormat("UpdateStatus: Invalid status '{0}'.", status);
                 return;
             }
 
@@ -300,7 +300,7 @@ namespace GuessMyMessServer.BusinessLogic
                 try
                 {
                     await _playerRepository.SaveChangesAsync();
-                    _log.Debug($"User '{username}' status updated to '{status}'.");
+                    _log.DebugFormat("User '{0}' status updated to '{1}'.", username, status);
                 }
                 catch (Exception ex)
                 {
@@ -408,7 +408,7 @@ namespace GuessMyMessServer.BusinessLogic
             }
         }
 
-        private void ThrowServiceFault(ServiceErrorType type, string message)
+        private static void ThrowServiceFault(ServiceErrorType type, string message)
         {
             var fault = new ServiceFaultDto(type, message);
             throw new FaultException<ServiceFaultDto>(fault, new FaultReason(message));

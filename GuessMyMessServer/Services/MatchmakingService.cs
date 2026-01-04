@@ -22,7 +22,7 @@ namespace GuessMyMessServer.Services
         private IMatchmakingServiceCallback _callback;
 
         // Propiedad para resolver la lógica bajo demanda
-        private MatchmakingLogic Logic => Bootstrapper.Container.Resolve<MatchmakingLogic>();
+        private static MatchmakingLogic Logic => Bootstrapper.Container.Resolve<MatchmakingLogic>();
 
         // Constructor WCF
         public MatchmakingService()
@@ -50,7 +50,9 @@ namespace GuessMyMessServer.Services
             try
             {
                 _connectedUsername = username;
-                _log.Info($"MatchmakingService: User '{username}' connected (SessionId: {OperationContext.Current.SessionId}).");
+                _log.InfoFormat("MatchmakingService: User '{0}' connected (SessionId: {1}).",
+                    username,
+                    OperationContext.Current.SessionId);
                 Logic.ConnectUser(username);
             }
             catch (Exception ex)
@@ -69,7 +71,7 @@ namespace GuessMyMessServer.Services
         public async Task<OperationResultDto> CreateMatch(string hostUsername, LobbySettingsDto settings)
         {
             if (!IsSessionValid(hostUsername)) ThrowSessionFault();
-            _log.Info($"Request CreateMatch from: {hostUsername}");
+            _log.InfoFormat("Request CreateMatch from: {0}", hostUsername);
             return await Logic.CreateMatchAsync(hostUsername, settings);
         }
 
@@ -93,7 +95,7 @@ namespace GuessMyMessServer.Services
             }
             catch (FaultException<ServiceFaultDto> fEx)
             {
-                _log.Info($"JoinPublicMatch failed: {fEx.Detail.Message}");
+                _log.InfoFormat("JoinPublicMatch failed: {0}", fEx.Detail.Message);
                 _callback.MatchJoined(null, new OperationResultDto { Success = false, Message = fEx.Detail.Message });
             }
             catch (Exception ex)

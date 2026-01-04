@@ -18,7 +18,7 @@ namespace GuessMyMessServer.Services
         private string _connectedMatchId;
 
         // Propiedad para resolver la lógica bajo demanda (Nuevo DbContext por llamada)
-        private LobbyLogic Logic => Bootstrapper.Container.Resolve<LobbyLogic>();
+        private static LobbyLogic Logic => Bootstrapper.Container.Resolve<LobbyLogic>();
 
         // Constructor WCF
         public LobbyService()
@@ -46,7 +46,7 @@ namespace GuessMyMessServer.Services
             {
                 _connectedUsername = username;
                 _connectedMatchId = matchId;
-                _log.Info($"LobbyService: Connect request '{username}' -> Lobby '{matchId}'.");
+                _log.InfoFormat("LobbyService: Connect request '{0}' -> Lobby '{1}'.", username, matchId);
                 await Logic.ConnectAsync(username, matchId);
             }
             catch (Exception ex) { _log.Error($"Error connecting '{username}'", ex); }
@@ -76,8 +76,8 @@ namespace GuessMyMessServer.Services
                 Logic.KickPlayer(hostUsername, playerToKickUsername, matchId);
         }
 
-        public void StartKickVote(string v, string t, string m) { }
-        public void SubmitKickVote(string v, string t, string m, bool b) { }
+        public void StartKickVote(string voterUsername, string targetUsername, string matchId) { }
+        public void SubmitKickVote(string voterUsername, string targetUsername, string matchId, bool vote) { }
 
         private bool ValidateSession(string username, string matchId) => _connectedUsername == username && _connectedMatchId == matchId;
 
