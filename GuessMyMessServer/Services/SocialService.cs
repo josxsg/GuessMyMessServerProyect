@@ -16,60 +16,80 @@ namespace GuessMyMessServer.Services
     {
         private static readonly ILog _log = LogManager.GetLogger(typeof(SocialService));
 
-        // Propiedad para resolver la lógica bajo demanda (Nuevo DbContext por llamada)
         private SocialLogic Logic => Bootstrapper.Container.Resolve<SocialLogic>();
 
-        // Gestión de Clientes Conectados (Estático para persistir entre llamadas PerCall)
         private static readonly Dictionary<string, ISocialServiceCallback> ConnectedClients = new Dictionary<string, ISocialServiceCallback>();
         private static readonly object _clientLock = new object();
 
-        // Constructor WCF
         public SocialService()
         {
             Bootstrapper.Init();
         }
 
-        // Constructor Inyección (opcional para tests)
         public SocialService(SocialLogic socialLogic)
         {
-            // No guardamos la instancia, confiamos en el contenedor
         }
 
         public void Connect(string username)
         {
-            if (string.IsNullOrWhiteSpace(username)) return;
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                return;
+            }
             try
             {
                 var callback = OperationContext.Current.GetCallbackChannel<ISocialServiceCallback>();
                 lock (_clientLock)
                 {
-                    if (ConnectedClients.ContainsKey(username)) ConnectedClients[username] = callback;
+                    if (ConnectedClients.ContainsKey(username))
+                    {
+                        ConnectedClients[username] = callback;
+                    }
                     else ConnectedClients.Add(username, callback);
                 }
+
                 _log.Info($"SocialService: User '{username}' connected.");
 
-                Task.Run(async () => {
+                Task.Run(async () =>
+                {
                     await Logic.UpdatePlayerStatusAsync(username, "Online");
                     await NotifyFriendStatusUpdate(username, "Online");
                 });
             }
-            catch (Exception ex) { _log.Error($"Error connecting user '{username}'", ex); }
+            catch (Exception ex)
+            {
+                _log.Error($"Error connecting user '{username}'", ex);
+            }
         }
 
         public void Disconnect(string username)
         {
-            if (string.IsNullOrWhiteSpace(username)) return;
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                return;
+            }
             try
             {
-                lock (_clientLock) { if (ConnectedClients.ContainsKey(username)) ConnectedClients.Remove(username); }
+                lock (_clientLock)
+                {
+                    if (ConnectedClients.ContainsKey(username))
+                    {
+                        ConnectedClients.Remove(username);
+                    }
+                }
+
                 _log.Info($"SocialService: User '{username}' disconnected.");
 
-                Task.Run(async () => {
+                Task.Run(async () =>
+                {
                     await Logic.UpdatePlayerStatusAsync(username, "Offline");
                     await NotifyFriendStatusUpdate(username, "Offline");
                 });
             }
-            catch (Exception ex) { _log.Warn($"Error disconnecting user '{username}'", ex); }
+            catch (Exception ex)
+            {
+                _log.Warn($"Error disconnecting user '{username}'", ex);
+            }
         }
 
         public async Task<List<FriendDto>> GetFriendsListAsync(string username)
@@ -79,7 +99,10 @@ namespace GuessMyMessServer.Services
             {
                 foreach (var friend in friends)
                 {
-                    if (ConnectedClients.ContainsKey(friend.Username)) friend.IsOnline = true;
+                    if (ConnectedClients.ContainsKey(friend.Username))
+                    {
+                        friend.IsOnline = true;
+                    }
                 }
             }
             return friends;
@@ -92,21 +115,42 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                await Logic.SendFriendRequestAsync(requesterUsername, targetUsername);
-                NotifyIfConnected(targetUsername, cb => cb.NotifyFriendRequest(requesterUsername));
+                var result = await Logic.SendFriendRequestAsync(requesterUsername, targetUsername);
+
+                if (result.Success)
+                {
+                    NotifyIfConnected(targetUsername, cb => cb.NotifyFriendRequest(requesterUsername));
+                }
+                else
+                {
+                    _log.Warn($"SendRequest failed: {result.Message}");
+                }
             }
-            catch (Exception ex) { _log.Error($"Error sending friend request", ex); }
+            catch (Exception ex)
+            {
+                _log.Error($"Error sending friend request", ex);
+            }
         }
 
         public async void RespondToFriendRequest(string targetUsername, string requesterUsername, bool accepted)
         {
             try
             {
-                await Logic.RespondToFriendRequestAsync(targetUsername, requesterUsername, accepted);
-                NotifyIfConnected(requesterUsername, cb => cb.NotifyFriendResponse(targetUsername, accepted));
-                if (accepted) await NotifyNewFriendshipStatus(targetUsername, requesterUsername);
+                var result = await Logic.RespondToFriendRequestAsync(targetUsername, requesterUsername, accepted);
+
+                if (result.Success)
+                {
+                    NotifyIfConnected(requesterUsername, cb => cb.NotifyFriendResponse(targetUsername, accepted));
+                    if (accepted)
+                    {
+                        await NotifyNewFriendshipStatus(targetUsername, requesterUsername);
+                    }
+                }
             }
-            catch (Exception ex) { _log.Error($"Error responding request", ex); }
+            catch (Exception ex)
+            {
+                _log.Error($"Error responding request", ex);
+            }
         }
 
         public async Task<OperationResultDto> RemoveFriendAsync(string username, string friendToRemove)
@@ -124,7 +168,7 @@ namespace GuessMyMessServer.Services
             catch (Exception ex)
             {
                 _log.Error($"Error removing friend", ex);
-                throw new FaultException<ServiceFaultDto>(new ServiceFaultDto(ServiceErrorType.OperationFailed, "Error del servidor."), new FaultReason(ex.Message));
+                throw new FaultException<ServiceFaultDto>(new ServiceFaultDto(ServiceErrorType.OperationFailed, "Server error."), new FaultReason(ex.Message));
             }
         }
 
@@ -132,14 +176,14 @@ namespace GuessMyMessServer.Services
         {
             try
             {
-                // 1. CAPTURAR: Obtenemos el mensaje procesado (ya censurado) de la lógica
                 var processedMessage = await Logic.SendDirectMessageAsync(message);
 
-                // 2. NOTIFICAR: Usamos 'processedMessage' para que al receptor le lleguen los asteriscos
-                NotifyIfConnected(message.RecipientUsername, cb => cb.NotifyMessageReceived(processedMessage));
-
-                // 3. RETORNAR: Devolvemos el mensaje procesado para que el sender también vea los asteriscos
-                return processedMessage;
+                if (processedMessage != null)
+                {
+                    NotifyIfConnected(message.RecipientUsername, cb => cb.NotifyMessageReceived(processedMessage));
+                    return processedMessage;
+                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -160,7 +204,7 @@ namespace GuessMyMessServer.Services
             catch (Exception ex)
             {
                 _log.Error($"Error getting profile for {username}", ex);
-                throw new FaultException<ServiceFaultDto>(new ServiceFaultDto(ServiceErrorType.OperationFailed, "Error al obtener el perfil."), new FaultReason(ex.Message));
+                throw new FaultException<ServiceFaultDto>(new ServiceFaultDto(ServiceErrorType.OperationFailed, "Error trying to get the friend profile."), new FaultReason(ex.Message));
             }
         }
 
@@ -172,8 +216,15 @@ namespace GuessMyMessServer.Services
 
         private async Task NotifyFriendStatusUpdate(string username, string status)
         {
-            var friends = await Logic.GetFriendsListAsync(username);
-            foreach (var friend in friends) NotifyIfConnected(friend.Username, cb => cb.NotifyFriendStatusChanged(username, status));
+            try
+            {
+                var friends = await Logic.GetFriendsListAsync(username);
+                foreach (var friend in friends) NotifyIfConnected(friend.Username, cb => cb.NotifyFriendStatusChanged(username, status));
+            }
+            catch (Exception ex)
+            {
+                _log.Warn("Error notifying status update", ex);
+            }
         }
 
         private async Task NotifyNewFriendshipStatus(string u1, string u2)
@@ -191,8 +242,17 @@ namespace GuessMyMessServer.Services
             lock (_clientLock) { ConnectedClients.TryGetValue(target, out cb); }
             if (cb != null)
             {
-                try { action(cb); }
-                catch { lock (_clientLock) { ConnectedClients.Remove(target); } }
+                try
+                {
+                    action(cb);
+                }
+                catch
+                {
+                    lock (_clientLock)
+                    {
+                        ConnectedClients.Remove(target);
+                    }
+                }
             }
         }
     }

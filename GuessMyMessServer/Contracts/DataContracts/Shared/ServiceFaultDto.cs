@@ -9,15 +9,15 @@ namespace GuessMyMessServer.Contracts.DataContracts
         public ServiceErrorType ErrorType { get; set; }
 
         [DataMember]
-        public string Message { get; set; }
+        public string Message { get; set; } 
 
         [DataMember]
-        public string Target { get; set; } 
+        public string Target { get; set; }  
 
-        public ServiceFaultDto(ServiceErrorType type, string message, string target = null)
+        public ServiceFaultDto(ServiceErrorType type, string debugMessage, string target = null)
         {
             ErrorType = type;
-            Message = message;
+            Message = debugMessage;
             Target = target;
         }
     }

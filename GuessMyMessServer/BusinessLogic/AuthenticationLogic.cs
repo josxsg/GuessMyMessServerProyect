@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ServiceModel; 
+using System.ServiceModel;
 using System.Threading.Tasks;
 using GuessMyMessServer.Contracts.DataContracts;
-using GuessMyMessServer.DataAccess; 
-using GuessMyMessServer.DataAccess.Abstractions; 
+using GuessMyMessServer.DataAccess;
+using GuessMyMessServer.DataAccess.Abstractions;
 using GuessMyMessServer.Utilities;
 using GuessMyMessServer.Utilities.Email;
 using log4net;
@@ -15,9 +15,10 @@ namespace GuessMyMessServer.BusinessLogic
     {
         private static readonly ILog _log = LogManager.GetLogger(typeof(AuthenticationLogic));
         private static readonly Random _random = new Random();
+        private int StatusOffline = 1;
 
         private readonly IPlayerRepository _playerRepository;
-        private readonly IMatchRepository _matchRepository; 
+        private readonly IMatchRepository _matchRepository;
         private readonly IEmailService _emailService;
 
         public AuthenticationLogic(
@@ -34,36 +35,56 @@ namespace GuessMyMessServer.BusinessLogic
         {
             if (string.IsNullOrWhiteSpace(emailOrUsername) || string.IsNullOrWhiteSpace(password))
             {
-                ThrowServiceFault(ServiceErrorType.InvalidCredentials, "Username/Email and password are required.");
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.InvalidCredentials, Message = "Empty credentials"
+                };
             }
 
             Player player;
-            if (InputValidator.IsValidEmail(emailOrUsername))
+            try
             {
-                player = await _playerRepository.GetPlayerByEmailAsync(emailOrUsername);
+                if (InputValidator.IsValidEmail(emailOrUsername))
+                {
+                    player = await _playerRepository.GetPlayerByEmailAsync(emailOrUsername);
+                }
+                else
+                {
+                    player = await _playerRepository.GetPlayerByUsernameAsync(emailOrUsername);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                player = await _playerRepository.GetPlayerByUsernameAsync(emailOrUsername);
+                _log.Error("Database error during Login fetch", ex);
+                ThrowSystemError(ServiceErrorType.DatabaseError, "Error fetching user data");
+                return null;
             }
 
             if (player == null)
             {
-                // CORRECCIÓN: Usamos InfoFormat en lugar de Info
-                _log.InfoFormat("Failed login attempt: User '{0}' not found.", emailOrUsername);
-                ThrowServiceFault(ServiceErrorType.InvalidCredentials, "Incorrect credentials.");
+                _log.InfoFormat("Failed login: User '{0}' not found.", emailOrUsername);
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.InvalidCredentials, Message = "User not found"
+                };
             }
 
             if (player.is_verified == 0)
             {
-                _log.InfoFormat("Login denied: User '{0}' account is not verified.", player.username);
-                ThrowServiceFault(ServiceErrorType.AccountNotVerified, "The account has not been verified.");
+                _log.InfoFormat("Login denied: User '{0}' account not verified.", player.username);
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.AccountNotVerified, Message = "Account not verified"
+                };
             }
 
             if (!PasswordHasher.VerifyPassword(password, player.password))
             {
-                _log.InfoFormat("Failed login attempt: Incorrect credentials for user '{0}'.", player.username);
-                ThrowServiceFault(ServiceErrorType.InvalidCredentials, "Incorrect credentials.");
+                _log.InfoFormat("Failed login: Incorrect password for '{0}'.", player.username);
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.InvalidCredentials, Message = "Wrong password"
+                };
             }
 
             const int StatusOnline = 2;
@@ -72,7 +93,10 @@ namespace GuessMyMessServer.BusinessLogic
             if (player.UserStatus_idUserStatus == StatusOnline || player.UserStatus_idUserStatus == StatusInGame)
             {
                 _log.WarnFormat("Login denied: User '{0}' is already logged in.", player.username);
-                return new OperationResultDto { Success = false, Message = "UserAlreadyLoggedIn" };
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.OperationFailed, Message = "UserAlreadyLoggedIn"
+                };
             }
 
             player.UserStatus_idUserStatus = StatusOnline;
@@ -81,28 +105,56 @@ namespace GuessMyMessServer.BusinessLogic
             {
                 await _playerRepository.SaveChangesAsync();
                 _log.InfoFormat("User '{0}' logged in successfully.", player.username);
-                return new OperationResultDto { Success = true, Message = player.username };
+
+                return new OperationResultDto
+                {
+                    Success = true,
+                    ErrorCode = ServiceErrorType.None,
+                    Message = player.username 
+                };
             }
             catch (Exception ex)
             {
-                // CORRECCIÓN para Error:
-                // La mayoría de loggers usan: Error(mensaje, excepcion)
-                // Construimos el mensaje formateado y pasamos la excepción al final.
-                string errorMessage = string.Format("Database error updating status for user '{0}'", player.username);
-                _log.Error(errorMessage, ex);
-
-                ThrowServiceFault(ServiceErrorType.DatabaseError, "An error occurred while logging in.");
+                _log.Error($"Database error updating status for '{player.username}'", ex);
+                ThrowSystemError(ServiceErrorType.DatabaseError, "Error logging in");
                 return null;
             }
         }
+
         public async Task<OperationResultDto> RegisterPlayerAsync(UserProfileDto userProfile, string password)
         {
-            ValidateRegistrationInput(userProfile, password);
-            await CheckUserExistenceAsync(userProfile);
+            const int CodeLowerLimit = 100000;
+            const int CodeUpperLimit = 999999;
+            var validationResult = ValidateRegistrationInput(userProfile, password);
+            if (validationResult != ServiceErrorType.None)
+            {
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = validationResult, Message = "Validation Failed"
+                };
+            }
 
-            string verificationCode = _random.Next(100000, 999999).ToString("D6");
+            var existenceCheck = await CheckUserExistenceAsync(userProfile);
+            if (existenceCheck != ServiceErrorType.None)
+            {
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = existenceCheck, Message = "User/Email exists"
+                };
+            }
 
-            await SendVerificationEmailAsync(userProfile, verificationCode);
+            string verificationCode = _random.Next(CodeLowerLimit, CodeUpperLimit).ToString("D6");
+
+            try
+            {
+                var emailTemplate = new VerificationEmailTemplate(userProfile.Username, verificationCode);
+                await _emailService.SendEmailAsync(userProfile.Email, userProfile.Username, emailTemplate);
+            }
+            catch (Exception ex)
+            {
+                _log.Error($"Error sending email to '{userProfile.Email}'", ex);
+                ThrowSystemError(ServiceErrorType.OperationFailed, "Could not send verification email");
+            }
 
             return await CreateAndSavePlayerAsync(userProfile, password, verificationCode);
         }
@@ -111,24 +163,36 @@ namespace GuessMyMessServer.BusinessLogic
         {
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(code))
             {
-                ThrowServiceFault(ServiceErrorType.OperationFailed, "Email and code are required.");
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.OperationFailed, Message = "Missing data"
+                };
             }
 
-            var player = await _playerRepository.GetPlayerByEmailAsync(email);
+            Player player = await _playerRepository.GetPlayerByEmailAsync(email);
 
             if (player == null)
             {
-                ThrowServiceFault(ServiceErrorType.NotFound, "No account was found for this email.");
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.NotFound, Message = "Email not found"
+                };
             }
 
             if (player.is_verified == 1)
             {
-                ThrowServiceFault(ServiceErrorType.OperationFailed, "This account is already verified.");
+                return new OperationResultDto
+                {
+                    Success = true, ErrorCode = ServiceErrorType.None, Message = "Already verified"
+                };
             }
 
             if (player.verification_code != code || player.code_expiry_date < DateTime.UtcNow)
             {
-                ThrowServiceFault(ServiceErrorType.InvalidCredentials, "Invalid or expired verification code.");
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.InvalidCredentials, Message = "Invalid/Expired Code"
+                };
             }
 
             player.is_verified = 1;
@@ -139,13 +203,13 @@ namespace GuessMyMessServer.BusinessLogic
             try
             {
                 await _playerRepository.SaveChangesAsync();
-                _log.InfoFormat("Account verified successfully: '{0}'.", player.username);
-                return new OperationResultDto { Success = true, Message = "Account verified successfully. Welcome!" };
+                _log.InfoFormat("Account verified: '{0}'.", player.username);
+                return new OperationResultDto { Success = true, ErrorCode = ServiceErrorType.None, Message = "Verified" };
             }
             catch (Exception ex)
             {
-                _log.Error($"Database error verifying account '{player.username}'", ex);
-                ThrowServiceFault(ServiceErrorType.DatabaseError, "Error updating verification status.");
+                _log.Error($"Database error verifying '{player.username}'", ex);
+                ThrowSystemError(ServiceErrorType.DatabaseError, "DB update failed");
                 return null;
             }
         }
@@ -159,12 +223,21 @@ namespace GuessMyMessServer.BusinessLogic
 
                 if (int.TryParse(matchIdStr, out int matchId))
                 {
-                    isPrivate = await _matchRepository.IsMatchPrivateAsync(matchId);
+                    try
+                    {
+                        isPrivate = await _matchRepository.IsMatchPrivateAsync(matchId);
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.Error("DB Error checking match privacy", ex);
+                        ThrowSystemError(ServiceErrorType.DatabaseError, "Check match failed");
+                    }
                 }
 
                 return new OperationResultDto
                 {
                     Success = true,
+                    ErrorCode = ServiceErrorType.None,
                     Message = uniqueSessionId,
                     Data = new Dictionary<string, string>
                     {
@@ -176,14 +249,15 @@ namespace GuessMyMessServer.BusinessLogic
             }
             else
             {
-                ThrowServiceFault(ServiceErrorType.InvalidCredentials, "Invalid invitation code or email.");
-                return null;
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.InvalidCredentials, Message = "Invalid Guest Invite"
+                };
             }
         }
 
         public async Task LogOutAsync(string username)
         {
-            const int StatusOffline = 1;
             try
             {
                 var player = await _playerRepository.GetPlayerByUsernameAsync(username);
@@ -200,64 +274,59 @@ namespace GuessMyMessServer.BusinessLogic
             }
         }
 
-        private void ValidateRegistrationInput(UserProfileDto userProfile, string password)
+        private ServiceErrorType ValidateRegistrationInput(UserProfileDto userProfile, string password)
         {
             if (userProfile == null || string.IsNullOrWhiteSpace(password))
             {
-                ThrowServiceFault(ServiceErrorType.OperationFailed, "User profile and password are required.");
+                return ServiceErrorType.OperationFailed;
             }
 
-            if (string.IsNullOrWhiteSpace(userProfile.Username) ||
-                string.IsNullOrWhiteSpace(userProfile.Email) ||
-                string.IsNullOrWhiteSpace(userProfile.FirstName) ||
-                string.IsNullOrWhiteSpace(userProfile.LastName))
+            if (string.IsNullOrWhiteSpace(userProfile.Username))
             {
-                ThrowServiceFault(ServiceErrorType.OperationFailed, "All fields are required.");
+                return ServiceErrorType.OperationFailed;
             }
 
             if (!InputValidator.IsValidEmail(userProfile.Email))
             {
-                ThrowServiceFault(ServiceErrorType.OperationFailed, "Invalid email format.");
+                return ServiceErrorType.InvalidEmailFormat;
             }
 
             if (!InputValidator.IsPasswordSecure(password))
             {
-                ThrowServiceFault(ServiceErrorType.OperationFailed, "Password does not meet security requirements.");
+                return ServiceErrorType.InvalidPasswordFormat;
             }
+
+            return ServiceErrorType.None;
         }
 
-        private async Task CheckUserExistenceAsync(UserProfileDto userProfile)
-        {
-            var existingUser = await _playerRepository.GetPlayerByUsernameAsync(userProfile.Username);
-            if (existingUser != null)
-            {
-                ThrowServiceFault(ServiceErrorType.UserAlreadyExists, "The username is already in use.");
-            }
-
-            var existingEmail = await _playerRepository.GetPlayerByEmailAsync(userProfile.Email);
-            if (existingEmail != null)
-            {
-                ThrowServiceFault(ServiceErrorType.EmailAlreadyRegistered, "The email is already registered.");
-            }
-        }
-
-        private async Task SendVerificationEmailAsync(UserProfileDto userProfile, string code)
+        private async Task<ServiceErrorType> CheckUserExistenceAsync(UserProfileDto userProfile)
         {
             try
             {
-                var emailTemplate = new VerificationEmailTemplate(userProfile.Username, code);
-                await _emailService.SendEmailAsync(userProfile.Email, userProfile.Username, emailTemplate);
+                var existingUser = await _playerRepository.GetPlayerByUsernameAsync(userProfile.Username);
+                if (existingUser != null)
+                {
+                    return ServiceErrorType.UserAlreadyExists;
+                }
+
+                var existingEmail = await _playerRepository.GetPlayerByEmailAsync(userProfile.Email);
+                if (existingEmail != null)
+                {
+                    return ServiceErrorType.EmailAlreadyRegistered;
+                }
+
+                return ServiceErrorType.None;
             }
             catch (Exception ex)
             {
-                _log.Error($"Error sending email to '{userProfile.Email}'", ex);
-                ThrowServiceFault(ServiceErrorType.OperationFailed, "Could not send verification email. Please try again later.");
+                _log.Error("Database error checking existence", ex);
+                ThrowSystemError(ServiceErrorType.DatabaseError, "Checking user failed");
+                return ServiceErrorType.DatabaseError;
             }
         }
 
         private async Task<OperationResultDto> CreateAndSavePlayerAsync(UserProfileDto userProfile, string password, string code)
         {
-            const int StatusOffline = 1;
             const int EmailCodeTimeExpiration = 15;
 
             var newPlayer = new Player
@@ -275,30 +344,31 @@ namespace GuessMyMessServer.BusinessLogic
                 code_expiry_date = DateTime.UtcNow.AddMinutes(EmailCodeTimeExpiration)
             };
 
-            _playerRepository.AddPlayer(newPlayer);
-
             try
             {
+                _playerRepository.AddPlayer(newPlayer);
                 await _playerRepository.SaveChangesAsync();
+
                 _log.InfoFormat("New user registered: '{0}'.", userProfile.Username);
                 return new OperationResultDto
                 {
                     Success = true,
+                    ErrorCode = ServiceErrorType.None,
                     Message = "Registration successful."
                 };
             }
             catch (Exception ex)
             {
                 _log.Error($"Database error saving user '{userProfile.Username}'", ex);
-                ThrowServiceFault(ServiceErrorType.DatabaseError, "Error registering user in database.");
+                ThrowSystemError(ServiceErrorType.DatabaseError, "Save failed");
                 return null;
             }
         }
 
-        private static void ThrowServiceFault(ServiceErrorType type, string message)
+        private static void ThrowSystemError(ServiceErrorType type, string debugMessage)
         {
-            var fault = new ServiceFaultDto(type, message);
-            throw new FaultException<ServiceFaultDto>(fault, new FaultReason(message));
+            var fault = new ServiceFaultDto(type, debugMessage);
+            throw new FaultException<ServiceFaultDto>(fault, new FaultReason("Server Error"));
         }
     }
 }

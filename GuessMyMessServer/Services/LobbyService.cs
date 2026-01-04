@@ -13,21 +13,17 @@ namespace GuessMyMessServer.Services
     {
         private static readonly ILog _log = LogManager.GetLogger(typeof(LobbyService));
 
-        // Variables de sesión
         private string _connectedUsername;
         private string _connectedMatchId;
 
-        // Propiedad para resolver la lógica bajo demanda (Nuevo DbContext por llamada)
         private static LobbyLogic Logic => Bootstrapper.Container.Resolve<LobbyLogic>();
 
-        // Constructor WCF
         public LobbyService()
         {
             Bootstrapper.Init();
             SubscribeToChannelEvents();
         }
 
-        // Constructor de Inyección
         public LobbyService(LobbyLogic lobbyLogic)
         {
             SubscribeToChannelEvents();
@@ -85,7 +81,6 @@ namespace GuessMyMessServer.Services
         {
             if (!string.IsNullOrEmpty(_connectedUsername))
             {
-                // Usamos Logic para desconectar
                 Logic.Disconnect(_connectedUsername, _connectedMatchId);
                 _connectedUsername = null;
             }

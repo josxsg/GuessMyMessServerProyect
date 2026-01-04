@@ -12,7 +12,6 @@ using GuessMyMessServer.Contracts.DataContracts;
 using GuessMyMessServer.Contracts.ServiceContracts;
 using GuessMyMessServer.DataAccess;
 using GuessMyMessServer.DataAccess.Abstractions;
-using GuessMyMessServer.Utilities;
 using GuessMyMessServer.Utilities.Email;
 using GuessMyMessServer.Utilities.Email.Templates;
 using log4net;
@@ -68,7 +67,10 @@ namespace GuessMyMessServer.BusinessLogic
             if (hostPlayer == null)
             {
                 _log.WarnFormat("CreateMatch failed: Host '{0}' not found.", hostUsername);
-                ThrowServiceFault(ServiceErrorType.NotFound, "Host user not found.");
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.NotFound, Message = "Host user not found."
+                };
             }
 
             string newMatchCode = null;
@@ -120,6 +122,7 @@ namespace GuessMyMessServer.BusinessLogic
                 return new OperationResultDto
                 {
                     Success = true,
+                    ErrorCode = ServiceErrorType.None,
                     Message = "Match created.",
                     Data = new Dictionary<string, string>
                     {
@@ -148,12 +151,18 @@ namespace GuessMyMessServer.BusinessLogic
         {
             if (!_connectedUsers.ContainsKey(username))
             {
-                ThrowServiceFault(ServiceErrorType.OperationFailed, "User not connected to matchmaking.");
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.UserNotConnected, Message = "User not connected."
+                };
             }
 
             if (!_activeLobbies.TryGetValue(matchId, out var lobby))
             {
-                ThrowServiceFault(ServiceErrorType.MatchNotFound, "Match not found or expired.");
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.MatchNotFound, Message = "Match not found or expired."
+                };
             }
 
             return await JoinLobbyInternalAsync(username, lobby);
@@ -163,14 +172,20 @@ namespace GuessMyMessServer.BusinessLogic
         {
             if (string.IsNullOrWhiteSpace(matchCode))
             {
-                ThrowServiceFault(ServiceErrorType.OperationFailed, "Match code is required.");
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.OperationFailed, Message = "Code required"
+                };
             }
 
             var lobby = _activeLobbies.Values.FirstOrDefault(l => l.MatchCode == matchCode && l.Status == MatchStatusWaiting);
 
             if (lobby == null)
             {
-                ThrowServiceFault(ServiceErrorType.MatchNotFound, "Invalid or expired match code.");
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.MatchNotFound, Message = "Invalid Code"
+                };
             }
 
             return await JoinLobbyInternalAsync(username, lobby);
@@ -180,17 +195,26 @@ namespace GuessMyMessServer.BusinessLogic
         {
             if (lobby.Players.Contains(username))
             {
-                return new OperationResultDto { Success = true, Message = "Already in match.", Data = new Dictionary<string, string> { { "MatchId", lobby.MatchId } } };
+                return new OperationResultDto
+                {
+                    Success = true, ErrorCode = ServiceErrorType.None, Message = "Already in match.", Data = new Dictionary<string, string> { { "MatchId", lobby.MatchId } }
+                };
             }
 
             if (lobby.CurrentPlayers >= lobby.Settings.MaxPlayers)
             {
-                ThrowServiceFault(ServiceErrorType.LobbyFull, "The match is full.");
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.LobbyFull, Message = "The match is full."
+                };
             }
 
             if (lobby.Status != MatchStatusWaiting)
             {
-                ThrowServiceFault(ServiceErrorType.GameInProgress, "Match has already started.");
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.GameInProgress, Message = "Match started."
+                };
             }
 
             lobby.Players.Add(username);
@@ -209,6 +233,7 @@ namespace GuessMyMessServer.BusinessLogic
             return new OperationResultDto
             {
                 Success = true,
+                ErrorCode = ServiceErrorType.None,
                 Message = "Joined successfully.",
                 Data = new Dictionary<string, string> { { "MatchId", lobby.MatchId } }
             };
@@ -219,10 +244,7 @@ namespace GuessMyMessServer.BusinessLogic
             if (_connectedUsers.TryGetValue(invitedUsername, out var callback))
             {
                 SafeCallback(callback, c => c.ReceiveMatchInvite(inviterUsername, matchId));
-                _log.InfoFormat("Invite sent: {0} -> {1} (Match {2})",
-                    inviterUsername,
-                    invitedUsername,
-                    matchId);
+                _log.InfoFormat("Invite sent: {0} -> {1} (Match {2})", inviterUsername, invitedUsername, matchId);
             }
             else
             {
@@ -235,7 +257,7 @@ namespace GuessMyMessServer.BusinessLogic
             var existingUser = await _playerRepository.GetPlayerByEmailAsync(targetEmail);
             if (existingUser != null)
             {
-                ThrowServiceFault(ServiceErrorType.EmailAlreadyRegistered, "User is already registered. Invite them by username.");
+                ThrowServiceFault(ServiceErrorType.EmailAlreadyRegistered, "User is already registered.");
             }
 
             string code = GuestInviteManager.CreateInvite(targetEmail, matchId);
@@ -311,10 +333,7 @@ namespace GuessMyMessServer.BusinessLogic
 
         private async Task UpdatePlayerCountInDbAsync(string matchIdStr, int change)
         {
-            if (!int.TryParse(matchIdStr, out int matchId))
-            {
-                return;
-            }
+            if (!int.TryParse(matchIdStr, out int matchId)) return;
 
             try
             {
@@ -322,10 +341,7 @@ namespace GuessMyMessServer.BusinessLogic
                 if (match != null)
                 {
                     match.currentPlayers += change;
-                    if (match.currentPlayers < 0)
-                    {
-                        match.currentPlayers = 0;
-                    }
+                    if (match.currentPlayers < 0) match.currentPlayers = 0;
                     await _matchRepository.SaveChangesAsync();
                 }
             }
@@ -337,17 +353,13 @@ namespace GuessMyMessServer.BusinessLogic
 
         private static async Task UpdateMatchStatusInDbAsync(string matchIdStr, string status)
         {
-            if (!int.TryParse(matchIdStr, out int matchId))
-            {
-                return;
-            }
+            if (!int.TryParse(matchIdStr, out int matchId)) return;
 
             using (var scope = Bootstrapper.Container.BeginLifetimeScope())
             {
                 try
                 {
                     var matchRepo = scope.Resolve<IMatchRepository>();
-
                     var match = await matchRepo.GetMatchByIdAsync(matchId);
                     if (match != null)
                     {
@@ -389,22 +401,9 @@ namespace GuessMyMessServer.BusinessLogic
             {
                 action(callback);
             }
-            catch (CommunicationException ex)
-            {
-                // CORRECCIÓN: Registramos como Debug porque es un evento esperado 
-                // cuando un jugador cierra el juego o pierde internet.
-                _log.Debug("Matchmaking callback failed: Client communication lost.", ex);
-            }
-            catch (TimeoutException ex)
-            {
-                // CORRECCIÓN: Los timeouts pueden indicar saturación de red.
-                _log.Warn("Matchmaking callback timed out.", ex);
-            }
             catch (Exception ex)
             {
-                // CORRECCIÓN: Cualquier otro error inesperado debe registrarse como Error 
-                // para que sepas si hay un bug en tu lógica.
-                _log.Error("Unexpected error in matchmaking callback.", ex);
+                _log.Debug("Matchmaking callback failed (client disconnected?).", ex);
             }
         }
 
@@ -423,7 +422,8 @@ namespace GuessMyMessServer.BusinessLogic
 
         private static void ThrowServiceFault(ServiceErrorType type, string message)
         {
-            throw new FaultException<ServiceFaultDto>(new ServiceFaultDto(type, message), new FaultReason(message));
+            var fault = new ServiceFaultDto(type, message);
+            throw new FaultException<ServiceFaultDto>(fault, new FaultReason(message));
         }
     }
 

@@ -18,7 +18,9 @@ namespace GuessMyMessServer.BusinessLogic
 
         public static string CreateInvite(string email, string matchId)
         {
-            var code = new Random().Next(100000, 999999).ToString();
+            const int CodeLowerLimit = 100000;
+            const int CodeUpperLimit = 999999;
+            var code = new Random().Next(CodeLowerLimit, CodeUpperLimit).ToString();
             var invite = new GuestInvite
             {
                 Email = email,

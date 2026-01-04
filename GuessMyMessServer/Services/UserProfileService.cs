@@ -15,20 +15,14 @@ namespace GuessMyMessServer.Services
     {
         private static readonly ILog _log = LogManager.GetLogger(typeof(UserProfileService));
 
-        // Propiedad para resolver la lógica bajo demanda (Nuevo DbContext por llamada)
         private UserProfileLogic Logic => Bootstrapper.Container.Resolve<UserProfileLogic>();
 
-        // Constructor para WCF
         public UserProfileService()
         {
             Bootstrapper.Init();
         }
 
-        // Constructor para Inyección
-        public UserProfileService(UserProfileLogic profileLogic)
-        {
-            // No asignamos nada para forzar el uso de la propiedad Logic y el contenedor
-        }
+        public UserProfileService(UserProfileLogic profileLogic) { }
 
         public async Task<UserProfileDto> GetUserProfileAsync(string username)
         {

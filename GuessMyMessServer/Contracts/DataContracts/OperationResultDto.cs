@@ -17,6 +17,16 @@ namespace GuessMyMessServer.Contracts.DataContracts
         public string Message { get; set; }
 
         [DataMember]
+        public ServiceErrorType ErrorCode { get; set; } 
+
+        [DataMember]
         public Dictionary<string, string> Data { get; set; }
+
+        public OperationResultDto()
+        {
+            Success = false;
+            ErrorCode = ServiceErrorType.Unknown;
+            Data = new Dictionary<string, string>();
+        }
     }
 }

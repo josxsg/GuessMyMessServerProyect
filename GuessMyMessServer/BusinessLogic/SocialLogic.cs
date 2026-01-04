@@ -112,7 +112,10 @@ namespace GuessMyMessServer.BusinessLogic
         {
             if (requesterUsername == targetUsername)
             {
-                ThrowServiceFault(ServiceErrorType.OperationFailed, "You cannot send a friend request to yourself.");
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.OperationFailed, Message = "Cannot add self"
+                };
             }
 
             var requester = await _playerRepository.GetPlayerByUsernameAsync(requesterUsername);
@@ -120,18 +123,27 @@ namespace GuessMyMessServer.BusinessLogic
 
             if (requester == null || target == null)
             {
-                ThrowServiceFault(ServiceErrorType.NotFound, "One or both users not found.");
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.NotFound, Message = "User not found"
+                };
             }
 
             var existing = await _socialRepository.GetFriendshipAsync(requester.idPlayer, target.idPlayer);
             if (existing != null)
             {
+                var errorType = existing.FriendShipStatus_idFriendShipStatus == StatusAccepted
+                    ? ServiceErrorType.DuplicateRecord 
+                    : ServiceErrorType.OperationFailed; 
+
                 string msg = existing.FriendShipStatus_idFriendShipStatus == StatusAccepted
                     ? "You are already friends."
                     : "A request is already pending.";
 
-                _log.InfoFormat("Friend request redundant: {0}", msg);
-                ThrowServiceFault(ServiceErrorType.OperationFailed, msg);
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = errorType, Message = msg
+                };
             }
 
             var friendship = new Friendship
@@ -147,7 +159,10 @@ namespace GuessMyMessServer.BusinessLogic
             {
                 await _socialRepository.SaveChangesAsync();
                 _log.InfoFormat("Friend request sent: '{0}' -> '{1}'.", requesterUsername, targetUsername);
-                return new OperationResultDto { Success = true, Message = "Friend request sent." };
+                return new OperationResultDto
+                {
+                    Success = true, ErrorCode = ServiceErrorType.None, Message = "Friend request sent."
+                };
             }
             catch (Exception ex)
             {
@@ -164,23 +179,32 @@ namespace GuessMyMessServer.BusinessLogic
 
             if (target == null || requester == null)
             {
-                ThrowServiceFault(ServiceErrorType.NotFound, "Users not found.");
+                return new OperationResultDto { Success = false, ErrorCode = ServiceErrorType.NotFound, Message = "User not found" };
             }
 
             var friendship = await _socialRepository.GetFriendshipAsync(requester.idPlayer, target.idPlayer);
             if (friendship == null)
             {
-                ThrowServiceFault(ServiceErrorType.NotFound, "Friend request not found.");
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.NotFound, Message = "Request not found"
+                };
             }
 
             if (friendship.FriendShipStatus_idFriendShipStatus != StatusPending)
             {
-                ThrowServiceFault(ServiceErrorType.NotFound, "Friend request not found (Status mismatch).");
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.OperationFailed, Message = "Status mismatch"
+                };
             }
 
             if (friendship.Player_idPlayer2 != target.idPlayer)
             {
-                ThrowServiceFault(ServiceErrorType.OperationFailed, "You cannot respond to this request.");
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.OperationFailed, Message = "Not your request"
+                };
             }
 
             if (accepted)
@@ -197,7 +221,10 @@ namespace GuessMyMessServer.BusinessLogic
             try
             {
                 await _socialRepository.SaveChangesAsync();
-                return new OperationResultDto { Success = true, Message = accepted ? "Request Accepted" : "Request Rejected" };
+                return new OperationResultDto
+                {
+                    Success = true, ErrorCode = ServiceErrorType.None, Message = accepted ? "Request Accepted" : "Request Rejected"
+                };
             }
             catch (Exception ex)
             {
@@ -209,15 +236,15 @@ namespace GuessMyMessServer.BusinessLogic
 
         public async Task<OperationResultDto> RemoveFriendAsync(string username, string friendToRemove)
         {
-            var result = new OperationResultDto { Success = false };
-
             var player = await _playerRepository.GetPlayerByUsernameAsync(username);
             var friend = await _playerRepository.GetPlayerByUsernameAsync(friendToRemove);
 
             if (player == null || friend == null)
             {
-                result.Message = "Usuario no encontrado.";
-                return result;
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.NotFound, Message = "User not found"
+                };
             }
 
             var friendship = await _socialRepository.GetFriendshipAsync(player.idPlayer, friend.idPlayer);
@@ -230,26 +257,33 @@ namespace GuessMyMessServer.BusinessLogic
                     if (await _socialRepository.SaveChangesAsync() > 0)
                     {
                         _log.InfoFormat("Friendship removed between '{0}' and '{1}'.", username, friendToRemove);
-                        result.Success = true;
-                        result.Message = "Amigo eliminado correctamente.";
+                        return new OperationResultDto
+                        {
+                            Success = true, ErrorCode = ServiceErrorType.None, Message = "Friend successfully removed."
+                        };
                     }
                     else
                     {
-                        result.Message = "No se pudo eliminar el registro de amistad.";
+                        return new OperationResultDto
+                        {
+                            Success = false, ErrorCode = ServiceErrorType.DatabaseError, Message = "No changes saved"
+                        };
                     }
                 }
                 catch (Exception ex)
                 {
                     _log.Error("Error removing friendship.", ex);
-                    ThrowServiceFault(ServiceErrorType.DatabaseError, "Error en base de datos al eliminar amigo.");
+                    ThrowServiceFault(ServiceErrorType.DatabaseError, "Error trying to delete friendship");
+                    return null;
                 }
             }
             else
             {
-                result.Message = "La amistad no existe.";
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.NotFound, Message = "Friendship not found"
+                };
             }
-
-            return result;
         }
 
         public async Task<FriendProfileDto> GetFriendProfileAsync(string username)
@@ -257,7 +291,7 @@ namespace GuessMyMessServer.BusinessLogic
             var player = await _playerRepository.GetPlayerByUsernameAsync(username);
             if (player == null)
             {
-                ThrowServiceFault(ServiceErrorType.NotFound, "Usuario no encontrado.");
+                ThrowServiceFault(ServiceErrorType.NotFound, "User not found.");
             }
 
             var socialNetworks = await _socialNetworkRepository.GetSocialNetworksAsync(player.idPlayer);

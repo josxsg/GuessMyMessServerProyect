@@ -7,10 +7,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using GuessMyMessServer.Contracts.DataContracts;
 using GuessMyMessServer.Contracts.ServiceContracts;
-using GuessMyMessServer.DataAccess;
 using GuessMyMessServer.DataAccess.Abstractions;
 using GuessMyMessServer.Properties.Langs;
-using GuessMyMessServer.Utilities; 
+using GuessMyMessServer.Utilities;
 using log4net;
 
 namespace GuessMyMessServer.BusinessLogic
@@ -128,13 +127,10 @@ namespace GuessMyMessServer.BusinessLogic
                     }
                     catch (CommunicationException ex)
                     {
-                        // CORRECCIÓN: Registramos el error de comunicación como Debug.
-                        // Es un error "esperado" cuando alguien cierra el juego repentinamente.
                         _log.DebugFormat("Broadcast failed: Player '{0}' is likely disconnected.", playerConn.Username, ex);
                     }
                     catch (Exception ex)
                     {
-                        // CORRECCIÓN: Errores no relacionados con la red deben ser registrados como Error.
                         _log.ErrorFormat("Unexpected error during broadcast to player '{0}'.", playerConn.Username, ex);
                     }
                 }
@@ -211,40 +207,33 @@ namespace GuessMyMessServer.BusinessLogic
 
         public void KickPlayer(string hostUsername, string playerToKickUsername, string matchId)
         {
-            // Cláusula de Guarda: Si no existe el lobby, salimos de inmediato
             if (!_lobbies.TryGetValue(matchId, out Lobby lobby))
             {
                 return;
             }
 
-            // Validación de Host: Aplanamos este bloque
             if (!hostUsername.Equals(lobby.HostUsername, StringComparison.OrdinalIgnoreCase))
             {
                 _log.WarnFormat("Kick denied: '{0}' is not host of {1}.", hostUsername, matchId);
                 return;
             }
 
-            // Buscamos al jugador por DisplayName
             var targetPair = lobby.Players.FirstOrDefault(p =>
                 p.Value.DisplayName.Equals(playerToKickUsername, StringComparison.OrdinalIgnoreCase));
 
-            // CORRECCIÓN S1066: Fusionamos los dos IFs en uno solo usando &&
             if (targetPair.Value == null && lobby.Players.TryGetValue(playerToKickUsername, out var conn))
             {
                 targetPair = new KeyValuePair<string, PlayerConnection>(playerToKickUsername, conn);
             }
 
-            // Verificamos si finalmente encontramos al jugador
             if (targetPair.Value == null)
             {
-                // CORRECCIÓN S6667: Usamos WarnFormat en lugar de interpolación ($)
                 _log.WarnFormat("Kick failed: Player '{0}' not found in lobby.", playerToKickUsername);
                 return;
             }
 
             string targetRealUsername = targetPair.Key;
 
-            // No permitimos que el host se expulse a sí mismo
             if (hostUsername.Equals(targetRealUsername, StringComparison.OrdinalIgnoreCase))
             {
                 return;
@@ -254,7 +243,6 @@ namespace GuessMyMessServer.BusinessLogic
             {
                 _matchmakingLogic.HandlePlayerLeave(targetRealUsername, matchId);
 
-                // CORRECCIÓN S6667: Usamos InfoFormat y marcadores {0}, {1}
                 _log.InfoFormat("Player '{0}' kicked from {1}.", targetRealUsername, matchId);
 
                 SafeCallback(kickedConn.Callback, () =>
@@ -263,6 +251,7 @@ namespace GuessMyMessServer.BusinessLogic
                 BroadcastLobbyState(lobby);
             }
         }
+
         public void StartGame(string hostUsername, string matchId)
         {
             if (_lobbies.TryGetValue(matchId, out Lobby lobby))
@@ -272,7 +261,7 @@ namespace GuessMyMessServer.BusinessLogic
                     return;
                 }
 
-                if (lobby.Players.Count < 1)
+                if (lobby.Players.Count < 1) 
                 {
                     return;
                 }
@@ -283,35 +272,6 @@ namespace GuessMyMessServer.BusinessLogic
                     _matchmakingLogic.SetMatchAsPlaying(id);
                     RemoveLobby(id);
                 });
-            }
-        }
-
-        public void CleanUpClient(ILobbyServiceCallback callback)
-        {
-            string userToRemove = null;
-            string matchIdToRemove = null;
-
-            foreach (var lobbyPair in _lobbies)
-            {
-                foreach (var playerPair in lobbyPair.Value.Players)
-                {
-                    if (playerPair.Value.Callback == callback)
-                    {
-                        userToRemove = playerPair.Key;
-                        matchIdToRemove = lobbyPair.Key;
-                        break;
-                    }
-                }
-
-                if (userToRemove != null)
-                {
-                    break;
-                }
-            }
-
-            if (userToRemove != null && matchIdToRemove != null)
-            {
-                Disconnect(userToRemove, matchIdToRemove);
             }
         }
 

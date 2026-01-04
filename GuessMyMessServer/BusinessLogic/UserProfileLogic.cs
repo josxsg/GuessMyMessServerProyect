@@ -25,6 +25,8 @@ namespace GuessMyMessServer.BusinessLogic
         private readonly IEmailService _emailService;
 
         private const string UserNotFoundMessage = "User not found.";
+        private const int CodeLowerLimit = 100000;
+        private const int CodeUpperLimit = 999999;
 
         public UserProfileLogic(
             IPlayerRepository playerRepository,
@@ -38,7 +40,7 @@ namespace GuessMyMessServer.BusinessLogic
             _emailService = emailService;
         }
 
-        private static string GenerateCode() => _random.Next(100000, 999999).ToString("D6");
+        private static string GenerateCode() => _random.Next(CodeLowerLimit, CodeUpperLimit).ToString("D6");
 
         public async Task<UserProfileDto> GetUserProfileAsync(string username)
         {
@@ -81,7 +83,10 @@ namespace GuessMyMessServer.BusinessLogic
         {
             if (profileData == null)
             {
-                ThrowServiceFault(ServiceErrorType.OperationFailed, "Invalid profile data.");
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.OperationFailed, Message = "Invalid data"
+                };
             }
 
             if (profileData.AvatarId > 0)
@@ -89,7 +94,10 @@ namespace GuessMyMessServer.BusinessLogic
                 var avatar = await _avatarRepository.GetAvatarByIdAsync(profileData.AvatarId);
                 if (avatar == null)
                 {
-                    ThrowServiceFault(ServiceErrorType.OperationFailed, "Selected avatar does not exist.");
+                    return new OperationResultDto
+                    {
+                        Success = false, ErrorCode = ServiceErrorType.NotFound, Message = "Avatar not found"
+                    };
                 }
             }
 
@@ -97,7 +105,10 @@ namespace GuessMyMessServer.BusinessLogic
 
             if (playerToUpdate == null)
             {
-                ThrowServiceFault(ServiceErrorType.NotFound, UserNotFoundMessage);
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.NotFound, Message = UserNotFoundMessage
+                };
             }
 
             playerToUpdate.name = profileData.FirstName;
@@ -113,7 +124,10 @@ namespace GuessMyMessServer.BusinessLogic
             {
                 await _playerRepository.SaveChangesAsync();
                 _log.InfoFormat("Profile updated successfully for user '{0}'.", username);
-                return new OperationResultDto { Success = true, Message = "Profile updated successfully." };
+                return new OperationResultDto
+                {
+                    Success = true, ErrorCode = ServiceErrorType.None, Message = "Profile updated successfully."
+                };
             }
             catch (Exception ex)
             {
@@ -127,19 +141,28 @@ namespace GuessMyMessServer.BusinessLogic
         {
             if (socialNetworkDto == null || string.IsNullOrWhiteSpace(socialNetworkDto.UserLink))
             {
-                ThrowServiceFault(ServiceErrorType.OperationFailed, "Invalid social network data.");
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.OperationFailed, Message = "Invalid data"
+                };
             }
 
             var player = await _playerRepository.GetPlayerByUsernameAsync(username);
             if (player == null)
             {
-                ThrowServiceFault(ServiceErrorType.NotFound, UserNotFoundMessage);
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.NotFound, Message = UserNotFoundMessage
+                };
             }
 
             var networkType = await _socialRepository.GetTypeByNameAsync(socialNetworkDto.NetworkType);
             if (networkType == null)
             {
-                ThrowServiceFault(ServiceErrorType.OperationFailed, $"Invalid social network type: {socialNetworkDto.NetworkType}");
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.OperationFailed, Message = "Invalid Network Type"
+                };
             }
 
             var existingSocial = await _socialRepository.GetPlayerSocialNetworkAsync(player.idPlayer, networkType.idTypeSocialNetwork);
@@ -162,7 +185,10 @@ namespace GuessMyMessServer.BusinessLogic
             try
             {
                 await _socialRepository.SaveChangesAsync();
-                return new OperationResultDto { Success = true, Message = "Social profile updated." };
+                return new OperationResultDto
+                {
+                    Success = true, ErrorCode = ServiceErrorType.None, Message = "Social profile updated."
+                };
             }
             catch (Exception ex)
             {
@@ -212,7 +238,10 @@ namespace GuessMyMessServer.BusinessLogic
             var player = await _playerRepository.GetPlayerByUsernameAsync(username);
             if (player == null)
             {
-                ThrowServiceFault(ServiceErrorType.NotFound, UserNotFoundMessage);
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.NotFound, Message = UserNotFoundMessage
+                };
             }
 
             string code = GenerateCode();
@@ -226,7 +255,10 @@ namespace GuessMyMessServer.BusinessLogic
                 var emailTemplate = new PasswordChangeVerificationEmailTemplate(player.username, code);
                 await _emailService.SendEmailAsync(player.email, player.username, emailTemplate);
 
-                return new OperationResultDto { Success = true, Message = "Verification code sent." };
+                return new OperationResultDto
+                {
+                    Success = true, ErrorCode = ServiceErrorType.None, Message = "Verification code sent."
+                };
             }
             catch (Exception ex)
             {
@@ -240,18 +272,27 @@ namespace GuessMyMessServer.BusinessLogic
         {
             if (!InputValidator.IsPasswordSecure(newPassword))
             {
-                ThrowServiceFault(ServiceErrorType.OperationFailed, "Password does not meet security requirements.");
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.InvalidPasswordFormat, Message = "Insecure password"
+                };
             }
 
             var player = await _playerRepository.GetPlayerByUsernameAsync(username);
             if (player == null)
             {
-                ThrowServiceFault(ServiceErrorType.NotFound, UserNotFoundMessage);
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.NotFound, Message = UserNotFoundMessage
+                };
             }
 
             if (player.temp_code != verificationCode || player.temp_code_expiry < DateTime.UtcNow)
             {
-                ThrowServiceFault(ServiceErrorType.InvalidCredentials, "Invalid or expired code.");
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.InvalidCredentials, Message = "Invalid code"
+                };
             }
 
             player.password = PasswordHasher.HashPassword(newPassword);
@@ -261,7 +302,10 @@ namespace GuessMyMessServer.BusinessLogic
             try
             {
                 await _playerRepository.SaveChangesAsync();
-                return new OperationResultDto { Success = true, Message = "Password updated successfully." };
+                return new OperationResultDto
+                {
+                    Success = true, ErrorCode = ServiceErrorType.None, Message = "Password updated successfully."
+                };
             }
             catch (Exception ex)
             {
@@ -275,19 +319,28 @@ namespace GuessMyMessServer.BusinessLogic
         {
             if (!InputValidator.IsValidEmail(newEmail))
             {
-                ThrowServiceFault(ServiceErrorType.OperationFailed, "Invalid email format.");
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.InvalidEmailFormat, Message = "Invalid email"
+                };
             }
 
             var player = await _playerRepository.GetPlayerByUsernameAsync(username);
             if (player == null)
             {
-                ThrowServiceFault(ServiceErrorType.NotFound, UserNotFoundMessage);
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.NotFound, Message = UserNotFoundMessage
+                };
             }
 
             var existingUser = await _playerRepository.GetPlayerByEmailAsync(newEmail);
             if (existingUser != null)
             {
-                ThrowServiceFault(ServiceErrorType.EmailAlreadyRegistered, "The email is already registered.");
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.EmailAlreadyRegistered, Message = "Email exists"
+                };
             }
 
             string code = GenerateCode();
@@ -302,7 +355,10 @@ namespace GuessMyMessServer.BusinessLogic
                 var emailTemplate = new EmailChangeVerificationEmailTemplate(player.username, code);
                 await _emailService.SendEmailAsync(player.email, player.username, emailTemplate);
 
-                return new OperationResultDto { Success = true, Message = "Verification code sent to your current email." };
+                return new OperationResultDto
+                {
+                    Success = true, ErrorCode = ServiceErrorType.None, Message = "Verification code sent."
+                };
             }
             catch (Exception ex)
             {
@@ -317,17 +373,26 @@ namespace GuessMyMessServer.BusinessLogic
             var player = await _playerRepository.GetPlayerByUsernameAsync(username);
             if (player == null)
             {
-                ThrowServiceFault(ServiceErrorType.NotFound, UserNotFoundMessage);
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.NotFound, Message = UserNotFoundMessage
+                };
             }
 
             if (string.IsNullOrEmpty(player.new_email_pending))
             {
-                ThrowServiceFault(ServiceErrorType.OperationFailed, "No pending email change request.");
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.OperationFailed, Message = "No pending request"
+                };
             }
 
             if (player.temp_code != verificationCode || player.temp_code_expiry < DateTime.UtcNow)
             {
-                ThrowServiceFault(ServiceErrorType.InvalidCredentials, "Invalid or expired code.");
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.InvalidCredentials, Message = "Invalid code"
+                };
             }
 
             var collisionUser = await _playerRepository.GetPlayerByEmailAsync(player.new_email_pending);
@@ -335,9 +400,19 @@ namespace GuessMyMessServer.BusinessLogic
             {
                 player.temp_code = null;
                 player.new_email_pending = null;
-                await _playerRepository.SaveChangesAsync();
+                try
+                {
+                    await _playerRepository.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    _log.Warn("Error clearing pending email after collision", ex);
+                }
 
-                ThrowServiceFault(ServiceErrorType.EmailAlreadyRegistered, "Email already taken by another user.");
+                return new OperationResultDto
+                {
+                    Success = false, ErrorCode = ServiceErrorType.EmailAlreadyRegistered, Message = "Email taken"
+                };
             }
 
             player.email = player.new_email_pending;
@@ -348,7 +423,10 @@ namespace GuessMyMessServer.BusinessLogic
             try
             {
                 await _playerRepository.SaveChangesAsync();
-                return new OperationResultDto { Success = true, Message = "Email updated successfully." };
+                return new OperationResultDto
+                {
+                    Success = true, ErrorCode = ServiceErrorType.None, Message = "Email updated successfully."
+                };
             }
             catch (Exception ex)
             {
@@ -387,8 +465,6 @@ namespace GuessMyMessServer.BusinessLogic
                     int totalBytesRead = 0;
                     int bytesRead;
 
-                    // CORRECCIÓN: Leemos en un bucle hasta completar el tamaño del archivo
-                    // o hasta que ya no haya más que leer.
                     while (totalBytesRead < buffer.Length &&
                            (bytesRead = await stream.ReadAsync(buffer, totalBytesRead, buffer.Length - totalBytesRead)) > 0)
                     {
@@ -400,7 +476,6 @@ namespace GuessMyMessServer.BusinessLogic
             }
             catch (Exception ex)
             {
-                // CORRECCIÓN S6667: Usamos WarnFormat
                 _log.WarnFormat("Error reading file {0}. Exception: {1}", filePath, ex.Message);
                 return null;
             }
